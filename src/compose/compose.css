@@ -1,0 +1,22 @@
+html, body {
+  height: 100%;
+}
+
+main {
+  -webkit-user-select: none;
+  padding: 10px;
+  height: 100%;
+  background-color: #fefefe;
+}
+
+#success {
+  display: none;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+#success.visible {
+  display: flex;
+}

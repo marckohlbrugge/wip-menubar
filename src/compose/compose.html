@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../../node_modules/bulma/css/bulma.min.css" />
+    <link
+      rel="stylesheet"
+      href="../../node_modules/@fortawesome/fontawesome-free/css/all.min.css"
+    />
+    <link rel="stylesheet" href="./compose.css" />
+  </head>
+
+  <body>
+    <main>
+      <div id="success">
+        <div>✅ Todo added!</div>
+      </div>
+      <form id="todo-form">
+        <div class="field">
+          <div class="control has-icons-left has-icons-right">
+            <input
+              id="todo-body"
+              type="text"
+              class="input"
+              placeholder="redesigned homepage"
+            />
+            <span class="icon is-left"> <i class="fas fa-check"></i> </span>
+          </div>
+          <p class="help">Press enter to save</p>
+        </div>
+      </form>
+    </main>
+    <script src="./compose.js"></script>
+  </body>
+</html>
