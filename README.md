@@ -1,22 +1,23 @@
-<p align="center"><img src="./build/icon.png" height="64" alt="Streaker Logo"></p>
-<h3 align="center">Streaker</h3>
-<p align="center">🐙 GitHub contribution streak tracking menubar app<p>
+<p align="center"><img src="./build/icon.png" height="64" alt="WIP Logo"></p>
+<h3 align="center">WIP</h3>
+<p align="center">🚧 WIP menubar app<p>
 <p align="center">
-    <a href="https://github.com/jamieweavis/streaker/releases"><img src="https://img.shields.io/github/downloads/jamieweavis/streaker/total.svg" alt="GitHub Downloads"></a>
-    <a href="https://github.com/jamieweavis/streaker/releases"><img src="https://img.shields.io/github/release/jamieweavis/streaker.svg" alt="Current Release Version"></a>
-    <a href="https://github.com/jamieweavis/readme-template/blob/master/LICENSE.md"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT License"></a>
+    <a href="https://github.com/marckohlbrugge/wip-menubar/releases"><img src="https://img.shields.io/github/downloads/marckohlbrugge/wip-menubar/total.svg" alt="GitHub Downloads"></a>
+    <a href="https://github.com/marckohlbrugge/wip-menubar/releases"><img src="https://img.shields.io/github/release/marckohlbrugge/wip-menubar.svg" alt="Current Release Version"></a>
+    <a href="https://github.com/marckohlbrugge/readme-template/blob/master/LICENSE.md"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT License"></a>
     <a href="https://github.com/prettier/prettier"><img src="https://img.shields.io/badge/code_style-prettier-ff69b4.svg" alt="Prettier Code Style"></a>
 </p>
 
 ## Installation
 
-Download the latest version of Streaker from the the **[GitHub releases](https://github.com/jamieweavis/streaker/releases)** page. (currently macOS & Windows only)
+Download the latest version of WIP from the **[GitHub releases](https://github.com/marckohlbrugge/wip-menubar/releases)** page. (currently macOS & Windows only)
 
 ## Features
 
-- Current streak, best streak, total contribution & best day stats
+- Current streak & best streak
 - Launch at login
-- Notification when you haven't commited today
+- Notification when you haven't shipped today
+- Quickly jump to your product pages
 
 ## Screenshots
 
@@ -30,19 +31,23 @@ Download the latest version of Streaker from the the **[GitHub releases](https:/
 
 ## Menu Bar Icons
 
-Streaker's menu bar icon is updated depending on your current contribution status:
+WIP's menu bar icon is updated depending on your current streak status:
 
 |                                                              | Status  | Description                                           |
 | ------------------------------------------------------------ | ------- | ----------------------------------------------------- |
-| <img src="./src/icons/macos/doneTemplate@2x.png" width="16"> | Done    | You've contributed today                              |
-| <img src="./src/icons/macos/todoTemplate@2x.png" width="16"> | Todo    | You haven't contributed today                         |
-| <img src="./src/icons/macos/loadTemplate@2x.png" width="16"> | Loading | Your contribution data is being requested from GitHub |
-| <img src="./src/icons/macos/failTemplate@2x.png" width="16"> | Failed  | Your contribution data request failed                 |
+| <img src="./src/icons/macos/doneTemplate@2x.png" width="16"> | Done    | You've shipped today                                  |
+| <img src="./src/icons/macos/todoTemplate@2x.png" width="16"> | Todo    | You haven't shipped today                             |
+| <img src="./src/icons/macos/loadTemplate@2x.png" width="16"> | Loading | Your streak data is being requested from WIP          |
+| <img src="./src/icons/macos/failTemplate@2x.png" width="16"> | Failed  | Your streak data request failed                       |
 
-## Related
 
-- [streaker-cli](https://github.com/jamieweavis/streaker-cli) - 🐙 GitHub contribution streak fetching CLI app
-- [contribution](https://github.com/jamieweavis/contribution) - 🗓 GitHub contribution count & streak fetcher with zero dependencies
+## Development
+
+Run `yarn dist` to build apps.
+
+## Credits
+
+This app is almost a 1:1 copy of [streaker](https://github.com/jamieweavis/streaker) by [Jamie Weavis](https://github.com/jamieweavis). Major props to him for open sourcing his work.
 
 ## License
 
