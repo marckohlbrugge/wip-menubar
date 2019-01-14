@@ -1,6 +1,11 @@
+try {
+  require('electron-reloader')(module);
+} catch (err) {}
+
 const electron = require('electron');
 const AutoLaunch = require('auto-launch');
 const { CronJob, CronTime } = require('cron');
+const electronLocalshortcut = require('electron-localshortcut');
 
 const icon = require('./icon');
 const store = require('./store');
@@ -69,8 +74,70 @@ const contribution = (username = '', options = {}) => {
   });
 };
 
+const createTodoViaApi = (api_key = null, todo = null, completed = true, options = {}) => {
+  const { net } = require('electron');
+  return new Promise((resolve, reject) => {
+    let request_options = { method: 'POST', path: '/graphql' };
+
+    if (store.get('development')) {
+      request_options.protocol = 'http:';
+      request_options.hostname = 'wip.test';
+      request_options.port = 80;
+    } else {
+      request_options.protocol = 'https:';
+      request_options.hostname = 'wip.chat';
+      request_options.port = 443;
+    }
+
+    const request = net.request(request_options);
+    request.setHeader('Content-Type', 'application/json');
+    request.setHeader('Accept', 'application/json');
+    request.setHeader('Authorization', `bearer ${api_key}`);
+
+    let body = '';
+    request.on('response', response => {
+      if (response.statusCode !== 200) {
+        console.log('create todo rjeect');
+        if (options.onFailure) return options.onFailure(response);
+        return reject(response);
+      }
+
+      response.on('data', chunk => {
+        console.log('chunk of data');
+        body += chunk.toString();
+      });
+
+      response.on('end', () => {
+        console.log('create todo end');
+
+        const json = JSON.parse(body);
+        const data = {
+          id: json.data.createTodo.id,
+          completed_at: json.data.createTodo.completed_at,
+        };
+        console.log(data);
+        if (options.onSuccess) return options.onSuccess(data);
+        return resolve(data);
+      });
+    });
+
+    const completed_at = completed ? ` completed_at:"${new Date().toISOString()}"` : "";
+    const query = `
+      mutation createTodo {
+        createTodo(input: { body:"${todo}"${completed_at} }) {
+          id
+          body
+          completed_at
+        }
+      }
+    `;
+    request.end(JSON.stringify({ query: query }));
+  });
+};
+
 const {
   app,
+  globalShortcut,
   BrowserWindow,
   ipcMain,
   Menu,
@@ -82,13 +149,86 @@ const {
 app.on('ready', () => {
   const autoLauncher = new AutoLaunch({ name: pjson.name });
   const tray = new Tray(icon.done);
+  let composeWindow = null;
   let preferencesWindow = null;
+
+  // Create the Application's main menu
+  var template = [{
+    label: "Application",
+    submenu: [
+      { label: "About Application", selector: "orderFrontStandardAboutPanel:" },
+      { type: "separator" },
+      { label: "Quit", accelerator: "Command+Q", click: function() { app.quit(); }}
+    ]}, {
+      label: "Edit",
+      submenu: [
+        { label: "Undo", accelerator: "CmdOrCtrl+Z", selector: "undo:" },
+        { label: "Redo", accelerator: "Shift+CmdOrCtrl+Z", selector: "redo:" },
+        { type: "separator" },
+        { label: "Cut", accelerator: "CmdOrCtrl+X", selector: "cut:" },
+        { label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:" },
+        { label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:" },
+        { label: "Select All", accelerator: "CmdOrCtrl+A", selector: "selectAll:" }
+      ]}
+  ];
+
+  Menu.setApplicationMenu(Menu.buildFromTemplate(template));
+
+  const ret = globalShortcut.register(store.get('shortcut'), () => {
+    onComposeClick();
+  });
+
+  if (!ret) {
+    console.log('registration failed');
+  }
+
+  function createComposeWindow() {
+    composeWindow = new BrowserWindow({
+      width: 600,
+      height: 54,
+      frame: false,
+      show: false,
+      resizable: false,
+      maximizable: false,
+      minimizable: false,
+      fullscreenable: false,
+      transparent: true,
+    });
+    composeWindow.loadURL(
+      `file://${__dirname}/compose/compose.html`,
+    );
+
+    composeWindow.on('ready-to-show', () => {
+      composeWindow.show();
+      if (process.platform === 'darwin') {
+        app.dock.show();
+      }
+    });
+
+    composeWindow.on('closed', () => {
+      composeWindow = null;
+      if (process.platform === 'darwin') {
+        app.dock.hide();
+      }
+    });
+
+    electronLocalshortcut.register(composeWindow, 'Esc', () => {
+      composeWindow.close();
+    });
+  }
+
+  function onComposeClick() {
+    if (composeWindow === null) {
+      return createComposeWindow();
+    }
+    composeWindow.focus();
+  }
 
   function createPreferencesWindow() {
     preferencesWindow = new BrowserWindow({
       title: `${pjson.name} - Preferences`,
       width: 300,
-      height: 320,
+      height: 425,
       resizable: false,
       maximizable: false,
       minimizable: false,
@@ -144,16 +284,11 @@ app.on('ready', () => {
         accelerator: 'CmdOrCtrl+O',
       },
       { type: 'separator' },
-    ]);
-
-    if (!streaking) {
-      menuTemplate.push({ label: `Time Left: ${timeLeft()}`, enabled: false });
-    }
-
-    menuTemplate = menuTemplate.concat([
-      { label: `Current Streak: ${currentStreak}`, enabled: false },
-      { label: `Best Streak: ${bestStreak}`, enabled: false },
-      { type: 'separator' },
+      {
+        label: 'New Todo...',
+        accelerator: store.get('shortcut'),
+        click: onComposeClick,
+      },
     ]);
 
     if (Array.isArray(products)) {
@@ -191,6 +326,19 @@ app.on('ready', () => {
         click: onPreferencesClick,
       },
       { type: 'separator' },
+    ]);
+
+    if (!streaking) {
+      menuTemplate.push({ label: `Time Left: ${timeLeft()}`, enabled: false });
+    }
+
+    menuTemplate = menuTemplate.concat([
+      { label: `Current Streak: ${currentStreak}`, enabled: false },
+      { label: `Best Streak: ${bestStreak}`, enabled: false },
+      { type: 'separator' },
+    ]);
+
+    menuTemplate = menuTemplate.concat([
       {
         label: `Quit`,
         accelerator: 'CmdOrCtrl+Q',
@@ -242,6 +390,17 @@ app.on('ready', () => {
       event.sender.send('usernameSet', !!username);
     } catch (error) {
       event.sender.send('usernameSet', false);
+    }
+  }
+
+  async function setApiKey(event, api_key) {
+    try {
+      store.set('api-key', api_key);
+      // TODO: here's a good time to load stuff
+      // TODO: verify api key using API
+      event.sender.send('apiKeySet', !!api_key);
+    } catch (error) {
+      event.sender.send('apiKeySet', false);
     }
   }
 
@@ -301,6 +460,22 @@ app.on('ready', () => {
     event.sender.send('NotificationTimeSet');
   }
 
+  async function createTodo(event, value) {
+    const completed = !(value.match(/^\/todo\b/i));
+    value = value.replace(/^\/(todo|done)\b/i, '');
+    var todo = createTodoViaApi(store.get('api-key'), value, completed);
+
+    todo.then(result => {
+      console.log(result.id);
+      event.sender.send('todoCreated', result);
+    });
+
+    todo.catch(() => {
+      console.log('oops');
+    });
+
+  }
+
   const job = new CronJob({
     cronTime: '0 0 20 00 * *',
     async onTick() {
@@ -334,10 +509,12 @@ app.on('ready', () => {
   app.on('window-all-closed', () => {});
   tray.on('right-click', requestContributionData);
   ipcMain.on('setUsername', setUsername);
+  ipcMain.on('setApiKey', setApiKey);
   ipcMain.on('setSyncInterval', setSyncInterval);
   ipcMain.on('activateLaunchAtLogin', activateLaunchAtLogin);
   ipcMain.on('activateNotifications', activateNotifications);
   ipcMain.on('setNotificationTime', setNotificationTime);
+  ipcMain.on('createTodo', createTodo);
 
   requestContributionData();
 

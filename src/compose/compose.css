@@ -1,0 +1,27 @@
+html, body {
+  background: black;
+}
+
+main {
+  -webkit-user-select: none;
+}
+
+.fa-check {
+  color: lightgreen;
+}
+
+.fa-hourglass-half {
+  color: orange;
+}
+
+.input.input {
+  border-color: transparent;
+  background-color: black;
+  color: white;
+}
+
+
+
+.input.input::placeholder {
+  color: #555;
+}

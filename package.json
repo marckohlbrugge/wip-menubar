@@ -1,7 +1,7 @@
 {
   "name": "WIP",
   "description": "Menubar app for WIP",
-  "version": "0.1.2",
+  "version": "0.2.0-alpha",
   "author": "Marc Köhlbrugge <hey@marckohlbrugge.com>",
   "bugs": {
     "url": "https://github.com/marckohlbrugge/wip-menubar/issues"
@@ -17,11 +17,13 @@
     "auto-launch": "^5.0.5",
     "bulma": "^0.7.2",
     "cron": "^1.6.0",
+    "electron-localshortcut": "^3.1.0",
     "electron-store": "^2.0.0"
   },
   "devDependencies": {
     "electron": "^4.0.1",
     "electron-builder": "^20.38.4",
+    "electron-reloader": "^0.2.0",
     "eslint": "^5.12.0",
     "eslint-config-prettier": "^3.3.0",
     "eslint-plugin-prettier": "^3.0.1",
