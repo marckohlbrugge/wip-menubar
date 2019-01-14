@@ -5,6 +5,7 @@ module.exports = new Store({
     username: '',
     autoLaunch: false,
     syncInterval: 15,
+    development: false,
     notification: {
       isEnabled: false,
       time: '20:00',

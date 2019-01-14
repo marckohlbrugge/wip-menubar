@@ -2,49 +2,49 @@ const { ipcRenderer } = require('electron');
 
 const store = require('../store');
 
-const githubUsername = document.getElementById('github-username');
-const githubUsernameStatus = document.getElementById('github-username-status');
-const githubSyncInterval = document.getElementById('github-sync-interval');
+const wipUsername = document.getElementById('wip-username');
+const wipUsernameStatus = document.getElementById('wip-username-status');
+const wipSyncInterval = document.getElementById('wip-sync-interval');
 const launchAtLoginCheckbox = document.getElementById(
   'launch-at-login-checkbox',
 );
 const notificationCheckbox = document.getElementById('notification-checkbox');
 const notificationTime = document.getElementById('notification-time');
 
-githubUsername.value = store.get('username');
-githubSyncInterval.value = store.get('syncInterval');
+wipUsername.value = store.get('username');
+wipSyncInterval.value = store.get('syncInterval');
 launchAtLoginCheckbox.checked = store.get('autoLaunch');
 notificationCheckbox.checked = store.get('notification.isEnabled');
 notificationTime.value = store.get('notification.time');
 notificationTime.disabled = !store.get('notification.isEnabled');
 
-if (!githubUsername.value) {
-  githubUsername.focus();
-  isInvalid(githubUsername);
+if (!wipUsername.value) {
+  wipUsername.focus();
+  isInvalid(wipUsername);
 }
 
 let typingTimer;
-githubUsername.addEventListener('input', () => {
-  githubUsername.parentElement.classList.remove('is-loading');
+wipUsername.addEventListener('input', () => {
+  wipUsername.parentElement.classList.remove('is-loading');
   clearTimeout(typingTimer);
-  isInvalid(githubUsername);
+  isInvalid(wipUsername);
 
-  githubUsername.parentElement.classList.add('is-loading');
-  githubUsernameStatus.classList.remove('fa-check');
-  githubUsernameStatus.classList.remove('fa-times');
+  wipUsername.parentElement.classList.add('is-loading');
+  wipUsernameStatus.classList.remove('fa-check');
+  wipUsernameStatus.classList.remove('fa-times');
 
   typingTimer = setTimeout(() => {
-    ipcRenderer.send('setUsername', githubUsername.value);
+    ipcRenderer.send('setUsername', wipUsername.value);
   }, 1000);
 });
 
-githubSyncInterval.addEventListener('input', () => {
-  if (isInvalid(githubSyncInterval)) return;
-  const syncInterval = parseInt(githubSyncInterval.value, 10);
+wipSyncInterval.addEventListener('input', () => {
+  if (isInvalid(wipSyncInterval)) return;
+  const syncInterval = parseInt(wipSyncInterval.value, 10);
   if (syncInterval > 0) {
     ipcRenderer.send('setSyncInterval', syncInterval);
   } else {
-    githubSyncInterval.classList.add('is-warning');
+    wipSyncInterval.classList.add('is-warning');
   }
 });
 
@@ -63,10 +63,10 @@ notificationTime.addEventListener('input', () => {
 });
 
 ipcRenderer.on('usernameSet', (event, userExists) => {
-  githubUsername.parentElement.classList.remove('is-loading');
-  githubUsername.classList.toggle('is-danger', !userExists);
-  githubUsernameStatus.classList.toggle('fa-check', userExists);
-  githubUsernameStatus.classList.toggle('fa-times', !userExists);
+  wipUsername.parentElement.classList.remove('is-loading');
+  wipUsername.classList.toggle('is-danger', !userExists);
+  wipUsernameStatus.classList.toggle('fa-check', userExists);
+  wipUsernameStatus.classList.toggle('fa-times', !userExists);
 });
 
 function isInvalid(input) {

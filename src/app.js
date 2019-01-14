@@ -1,11 +1,73 @@
 const electron = require('electron');
 const AutoLaunch = require('auto-launch');
-const contribution = require('contribution');
 const { CronJob, CronTime } = require('cron');
 
 const icon = require('./icon');
 const store = require('./store');
 const pjson = require('../package.json');
+
+const contribution = (username = '', options = {}) => {
+  const { net } = require('electron');
+  return new Promise((resolve, reject) => {
+    let request_options = { method: 'POST', path: '/graphql' };
+
+    if (store.get('development')) {
+      request_options.protocol = 'http:';
+      request_options.hostname = 'wip.test';
+      request_options.port = 80;
+    } else {
+      request_options.protocol = 'https:';
+      request_options.hostname = 'wip.chat';
+      request_options.port = 433;
+    }
+
+    const request = net.request(request_options);
+    request.setHeader('Content-Type', 'application/json');
+    request.setHeader('Accept', 'application/json');
+
+    let body = '';
+    request.on('response', response => {
+      if (response.statusCode !== 200) {
+        if (options.onFailure) return options.onFailure(response);
+        return reject(response);
+      }
+
+      response.on('data', chunk => {
+        body += chunk.toString();
+      });
+
+      response.on('end', () => {
+        const json = JSON.parse(body);
+        const data = {
+          completedCount: 123, // json.data.user.completed_todos_count,
+          currentStreak: json.data.user.streak,
+          bestStreak: json.data.user.best_streak,
+          streaking: json.data.user.streaking,
+          products: json.data.user.products,
+        };
+        if (options.onSuccess) return options.onSuccess(data);
+        return resolve(data);
+      });
+    });
+    const query = `
+      {
+        user(username:"${username}") {
+          id
+          first_name
+          streak
+          best_streak
+          completed_todos_count
+          streaking
+          products {
+            name
+            url
+          }
+        }
+      }
+    `;
+    request.end(JSON.stringify({ query: query }));
+  });
+};
 
 const {
   app,
@@ -60,20 +122,63 @@ app.on('ready', () => {
   }
 
   function createTrayMenu(
-    contributionCount,
+    completedCount,
     currentStreak,
     bestStreak,
-    bestDay,
+    products,
+    streaking,
   ) {
     const username = store.get('username') || 'Username not set';
-    const githubProfileUrl = `https://github.com/${username}`;
-    const menuTemplate = [
-      { label: username, enabled: false },
+    const wipProfileUrl = `https://wip.chat/@${username}`;
+
+    let menuTemplate = new Array();
+
+    if (store.get('development')) {
+      menuTemplate.push({ label: 'Development Mode', enabled: false });
+    }
+
+    menuTemplate = menuTemplate.concat([
+      {
+        label: username,
+        click: () => shell.openExternal(wipProfileUrl),
+        accelerator: 'CmdOrCtrl+O',
+      },
       { type: 'separator' },
+    ]);
+
+    if (!streaking) {
+      menuTemplate.push({ label: `Time Left: ${timeLeft()}`, enabled: false });
+    }
+
+    menuTemplate = menuTemplate.concat([
       { label: `Current Streak: ${currentStreak}`, enabled: false },
       { label: `Best Streak: ${bestStreak}`, enabled: false },
-      { label: `Contributions: ${contributionCount}`, enabled: false },
-      { label: `Best Day: ${bestDay}`, enabled: false },
+      { type: 'separator' },
+    ]);
+
+    if (Array.isArray(products)) {
+      let submenu = new Array();
+
+      products.forEach(function(product) {
+        submenu.push({
+          label: product.name,
+          click: () => shell.openExternal(product.url),
+        });
+      });
+
+      menuTemplate.push({ label: 'Products', submenu: submenu });
+    }
+
+    menuTemplate = menuTemplate.concat([
+      { type: 'separator' },
+      {
+        label: `Open Chat…`,
+        click: () => shell.openExternal(`tg://resolve?domain=wipchat`),
+      },
+      {
+        label: `Open Questions…`,
+        click: () => shell.openExternal(`https://wip.chat/questions`),
+      },
       { type: 'separator' },
       {
         label: 'Reload',
@@ -81,31 +186,18 @@ app.on('ready', () => {
         click: requestContributionData,
       },
       {
-        label: 'Open GitHub Profile...',
-        accelerator: 'CmdOrCtrl+O',
-        click: () => shell.openExternal(githubProfileUrl),
-      },
-      { type: 'separator' },
-      {
         label: 'Preferences...',
         accelerator: 'CmdOrCtrl+,',
         click: onPreferencesClick,
       },
-      {
-        label: `About ${pjson.name}...`,
-        click: () => shell.openExternal(pjson.homepage),
-      },
-      {
-        label: 'Feedback && Support...',
-        click: () => shell.openExternal(pjson.bugs.url),
-      },
       { type: 'separator' },
       {
-        label: `Quit ${pjson.name}`,
+        label: `Quit`,
         accelerator: 'CmdOrCtrl+Q',
         click: () => app.quit(),
       },
-    ];
+    ]);
+
     return Menu.buildFromTemplate(menuTemplate);
   }
 
@@ -122,19 +214,20 @@ app.on('ready', () => {
       createTrayMenu('Loading...', 'Loading...', 'Loading...', 'Loading...'),
     );
 
-    setTimeout(requestContributionData, 1000 * 60 * store.get('syncInterval')); // `syncInterval` minutes
+    setTimeout(requestContributionData, 1000 * 60 * store.get('syncInterval'));
 
     contribution(username)
       .then(data => {
         tray.setContextMenu(
           createTrayMenu(
-            data.contributions,
+            data.completedTodos,
             data.currentStreak,
             data.bestStreak,
-            data.bestDay,
+            data.products,
+            data.streaking,
           ),
         );
-        tray.setImage(data.currentStreak > 0 ? icon.done : icon.todo);
+        tray.setImage(data.streaking ? icon.done : icon.todo);
       })
       .catch(() => {
         tray.setContextMenu(createTrayMenu('Error', 'Error', 'Error', 'Error'));
@@ -150,6 +243,28 @@ app.on('ready', () => {
     } catch (error) {
       event.sender.send('usernameSet', false);
     }
+  }
+
+  function timeLeft() {
+    const now = new Date();
+
+    let midnight = new Date(now.valueOf());
+    midnight.setHours(24);
+    midnight.setMinutes(0 - now.getTimezoneOffset());
+    midnight.setSeconds(0);
+    midnight.setMilliseconds(0);
+
+    const timeDifference = midnight.getTime() - now.getTime();
+
+    const minutes = Math.floor(timeDifference / 60000) % 60;
+    const hours = Math.floor(minutes / 60) % 24;
+
+    let output = `${hours} `;
+    output += hours == 1 ? ` hour` : ` hours`;
+    output += `, ${minutes}`
+    output += minutes == 1 ? ` minute` : ` minutes`;
+
+    return output;
   }
 
   function setSyncInterval(event, interval) {
@@ -190,10 +305,10 @@ app.on('ready', () => {
     cronTime: '0 0 20 00 * *',
     async onTick() {
       const data = await contribution(store.get('username'));
-      if (data.currentStreak === 0 && Notification.isSupported()) {
+      if (!data.streaking && Notification.isSupported()) {
         new Notification({
           title: pjson.name,
-          body: "You haven't contributed today",
+          body: "You haven't yet shipped today",
         }).show();
       }
     },

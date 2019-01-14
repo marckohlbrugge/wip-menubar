@@ -1,13 +1,13 @@
 {
-  "name": "Streaker",
-  "description": "GitHub contribution streak tracking menubar app",
-  "version": "1.3.0",
-  "author": "Jamie Weavis <jamie.weavis@gmail.com>",
+  "name": "WIP",
+  "description": "Menubar app for WIP",
+  "version": "0.1.1",
+  "author": "Marc Köhlbrugge <hey@marckohlbrugge.com>",
   "bugs": {
-    "url": "https://github.com/jamieweavis/streaker/issues"
+    "url": "https://github.com/marckohlbrugge/wip-menubar/issues"
   },
   "build": {
-    "appId": "com.jamieweavis.streaker",
+    "appId": "chat.wip.menubar",
     "mac": {
       "darkModeSupport": true
     }
@@ -16,7 +16,6 @@
     "@fortawesome/fontawesome-free": "^5.6.3",
     "auto-launch": "^5.0.5",
     "bulma": "^0.7.2",
-    "contribution": "^2.1.0",
     "cron": "^1.6.0",
     "electron-store": "^2.0.0"
   },
@@ -30,18 +29,16 @@
     "lint-staged": "^8.0.4",
     "prettier": "^1.15.3"
   },
-  "homepage": "https://github.com/jamieweavis/streaker#readme",
+  "homepage": "https://github.com/marckohlbrugge/wip-menubar#readme",
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged"
     }
   },
   "keywords": [
-    "contribution",
-    "contribution-graph",
+    "wip",
     "electron",
     "electron-app",
-    "github",
     "macos",
     "menubar",
     "streak"
@@ -61,7 +58,7 @@
   "main": "src/app.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jamieweavis/streaker.git"
+    "url": "git+https://github.com/marckohlbrugge/wip-menubar.git"
   },
   "scripts": {
     "dist": "build",
