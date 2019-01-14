@@ -1,7 +1,7 @@
 {
   "name": "WIP",
   "description": "Menubar app for WIP",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "author": "Marc Köhlbrugge <hey@marckohlbrugge.com>",
   "bugs": {
     "url": "https://github.com/marckohlbrugge/wip-menubar/issues"
