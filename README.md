@@ -23,11 +23,11 @@ Download the latest version of WIP from the **[GitHub releases](https://github.c
 
 ### Menubar
 
-<img src="./screenshots/menubar.png" width="280" alt="Menubar Screenshot">
+<img src="./screenshots/menubar.png" width="319" alt="Menubar Screenshot">
 
 ### Preferences
 
-<img src="./screenshots/preferences.png" width="380" alt="Preferences Screenshot">
+<img src="./screenshots/preferences.png" width="386" alt="Preferences Screenshot">
 
 ## Menu Bar Icons
 
