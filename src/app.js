@@ -18,7 +18,7 @@ const contribution = (username = '', options = {}) => {
     } else {
       request_options.protocol = 'https:';
       request_options.hostname = 'wip.chat';
-      request_options.port = 433;
+      request_options.port = 443;
     }
 
     const request = net.request(request_options);
