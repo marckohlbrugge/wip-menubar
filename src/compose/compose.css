@@ -1,22 +1,27 @@
 html, body {
-  height: 100%;
+  background: black;
 }
 
 main {
   -webkit-user-select: none;
-  padding: 10px;
-  height: 100%;
-  background-color: #fefefe;
 }
 
-#success {
-  display: none;
-  text-align: center;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
+.fa-check {
+  color: lightgreen;
 }
 
-#success.visible {
-  display: flex;
+.fa-hourglass-half {
+  color: orange;
+}
+
+.input.input {
+  border-color: transparent;
+  background-color: black;
+  color: white;
+}
+
+
+
+.input.input::placeholder {
+  color: #555;
 }

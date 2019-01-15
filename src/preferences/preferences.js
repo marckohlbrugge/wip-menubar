@@ -13,6 +13,15 @@ const launchAtLoginCheckbox = document.getElementById(
 const notificationCheckbox = document.getElementById('notification-checkbox');
 const notificationTime = document.getElementById('notification-time');
 
+// Open all links in external browser
+let shell = require('electron').shell
+document.addEventListener('click', function (event) {
+  if (event.target.tagName === 'A' && event.target.href.startsWith('http')) {
+    event.preventDefault()
+    shell.openExternal(event.target.href)
+  }
+});
+
 wipUsername.value = store.get('username');
 wipApiKey.value = store.get('api-key');
 wipSyncInterval.value = store.get('syncInterval');

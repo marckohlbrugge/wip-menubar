@@ -1,3 +1,7 @@
+try {
+  require('electron-reloader')(module);
+} catch (err) {}
+
 const electron = require('electron');
 const AutoLaunch = require('auto-launch');
 const { CronJob, CronTime } = require('cron');
@@ -70,7 +74,7 @@ const contribution = (username = '', options = {}) => {
   });
 };
 
-const createTodoViaApi = (api_key = null, todo = null, options = {}) => {
+const createTodoViaApi = (api_key = null, todo = null, completed = true, options = {}) => {
   const { net } = require('electron');
   return new Promise((resolve, reject) => {
     let request_options = { method: 'POST', path: '/graphql' };
@@ -109,16 +113,18 @@ const createTodoViaApi = (api_key = null, todo = null, options = {}) => {
         const json = JSON.parse(body);
         const data = {
           id: json.data.createTodo.id,
+          completed_at: json.data.createTodo.completed_at,
         };
         console.log(data);
         if (options.onSuccess) return options.onSuccess(data);
         return resolve(data);
       });
     });
-    const completed_at = new Date().toISOString();
+
+    const completed_at = completed ? ` completed_at:"${new Date().toISOString()}"` : "";
     const query = `
       mutation createTodo {
-        createTodo(input: { body:"${todo}", completed_at:"${completed_at}" }) {
+        createTodo(input: { body:"${todo}"${completed_at} }) {
           id
           body
           completed_at
@@ -146,20 +152,25 @@ app.on('ready', () => {
   let composeWindow = null;
   let preferencesWindow = null;
 
-  const ret = globalShortcut.register('Control+Space', () => {
+  const ret = globalShortcut.register(store.get('shortcut'), () => {
     onComposeClick();
-  })
+  });
 
   if (!ret) {
-    console.log('registration failed')
+    console.log('registration failed');
   }
 
   function createComposeWindow() {
     composeWindow = new BrowserWindow({
       width: 600,
-      height: 75,
+      height: 54,
       frame: false,
-      show: false
+      show: false,
+      resizable: false,
+      maximizable: false,
+      minimizable: false,
+      fullscreenable: false,
+      transparent: true,
     });
     composeWindow.loadURL(
       `file://${__dirname}/compose/compose.html`,
@@ -195,7 +206,7 @@ app.on('ready', () => {
     preferencesWindow = new BrowserWindow({
       title: `${pjson.name} - Preferences`,
       width: 300,
-      height: 320,
+      height: 425,
       resizable: false,
       maximizable: false,
       minimizable: false,
@@ -420,11 +431,13 @@ app.on('ready', () => {
   }
 
   async function createTodo(event, value) {
-    var todo = createTodoViaApi(store.get('api-key'), value);
+    const completed = !(value.match(/^\/todo\b/i));
+    value = value.replace(/^\/(todo|done)\b/i, '');
+    var todo = createTodoViaApi(store.get('api-key'), value, completed);
 
     todo.then(result => {
       console.log(result.id);
-      event.sender.send('todoCreated', 'some todo');
+      event.sender.send('todoCreated', result);
     });
 
     todo.catch(() => {

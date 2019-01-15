@@ -6,6 +6,7 @@ module.exports = new Store({
     autoLaunch: false,
     syncInterval: 15,
     development: false,
+    shortcut: 'Ctrl+Space',
     notification: {
       isEnabled: false,
       time: '20:00',
