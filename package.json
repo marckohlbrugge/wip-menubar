@@ -63,8 +63,10 @@
     "url": "git+https://github.com/marckohlbrugge/wip-menubar.git"
   },
   "scripts": {
-    "dist": "build",
-    "dist-win": "build -w",
+    "dist": "build -mwl",
+    "dist-m": "build -m",
+    "dist-w": "build -w",
+    "dist-l": "build -l",
     "format": "prettier --write './src/**/*.{js,html}'",
     "lint": "eslint .",
     "pack": "build --dir",
