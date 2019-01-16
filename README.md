@@ -25,11 +25,19 @@ Download the latest version of WIP from the **[GitHub releases](https://github.c
 
 ### Menubar
 
-<img src="./screenshots/menubar.png" width="319" alt="Menubar Screenshot">
+<img src="./screenshots/menubar.png" width="325" alt="Menubar Screenshot">
+
+### Add a Completed Todo
+
+<img src="./screenshots/done.png" width="713" alt="Completed Todo Screenshot">
+
+### Add a Pending Todo
+
+<img src="./screenshots/todo.png" width="713" alt="Pending Todo Screenshot">
 
 ### Preferences
 
-<img src="./screenshots/preferences.png" width="386" alt="Preferences Screenshot">
+<img src="./screenshots/preferences.png" width="399" alt="Preferences Screenshot">
 
 ## Menu Bar Icons
 
