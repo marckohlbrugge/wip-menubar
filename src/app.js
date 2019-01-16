@@ -256,13 +256,13 @@ app.on('ready', () => {
 
     const timeDifference = midnight.getTime() - now.getTime();
 
-    const minutes = Math.floor(timeDifference / 60000) % 60;
-    const hours = Math.floor(minutes / 60) % 24;
+    const minutes = Math.floor(timeDifference / 60000);
+    const hours = Math.floor(minutes / 60);
 
-    let output = `${hours} `;
-    output += hours == 1 ? ` hour` : ` hours`;
-    output += `, ${minutes}`
-    output += minutes == 1 ? ` minute` : ` minutes`;
+    let output = `${hours % 24}`;
+    output += hours % 24 == 1 ? ` hour` : ` hours`;
+    output += `, ${minutes % 60}`;
+    output += minutes % 60 == 1 ? ` minute` : ` minutes`;
 
     return output;
   }
