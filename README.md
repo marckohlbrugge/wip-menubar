@@ -10,7 +10,7 @@
 
 ## Installation
 
-Download the latest version of WIP from the **[GitHub releases](https://github.com/marckohlbrugge/wip-menubar/releases)** page. (currently macOS & Windows only)
+Download the latest version of WIP from the **[GitHub releases](https://github.com/marckohlbrugge/wip-menubar/releases)** page. (macOS, Windows, and Linux)
 
 ## Features
 
