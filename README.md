@@ -14,10 +14,12 @@ Download the latest version of WIP from the **[GitHub releases](https://github.c
 
 ## Features
 
-- Current streak & best streak
-- Launch at login
+- Quickly create a todo with a system-wide shortcut (`Ctrl+Space`)
+- See your current streak & best streak
 - Notification when you haven't shipped today
-- Quickly jump to your product pages
+- See time left to keep your streak
+- Launch at login
+- Jump to your product pages
 
 ## Screenshots
 
