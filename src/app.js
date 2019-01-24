@@ -1,3 +1,6 @@
+const promiseIpc = require('electron-promise-ipc');
+// const fsp = require('fs-promise');
+
 try {
   require('electron-reloader')(module);
 } catch (err) {}
@@ -101,10 +104,10 @@ app.on('ready', () => {
   function createComposeWindow() {
     composeWindow = new BrowserWindow({
       width: 600,
-      height: 54,
+      height: 200,
       frame: false,
       show: false,
-      resizable: false,
+      resizable: true,
       maximizable: false,
       minimizable: false,
       fullscreenable: false,
@@ -321,6 +324,17 @@ app.on('ready', () => {
     registerGlobalShortcut();
   }
 
+  promiseIpc.on('fetchPendingTodos', async (filter) => {
+    let todos = await pendingTodosViaApi(store.get('api-key'));
+
+    return todos.filter((option) => {
+      return option.body
+        .toString()
+        .toLowerCase()
+        .indexOf(filter.toLowerCase()) >= 0
+    });
+  });
+
   // Stores API Key in config.
   //
   // TODO: Verify key using API
@@ -410,7 +424,20 @@ app.on('ready', () => {
 
     todo.then(result => {
       console.log(result.id);
-      event.sender.send('todoCreated', result);
+      event.sender.send('todoSaved', result);
+    });
+
+    todo.catch(() => {
+      console.log('oops');
+    });
+  }
+
+  async function completeTodo(event, todo_id) {
+    var todo = completeTodoViaApi(store.get('api-key'), todo_id);
+
+    todo.then(result => {
+      console.log(result.id);
+      event.sender.send('todoSaved', result);
     });
 
     todo.catch(() => {
@@ -459,6 +486,7 @@ app.on('ready', () => {
   ipcMain.on('activateNotifications', activateNotifications);
   ipcMain.on('setNotificationTime', setNotificationTime);
   ipcMain.on('createTodo', createTodo);
+  ipcMain.on('completeTodo', completeTodo);
 
   requestViewerData();
 

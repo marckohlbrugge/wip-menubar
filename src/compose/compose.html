@@ -4,28 +4,37 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="../../node_modules/bulma/css/bulma.min.css" />
+    <link rel="stylesheet" href="../../node_modules/buefy/dist/buefy.min.css" />
     <link
       rel="stylesheet"
       href="../../node_modules/@fortawesome/fontawesome-free/css/all.min.css"
     />
     <link rel="stylesheet" href="./compose.css" />
+    <script src="../../node_modules/vue/dist/vue.min.js"></script>
+    <script src="../../node_modules/buefy/dist/buefy.min.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/lodash@4.17.4/lodash.min.js"></script>
   </head>
 
   <body>
     <main>
-      <form id="todo-form">
-        <div class="field">
-          <div class="control has-icons-left has-icons-right">
-            <input
-              id="todo-body"
-              type="text"
-              class="input is-large"
-              placeholder="Press return to save…"
-            />
-            <span class="icon is-left"> <i class="fas fa-check"></i> </span>
-          </div>
+        <div id="app" class="container">
+          <b-autocomplete
+            id="todo-body"
+            v-model="name"
+            :data="data"
+            :loading="isFetching"
+            field="body"
+            size="is-large"
+            autofocus="true"
+            :icon="icon"
+            icon-pack="fas"
+            placeholder="Press return to save…"
+            @keyup.native="keydown"
+            @keydown.native.enter="submitForm"
+            @select="option => selected = option">
+          </b-autocomplete>
         </div>
-      </form>
     </main>
     <script src="./compose.js"></script>
   </body>
