@@ -1,3 +1,5 @@
+const promiseIpc = require('electron-promise-ipc');
+
 try {
   require('electron-reloader')(module);
 } catch (err) {}
@@ -9,13 +11,13 @@ const electronLocalshortcut = require('electron-localshortcut');
 const icon = require('./icon');
 const store = require('./store');
 const pjson = require('../package.json');
-const debug = require('electron-debug');
 const wip = require('./wip');
+const debug = require('electron-debug');
+
+debug();
 
 wip.setDevMode(store.get('development'));
 wip.setApiKey(store.get('api-key'));
-
-debug();
 
 const {
   app,
@@ -101,7 +103,7 @@ app.on('ready', () => {
   function createComposeWindow() {
     composeWindow = new BrowserWindow({
       width: 600,
-      height: 54,
+      height: 200,
       frame: false,
       show: false,
       resizable: false,
@@ -110,6 +112,9 @@ app.on('ready', () => {
       fullscreenable: false,
       transparent: true,
       alwaysOnTop: true,
+      webPreferences: {
+        devTools: true,
+      },
     });
 
     composeWindow.loadURL(`file://${__dirname}/compose/compose.html`);
@@ -119,9 +124,9 @@ app.on('ready', () => {
     });
 
     // Hide window when it loses focus
-    composeWindow.on('blur', (event) => {
-      composeWindow.close();
-    });
+    // composeWindow.on('blur', event => {
+    //   composeWindow.close();
+    // });
 
     composeWindow.on('closed', () => {
       composeWindow = null;
@@ -321,6 +326,10 @@ app.on('ready', () => {
     registerGlobalShortcut();
   }
 
+  promiseIpc.on('fetchPendingTodos', async filter => {
+    return await wip.pendingTodos(filter);
+  });
+
   // Stores API Key in config.
   //
   // TODO: Verify key using API
@@ -410,7 +419,20 @@ app.on('ready', () => {
 
     todo.then(result => {
       console.log(result.id);
-      event.sender.send('todoCreated', result);
+      event.sender.send('todoSaved', result);
+    });
+
+    todo.catch(() => {
+      console.log('oops');
+    });
+  }
+
+  async function completeTodo(event, todo_id) {
+    var todo = wip.completeTodo(todo_id);
+
+    todo.then(result => {
+      console.log(result.id);
+      event.sender.send('todoSaved', result);
     });
 
     todo.catch(() => {
@@ -459,6 +481,7 @@ app.on('ready', () => {
   ipcMain.on('activateNotifications', activateNotifications);
   ipcMain.on('setNotificationTime', setNotificationTime);
   ipcMain.on('createTodo', createTodo);
+  ipcMain.on('completeTodo', completeTodo);
 
   requestViewerData();
 

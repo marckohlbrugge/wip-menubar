@@ -1,12 +1,16 @@
 html, body {
-  background: black;
+  background: transparent;
+}
 
-  /* Hide scrollbar on Linux */
-  overflow: hidden;
+/* Hide scrollbar on Linux */
+body::-webkit-scrollbar {
+  display: none;
 }
 
 main {
   -webkit-user-select: none;
+  background: black;
+  border-radius: 0.3em;
 }
 
 .fa-check {
@@ -17,14 +21,16 @@ main {
   color: orange;
 }
 
-.input.input {
+#todo-body {
   border-color: transparent;
   background-color: black;
   color: white;
 }
 
-
-
-.input.input::placeholder {
+#todo-body::placeholder {
   color: #555;
+}
+
+#todo-body:focus {
+  box-shadow: none;
 }
