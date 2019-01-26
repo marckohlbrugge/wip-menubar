@@ -10,6 +10,7 @@ const wipSyncInterval = document.getElementById('wip-sync-interval');
 const launchAtLoginCheckbox = document.getElementById(
   'launch-at-login-checkbox',
 );
+const developmentModeCheckbox = document.getElementById('development-mode-checkbox');
 const notificationCheckbox = document.getElementById('notification-checkbox');
 const notificationTime = document.getElementById('notification-time');
 
@@ -26,6 +27,7 @@ wipUsername.value = store.get('username');
 wipApiKey.value = store.get('api-key');
 wipSyncInterval.value = store.get('syncInterval');
 launchAtLoginCheckbox.checked = store.get('autoLaunch');
+developmentModeCheckbox.checked = store.get('development');
 notificationCheckbox.checked = store.get('notification.isEnabled');
 notificationTime.value = store.get('notification.time');
 notificationTime.disabled = !store.get('notification.isEnabled');
@@ -77,6 +79,10 @@ wipSyncInterval.addEventListener('input', () => {
 
 launchAtLoginCheckbox.addEventListener('change', () => {
   ipcRenderer.send('activateLaunchAtLogin', launchAtLoginCheckbox.checked);
+});
+
+developmentModeCheckbox.addEventListener('change', () => {
+  ipcRenderer.send('activateDevelopmentMode', developmentModeCheckbox.checked);
 });
 
 notificationCheckbox.addEventListener('change', () => {
