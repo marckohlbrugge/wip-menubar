@@ -328,7 +328,9 @@ app.on('ready', () => {
       { type: 'separator' },
     ]);
 
-    if (!streaking) {
+    if (streaking) {
+      menuTemplate.push({ label: `You shipped today.`, enabled: false });
+    } else {
       menuTemplate.push({ label: `Time Left: ${timeLeft()}`, enabled: false });
     }
 
