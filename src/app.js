@@ -1,5 +1,4 @@
 const promiseIpc = require('electron-promise-ipc');
-// const fsp = require('fs-promise');
 
 try {
   require('electron-reloader')(module);
@@ -113,6 +112,9 @@ app.on('ready', () => {
       fullscreenable: false,
       transparent: true,
       alwaysOnTop: true,
+      webPreferences: {
+        devTools: true,
+      },
     });
 
     composeWindow.loadURL(`file://${__dirname}/compose/compose.html`);
@@ -124,6 +126,7 @@ app.on('ready', () => {
     // Hide window when it loses focus
     composeWindow.on('blur', (event) => {
       composeWindow.close();
+
     });
 
     composeWindow.on('closed', () => {
@@ -324,6 +327,7 @@ app.on('ready', () => {
     registerGlobalShortcut();
   }
 
+  // TODO: Filter on server-side instead of client-side
   promiseIpc.on('fetchPendingTodos', async (filter) => {
     let todos = await pendingTodosViaApi(store.get('api-key'));
 
