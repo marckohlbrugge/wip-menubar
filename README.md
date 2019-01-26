@@ -53,7 +53,8 @@ WIP's menu bar icon is updated depending on your current streak status:
 
 ## Development
 
-Run `yarn dist` to build apps.
+- `yarn start` to run the app.
+- `yarn dist` to build apps for distribution.
 
 ## Credits
 
