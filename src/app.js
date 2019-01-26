@@ -74,7 +74,12 @@ const contribution = (username = '', options = {}) => {
   });
 };
 
-const createTodoViaApi = (api_key = null, todo = null, completed = true, options = {}) => {
+const createTodoViaApi = (
+  api_key = null,
+  todo = null,
+  completed = true,
+  options = {},
+) => {
   const { net } = require('electron');
   return new Promise((resolve, reject) => {
     let request_options = { method: 'POST', path: '/graphql' };
@@ -121,7 +126,9 @@ const createTodoViaApi = (api_key = null, todo = null, completed = true, options
       });
     });
 
-    const completed_at = completed ? ` completed_at:"${new Date().toISOString()}"` : "";
+    const completed_at = completed
+      ? ` completed_at:"${new Date().toISOString()}"`
+      : '';
     const query = `
       mutation createTodo {
         createTodo(input: { body:"${todo}"${completed_at} }) {
@@ -153,23 +160,40 @@ app.on('ready', () => {
   let preferencesWindow = null;
 
   // Create the Application's main menu
-  var template = [{
-    label: "Application",
-    submenu: [
-      { label: "About Application", selector: "orderFrontStandardAboutPanel:" },
-      { type: "separator" },
-      { label: "Quit", accelerator: "Command+Q", click: function() { app.quit(); }}
-    ]}, {
-      label: "Edit",
+  var template = [
+    {
+      label: 'Application',
       submenu: [
-        { label: "Undo", accelerator: "CmdOrCtrl+Z", selector: "undo:" },
-        { label: "Redo", accelerator: "Shift+CmdOrCtrl+Z", selector: "redo:" },
-        { type: "separator" },
-        { label: "Cut", accelerator: "CmdOrCtrl+X", selector: "cut:" },
-        { label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:" },
-        { label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:" },
-        { label: "Select All", accelerator: "CmdOrCtrl+A", selector: "selectAll:" }
-      ]}
+        {
+          label: 'About Application',
+          selector: 'orderFrontStandardAboutPanel:',
+        },
+        { type: 'separator' },
+        {
+          label: 'Quit',
+          accelerator: 'Command+Q',
+          click: function() {
+            app.quit();
+          },
+        },
+      ],
+    },
+    {
+      label: 'Edit',
+      submenu: [
+        { label: 'Undo', accelerator: 'CmdOrCtrl+Z', selector: 'undo:' },
+        { label: 'Redo', accelerator: 'Shift+CmdOrCtrl+Z', selector: 'redo:' },
+        { type: 'separator' },
+        { label: 'Cut', accelerator: 'CmdOrCtrl+X', selector: 'cut:' },
+        { label: 'Copy', accelerator: 'CmdOrCtrl+C', selector: 'copy:' },
+        { label: 'Paste', accelerator: 'CmdOrCtrl+V', selector: 'paste:' },
+        {
+          label: 'Select All',
+          accelerator: 'CmdOrCtrl+A',
+          selector: 'selectAll:',
+        },
+      ],
+    },
   ];
 
   Menu.setApplicationMenu(Menu.buildFromTemplate(template));
@@ -252,7 +276,9 @@ app.on('ready', () => {
       show: false,
     });
 
-    preferencesWindow.loadURL(`file://${__dirname}/preferences/preferences.html`);
+    preferencesWindow.loadURL(
+      `file://${__dirname}/preferences/preferences.html`,
+    );
 
     preferencesWindow.on('ready-to-show', () => {
       preferencesWindow.show();
@@ -470,7 +496,7 @@ app.on('ready', () => {
     store.set('development', isEnabled);
 
     // Reload menubar
-    requestContributionData()
+    requestContributionData();
 
     event.sender.send('activateDevelopmentModeSet');
   }
@@ -499,7 +525,7 @@ app.on('ready', () => {
   }
 
   async function createTodo(event, value) {
-    const completed = !(value.match(/^\/todo\b/i));
+    const completed = !value.match(/^\/todo\b/i);
     value = value.replace(/^\/(todo|done)\b/i, '');
     var todo = createTodoViaApi(store.get('api-key'), value, completed);
 
@@ -511,7 +537,6 @@ app.on('ready', () => {
     todo.catch(() => {
       console.log('oops');
     });
-
   }
 
   const job = new CronJob({

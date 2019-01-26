@@ -18,7 +18,7 @@ todoBody.addEventListener('input', () => {
   }
 });
 
-todoForm.addEventListener('submit', (event) => {
+todoForm.addEventListener('submit', event => {
   event.preventDefault();
   todoBody.disabled = true;
   todoIcon.classList.remove('fa-check', 'fa-hourglass-half');
