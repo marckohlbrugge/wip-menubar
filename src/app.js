@@ -234,22 +234,22 @@ app.on('ready', () => {
       minimizable: false,
       fullscreenable: false,
       transparent: true,
+      alwaysOnTop: true,
     });
 
     composeWindow.loadURL(`file://${__dirname}/compose/compose.html`);
 
     composeWindow.on('ready-to-show', () => {
       composeWindow.show();
-      if (process.platform === 'darwin') {
-        app.dock.show();
-      }
+    });
+
+    // Hide window when it loses focus
+    composeWindow.on('blur', (event) => {
+      composeWindow.close();
     });
 
     composeWindow.on('closed', () => {
       composeWindow = null;
-      if (process.platform === 'darwin') {
-        app.dock.hide();
-      }
     });
 
     electronLocalshortcut.register(composeWindow, 'Esc', () => {
