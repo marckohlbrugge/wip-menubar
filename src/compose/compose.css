@@ -1,5 +1,8 @@
 html, body {
   background: black;
+
+  /* Hide scrollbar on Linux */
+  overflow: hidden;
 }
 
 main {
