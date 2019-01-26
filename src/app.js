@@ -174,13 +174,30 @@ app.on('ready', () => {
 
   Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 
-  const ret = globalShortcut.register(store.get('shortcut'), () => {
-    onComposeClick();
-  });
-
-  if (!ret) {
-    console.log('registration failed');
+  function registerGlobalShortcut() {
+    try {
+      const ret = globalShortcut.register(store.get('shortcut'), () => {
+        onComposeClick();
+      });
+      if (!ret) {
+        console.log('registration failed');
+      }
+    } catch (error) {
+      // Probably invalid shortcut
+      console.log(error);
+    }
   }
+
+  function unregisterGlobalShortcut() {
+    try {
+      globalShortcut.unregister(store.get('shortcut'));
+    } catch (error) {
+      // Probably invalid (previous) shortcut
+      console.log(error);
+    }
+  }
+
+  registerGlobalShortcut();
 
   function createComposeWindow() {
     composeWindow = new BrowserWindow({
@@ -194,9 +211,8 @@ app.on('ready', () => {
       fullscreenable: false,
       transparent: true,
     });
-    composeWindow.loadURL(
-      `file://${__dirname}/compose/compose.html`,
-    );
+
+    composeWindow.loadURL(`file://${__dirname}/compose/compose.html`);
 
     composeWindow.on('ready-to-show', () => {
       composeWindow.show();
@@ -228,16 +244,15 @@ app.on('ready', () => {
     preferencesWindow = new BrowserWindow({
       title: `${pjson.name} - Preferences`,
       width: 300,
-      height: 480,
+      height: 585,
       resizable: false,
       maximizable: false,
       minimizable: false,
       fullscreenable: false,
       show: false,
     });
-    preferencesWindow.loadURL(
-      `file://${__dirname}/preferences/preferences.html`,
-    );
+
+    preferencesWindow.loadURL(`file://${__dirname}/preferences/preferences.html`);
 
     preferencesWindow.on('ready-to-show', () => {
       preferencesWindow.show();
@@ -395,11 +410,23 @@ app.on('ready', () => {
     }
   }
 
+  // Unregisters current shortcut, sets shortcut variable to new choice, and
+  // finally registers the new shortcut.
+  //
+  // TODO: Verify shortcut is valid format
+  async function setShortcut(event, shortcut) {
+    unregisterGlobalShortcut();
+    store.set('shortcut', shortcut);
+    registerGlobalShortcut();
+  }
+
+  // Stores API Key in config.
+  //
+  // TODO: Verify key using API
   async function setApiKey(event, api_key) {
     try {
       store.set('api-key', api_key);
       // TODO: here's a good time to load stuff
-      // TODO: verify api key using API
       event.sender.send('apiKeySet', !!api_key);
     } catch (error) {
       event.sender.send('apiKeySet', false);
@@ -521,6 +548,7 @@ app.on('ready', () => {
   tray.on('right-click', requestContributionData);
   ipcMain.on('setUsername', setUsername);
   ipcMain.on('setApiKey', setApiKey);
+  ipcMain.on('setShortcut', setShortcut);
   ipcMain.on('setSyncInterval', setSyncInterval);
   ipcMain.on('activateLaunchAtLogin', activateLaunchAtLogin);
   ipcMain.on('activateDevelopmentMode', activateDevelopmentMode);
