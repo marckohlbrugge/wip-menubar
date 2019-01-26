@@ -228,7 +228,7 @@ app.on('ready', () => {
     preferencesWindow = new BrowserWindow({
       title: `${pjson.name} - Preferences`,
       width: 300,
-      height: 425,
+      height: 480,
       resizable: false,
       maximizable: false,
       minimizable: false,
@@ -437,6 +437,15 @@ app.on('ready', () => {
     event.sender.send('activateLaunchAtLoginSet');
   }
 
+  function activateDevelopmentMode(event, isEnabled) {
+    store.set('development', isEnabled);
+
+    // Reload menubar
+    requestContributionData()
+
+    event.sender.send('activateDevelopmentModeSet');
+  }
+
   function activateNotifications(event, isEnabled) {
     store.set('notification.isEnabled', isEnabled);
     if (isEnabled) {
@@ -512,6 +521,7 @@ app.on('ready', () => {
   ipcMain.on('setApiKey', setApiKey);
   ipcMain.on('setSyncInterval', setSyncInterval);
   ipcMain.on('activateLaunchAtLogin', activateLaunchAtLogin);
+  ipcMain.on('activateDevelopmentMode', activateDevelopmentMode);
   ipcMain.on('activateNotifications', activateNotifications);
   ipcMain.on('setNotificationTime', setNotificationTime);
   ipcMain.on('createTodo', createTodo);
