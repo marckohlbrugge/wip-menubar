@@ -3,6 +3,7 @@ const { ipcRenderer } = require('electron');
 const store = require('../store');
 
 const wipUsername = document.getElementById('wip-username');
+const shortcut = document.getElementById('shortcut');
 const wipUsernameStatus = document.getElementById('wip-username-status');
 const wipApiKey = document.getElementById('wip-api-key');
 const wipApiKeyStatus = document.getElementById('wip-api-key-status');
@@ -24,6 +25,7 @@ document.addEventListener('click', function (event) {
 });
 
 wipUsername.value = store.get('username');
+shortcut.value = store.get('shortcut');
 wipApiKey.value = store.get('api-key');
 wipSyncInterval.value = store.get('syncInterval');
 launchAtLoginCheckbox.checked = store.get('autoLaunch');
@@ -64,6 +66,15 @@ wipApiKey.addEventListener('input', () => {
 
   apiKeyTypingTimer = setTimeout(() => {
     ipcRenderer.send('setApiKey', wipApiKey.value);
+  }, 1000);
+});
+
+let shortcutTypingTimer;
+shortcut.addEventListener('input', () => {
+  clearTimeout(shortcutTypingTimer);
+
+  shortcutTypingTimer = setTimeout(() => {
+    ipcRenderer.send('setShortcut', shortcut.value);
   }, 1000);
 });
 
