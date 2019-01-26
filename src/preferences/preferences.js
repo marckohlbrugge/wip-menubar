@@ -11,16 +11,18 @@ const wipSyncInterval = document.getElementById('wip-sync-interval');
 const launchAtLoginCheckbox = document.getElementById(
   'launch-at-login-checkbox',
 );
-const developmentModeCheckbox = document.getElementById('development-mode-checkbox');
+const developmentModeCheckbox = document.getElementById(
+  'development-mode-checkbox',
+);
 const notificationCheckbox = document.getElementById('notification-checkbox');
 const notificationTime = document.getElementById('notification-time');
 
 // Open all links in external browser
-let shell = require('electron').shell
-document.addEventListener('click', function (event) {
+let shell = require('electron').shell;
+document.addEventListener('click', function(event) {
   if (event.target.tagName === 'A' && event.target.href.startsWith('http')) {
-    event.preventDefault()
-    shell.openExternal(event.target.href)
+    event.preventDefault();
+    shell.openExternal(event.target.href);
   }
 });
 
