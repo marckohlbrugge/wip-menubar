@@ -1,8 +1,10 @@
 html, body {
   background: transparent;
+}
 
-  /* Hide scrollbar on Linux */
-  overflow: hidden;
+/* Hide scrollbar on Linux */
+body::-webkit-scrollbar {
+  display: none;
 }
 
 main {

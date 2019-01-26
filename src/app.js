@@ -126,7 +126,6 @@ app.on('ready', () => {
     // Hide window when it loses focus
     composeWindow.on('blur', (event) => {
       composeWindow.close();
-
     });
 
     composeWindow.on('closed', () => {
@@ -330,12 +329,10 @@ app.on('ready', () => {
   // TODO: Filter on server-side instead of client-side
   promiseIpc.on('fetchPendingTodos', async (filter) => {
     let todos = await pendingTodosViaApi(store.get('api-key'));
+    console.log(todos);
 
-    return todos.filter((option) => {
-      return option.body
-        .toString()
-        .toLowerCase()
-        .indexOf(filter.toLowerCase()) >= 0
+    return todos.filter(option => {
+      return option.body.toString().toLowerCase().indexOf(filter.toLowerCase()) >= 0
     });
   });
 
