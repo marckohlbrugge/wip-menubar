@@ -8,14 +8,14 @@ const todoBody = document.getElementById('todo-body');
 const todoIcon = document.querySelector('.icon i.fas');
 
 // console.log(todoForm);
-// 
+//
 // todoForm.addEventListener('submit', (event) => {
 //   alert("SUBMIT");
 //   event.preventDefault();
 //   todoBody.disabled = true;
 //   todoIcon.classList.remove('fa-check', 'fa-hourglass-half');
 //   todoIcon.classList.add('fa-spinner', 'fa-spin');
-// 
+//
 //   if(app.selected) {
 //     // Completed an existing todo
 //     ipcRenderer.send('completeTodo', app.selected.id);
@@ -25,7 +25,7 @@ const todoIcon = document.querySelector('.icon i.fas');
 //     ipcRenderer.send('createTodo', todoBody.value);
 //     console.log('new todo');
 //   }
-// 
+//
 //   // if (isInvalid(todoBody)) return;
 // });
 
@@ -40,13 +40,11 @@ function isInvalid(input) {
   return valid;
 }
 
-
 // ipcRenderer.send('fetchPendingTodos');
 // ipcRenderer.on('pendingTodosFetched', (event, todos) => {
 //   console.log(event);
 //   console.log(todos);
 // });
-
 
 const example = {
   data() {
@@ -55,8 +53,8 @@ const example = {
       name: '',
       selected: null,
       isFetching: false,
-      icon: 'check'
-    }
+      icon: 'check',
+    };
   },
   methods: {
     keydown: function() {
@@ -70,10 +68,10 @@ const example = {
     submitForm: function() {
       todoBody.disabled = true;
 
-      if(app.selected) {
+      if (app.selected) {
         // Completed an existing todo
         ipcRenderer.send('completeTodo', app.selected.id);
-        console.log("selected", app.selected.id);
+        console.log('selected', app.selected.id);
       } else {
         // New todo
         ipcRenderer.send('createTodo', app.name);
@@ -83,17 +81,16 @@ const example = {
 
       // if (isInvalid(todoBody)) return;
     },
-    getAsyncData: debounce(function () {
-
-
+    getAsyncData: debounce(function() {
       if (!this.name.length) {
-        this.data = []
-        return
+        this.data = [];
+        return;
       }
-      this.isFetching = true
+      this.isFetching = true;
 
-      promiseIpc.send('fetchPendingTodos', this.name)
-        .then((todos) => {
+      promiseIpc
+        .send('fetchPendingTodos', this.name)
+        .then(todos => {
           this.data = todos;
         })
         .catch(error => {
@@ -102,10 +99,10 @@ const example = {
         })
         .finally(() => {
           this.isFetching = false;
-        })
-    }, 500)
-  }
-}
+        });
+    }, 500),
+  },
+};
 
 const app = new Vue(example);
 app.$mount('#app');
@@ -114,12 +111,11 @@ const form = new Vue({
   // our data
   data: {
     name: '',
-    email: ''
+    email: '',
   },
 
   // our methods
-  methods: {
-  }
+  methods: {},
 });
 
 form.$mount('#todo-form');

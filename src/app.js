@@ -124,7 +124,7 @@ app.on('ready', () => {
     });
 
     // Hide window when it loses focus
-    composeWindow.on('blur', (event) => {
+    composeWindow.on('blur', event => {
       composeWindow.close();
     });
 
@@ -326,14 +326,8 @@ app.on('ready', () => {
     registerGlobalShortcut();
   }
 
-  // TODO: Filter on server-side instead of client-side
-  promiseIpc.on('fetchPendingTodos', async (filter) => {
-    let todos = await pendingTodosViaApi(store.get('api-key'));
-    console.log(todos);
-
-    return todos.filter(option => {
-      return option.body.toString().toLowerCase().indexOf(filter.toLowerCase()) >= 0
-    });
+  promiseIpc.on('fetchPendingTodos', async filter => {
+    return await pendingTodosViaApi(store.get('api-key'), filter);
   });
 
   // Stores API Key in config.

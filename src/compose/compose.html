@@ -16,23 +16,24 @@
 
   <body>
     <main>
-        <div id="app" class="container">
-          <b-autocomplete
-            id="todo-body"
-            v-model="name"
-            :data="data"
-            :loading="isFetching"
-            field="body"
-            size="is-large"
-            autofocus="true"
-            :icon="icon"
-            icon-pack="fas"
-            placeholder="Press return to save…"
-            @keyup.native="keydown"
-            @keydown.native.enter="submitForm"
-            @select="option => selected = option">
-          </b-autocomplete>
-        </div>
+      <div id="app" class="container">
+        <b-autocomplete
+          id="todo-body"
+          v-model="name"
+          :data="data"
+          :loading="isFetching"
+          field="body"
+          size="is-large"
+          autofocus="true"
+          :icon="icon"
+          icon-pack="fas"
+          placeholder="Press return to save…"
+          @keyup.native="keydown"
+          @keydown.native.enter="submitForm"
+          @select="option => selected = option"
+        >
+        </b-autocomplete>
+      </div>
     </main>
     <script src="./compose.js"></script>
   </body>
