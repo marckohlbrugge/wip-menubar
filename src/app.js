@@ -106,7 +106,7 @@ app.on('ready', () => {
       height: 200,
       frame: false,
       show: false,
-      resizable: true,
+      resizable: false,
       maximizable: false,
       minimizable: false,
       fullscreenable: false,

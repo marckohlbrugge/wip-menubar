@@ -3,31 +3,7 @@ const debounce = require('lodash.debounce');
 const store = require('../store');
 const promiseIpc = require('electron-promise-ipc');
 
-// const todoForm = document.getElementById('todo-form');
 const todoBody = document.getElementById('todo-body');
-const todoIcon = document.querySelector('.icon i.fas');
-
-// console.log(todoForm);
-//
-// todoForm.addEventListener('submit', (event) => {
-//   alert("SUBMIT");
-//   event.preventDefault();
-//   todoBody.disabled = true;
-//   todoIcon.classList.remove('fa-check', 'fa-hourglass-half');
-//   todoIcon.classList.add('fa-spinner', 'fa-spin');
-//
-//   if(app.selected) {
-//     // Completed an existing todo
-//     ipcRenderer.send('completeTodo', app.selected.id);
-//     console.log("selected", app.selected.id);
-//   } else {
-//     // New todo
-//     ipcRenderer.send('createTodo', todoBody.value);
-//     console.log('new todo');
-//   }
-//
-//   // if (isInvalid(todoBody)) return;
-// });
 
 ipcRenderer.on('todoSaved', (event, todo) => {
   var window = remote.getCurrentWindow();
@@ -39,12 +15,6 @@ function isInvalid(input) {
   input.classList.toggle('is-warning', valid);
   return valid;
 }
-
-// ipcRenderer.send('fetchPendingTodos');
-// ipcRenderer.on('pendingTodosFetched', (event, todos) => {
-//   console.log(event);
-//   console.log(todos);
-// });
 
 const example = {
   data() {
