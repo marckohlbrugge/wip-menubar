@@ -1,5 +1,6 @@
 const promiseIpc = require('electron-promise-ipc');
 
+
 try {
   require('electron-reloader')(module);
 } catch (err) {}
@@ -13,6 +14,9 @@ const store = require('./store');
 const pjson = require('../package.json');
 const debug = require('electron-debug');
 const wip = require('./wip');
+const debug = require('electron-debug');
+
+debug();
 
 wip.setDevMode(store.get('development'));
 wip.setApiKey(store.get('api-key'));
@@ -124,9 +128,9 @@ app.on('ready', () => {
     });
 
     // Hide window when it loses focus
-    composeWindow.on('blur', event => {
-      composeWindow.close();
-    });
+    // composeWindow.on('blur', event => {
+    //   composeWindow.close();
+    // });
 
     composeWindow.on('closed', () => {
       composeWindow = null;
