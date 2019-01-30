@@ -6,141 +6,13 @@ const electron = require('electron');
 const AutoLaunch = require('auto-launch');
 const { CronJob, CronTime } = require('cron');
 const electronLocalshortcut = require('electron-localshortcut');
-
 const icon = require('./icon');
 const store = require('./store');
 const pjson = require('../package.json');
+const wip = require('./wip');
 
-const contribution = (username = '', options = {}) => {
-  const { net } = require('electron');
-  return new Promise((resolve, reject) => {
-    let request_options = { method: 'POST', path: '/graphql' };
-
-    if (store.get('development')) {
-      request_options.protocol = 'http:';
-      request_options.hostname = 'wip.test';
-      request_options.port = 80;
-    } else {
-      request_options.protocol = 'https:';
-      request_options.hostname = 'wip.chat';
-      request_options.port = 443;
-    }
-
-    const request = net.request(request_options);
-    request.setHeader('Content-Type', 'application/json');
-    request.setHeader('Accept', 'application/json');
-
-    let body = '';
-    request.on('response', response => {
-      if (response.statusCode !== 200) {
-        if (options.onFailure) return options.onFailure(response);
-        return reject(response);
-      }
-
-      response.on('data', chunk => {
-        body += chunk.toString();
-      });
-
-      response.on('end', () => {
-        const json = JSON.parse(body);
-        const data = {
-          completedCount: 123, // json.data.user.completed_todos_count,
-          currentStreak: json.data.user.streak,
-          bestStreak: json.data.user.best_streak,
-          streaking: json.data.user.streaking,
-          products: json.data.user.products,
-        };
-        if (options.onSuccess) return options.onSuccess(data);
-        return resolve(data);
-      });
-    });
-    const query = `
-      {
-        user(username:"${username}") {
-          id
-          first_name
-          streak
-          best_streak
-          completed_todos_count
-          streaking
-          products {
-            name
-            url
-          }
-        }
-      }
-    `;
-    request.end(JSON.stringify({ query: query }));
-  });
-};
-
-const createTodoViaApi = (
-  api_key = null,
-  todo = null,
-  completed = true,
-  options = {},
-) => {
-  const { net } = require('electron');
-  return new Promise((resolve, reject) => {
-    let request_options = { method: 'POST', path: '/graphql' };
-
-    if (store.get('development')) {
-      request_options.protocol = 'http:';
-      request_options.hostname = 'wip.test';
-      request_options.port = 80;
-    } else {
-      request_options.protocol = 'https:';
-      request_options.hostname = 'wip.chat';
-      request_options.port = 443;
-    }
-
-    const request = net.request(request_options);
-    request.setHeader('Content-Type', 'application/json');
-    request.setHeader('Accept', 'application/json');
-    request.setHeader('Authorization', `bearer ${api_key}`);
-
-    let body = '';
-    request.on('response', response => {
-      if (response.statusCode !== 200) {
-        console.log('create todo rjeect');
-        if (options.onFailure) return options.onFailure(response);
-        return reject(response);
-      }
-
-      response.on('data', chunk => {
-        console.log('chunk of data');
-        body += chunk.toString();
-      });
-
-      response.on('end', () => {
-        console.log('create todo end');
-
-        const json = JSON.parse(body);
-        const data = {
-          id: json.data.createTodo.id,
-          completed_at: json.data.createTodo.completed_at,
-        };
-        console.log(data);
-        if (options.onSuccess) return options.onSuccess(data);
-        return resolve(data);
-      });
-    });
-
-    const completed_at = completed
-      ? ` completed_at:"${new Date().toISOString()}"`
-      : '';
-    const query = `
-      mutation createTodo {
-        createTodo(input: { body:"${todo}"${completed_at} }) {
-          id
-          body
-          completed_at
-        }
-      }
-    `;
-    request.end(JSON.stringify({ query: query }));
-  });
-};
+wip.setDevMode(store.get('development'));
+wip.setApiKey(store.get('api-key'));
 
 const {
   app,
@@ -359,7 +231,7 @@ app.on('ready', () => {
       {
         label: 'Reload',
         accelerator: 'CmdOrCtrl+R',
-        click: requestContributionData,
+        click: requestViewerData,
       },
       {
         label: 'Preferences...',
@@ -392,7 +264,7 @@ app.on('ready', () => {
     return Menu.buildFromTemplate(menuTemplate);
   }
 
-  function requestContributionData() {
+  function requestViewerData() {
     const username = store.get('username');
     if (!username) {
       tray.setImage(icon.fail);
@@ -405,9 +277,9 @@ app.on('ready', () => {
       createTrayMenu('Loading...', 'Loading...', 'Loading...', 'Loading...'),
     );
 
-    setTimeout(requestContributionData, 1000 * 60 * store.get('syncInterval'));
+    setTimeout(requestViewerData, 1000 * 60 * store.get('syncInterval'));
 
-    contribution(username)
+    wip.viewer()
       .then(data => {
         tray.setContextMenu(
           createTrayMenu(
@@ -429,7 +301,7 @@ app.on('ready', () => {
   async function setUsername(event, username) {
     try {
       store.set('username', username);
-      requestContributionData();
+      requestViewerData();
       event.sender.send('usernameSet', !!username);
     } catch (error) {
       event.sender.send('usernameSet', false);
@@ -452,7 +324,8 @@ app.on('ready', () => {
   async function setApiKey(event, api_key) {
     try {
       store.set('api-key', api_key);
-      // TODO: here's a good time to load stuff
+      wip.apiKey = store.get('api-key');
+      requestViewerData();
       event.sender.send('apiKeySet', !!api_key);
     } catch (error) {
       event.sender.send('apiKeySet', false);
@@ -495,8 +368,11 @@ app.on('ready', () => {
   function activateDevelopmentMode(event, isEnabled) {
     store.set('development', isEnabled);
 
+    // Set WIP dev mode
+    wip.devMode = isEnabled;
+
     // Reload menubar
-    requestContributionData();
+    requestViewerData();
 
     event.sender.send('activateDevelopmentModeSet');
   }
@@ -527,7 +403,7 @@ app.on('ready', () => {
   async function createTodo(event, value) {
     const completed = !value.match(/^\/todo\b/i);
     value = value.replace(/^\/(todo|done)\b/i, '');
-    var todo = createTodoViaApi(store.get('api-key'), value, completed);
+    var todo = wip.createTodo(value, completed);
 
     todo.then(result => {
       console.log(result.id);
@@ -542,7 +418,7 @@ app.on('ready', () => {
   const job = new CronJob({
     cronTime: '0 0 20 00 * *',
     async onTick() {
-      const data = await contribution(store.get('username'));
+      const data = await wip.viewer();
       if (!data.streaking && Notification.isSupported()) {
         new Notification({
           title: pjson.name,
@@ -570,7 +446,7 @@ app.on('ready', () => {
   }
 
   app.on('window-all-closed', () => {});
-  tray.on('right-click', requestContributionData);
+  tray.on('right-click', requestViewerData);
   ipcMain.on('setUsername', setUsername);
   ipcMain.on('setApiKey', setApiKey);
   ipcMain.on('setShortcut', setShortcut);
@@ -581,9 +457,9 @@ app.on('ready', () => {
   ipcMain.on('setNotificationTime', setNotificationTime);
   ipcMain.on('createTodo', createTodo);
 
-  requestContributionData();
+  requestViewerData();
 
-  if (!store.get('username')) {
+  if (!store.get('api-key')) {
     createPreferencesWindow();
   }
 });
