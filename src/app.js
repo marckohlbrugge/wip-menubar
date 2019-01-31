@@ -1,6 +1,5 @@
 const promiseIpc = require('electron-promise-ipc');
 
-
 try {
   require('electron-reloader')(module);
 } catch (err) {}
@@ -20,8 +19,6 @@ debug();
 
 wip.setDevMode(store.get('development'));
 wip.setApiKey(store.get('api-key'));
-
-debug();
 
 const {
   app,
@@ -331,7 +328,7 @@ app.on('ready', () => {
   }
 
   promiseIpc.on('fetchPendingTodos', async filter => {
-    return await pendingTodosViaApi(store.get('api-key'), filter);
+    return await wip.pendingTodos(filter);
   });
 
   // Stores API Key in config.
@@ -432,7 +429,7 @@ app.on('ready', () => {
   }
 
   async function completeTodo(event, todo_id) {
-    var todo = completeTodoViaApi(store.get('api-key'), todo_id);
+    var todo = wip.completeTodo(todo_id);
 
     todo.then(result => {
       console.log(result.id);
