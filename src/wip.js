@@ -13,8 +13,6 @@ function setApiKey(value) {
 }
 
 function viewer(options = {}) {
-  logger.log("API KEY");
-  logger.log(apiKey);
   return new Promise((resolve, reject) => {
     const request = makeRequest();
     let body = '';
