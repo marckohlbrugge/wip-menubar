@@ -1,4 +1,5 @@
 const { net } = require('electron');
+const logger = require('electron-timber');
 
 let devMode = false;
 let apiKey;
@@ -12,15 +13,15 @@ function setApiKey(value) {
 }
 
 function viewer(options = {}) {
-  console.log("API KEY");
-  console.log(apiKey);
+  logger.log("API KEY");
+  logger.log(apiKey);
   return new Promise((resolve, reject) => {
     const request = makeRequest();
     let body = '';
 
     request.on('response', response => {
       if (response.statusCode !== 200) {
-        console.log("viewer error");
+        logger.error("viewer error");
         if (options.onFailure) return options.onFailure(response);
         return reject(response);
       }
@@ -69,26 +70,26 @@ function createTodo(todo = null, completed = true, options = {}) {
 
     request.on('response', response => {
       if (response.statusCode !== 200) {
-        console.log('create todo reject:');
-        console.log(response.statusCode);
+        logger.error('create todo reject:');
+        logger.error(response.statusCode);
         if (options.onFailure) return options.onFailure(response);
         return reject(response);
       }
 
       response.on('data', chunk => {
-        console.log('chunk of data');
+        logger.log('chunk of data');
         body += chunk.toString();
       });
 
       response.on('end', () => {
-        console.log('create todo end');
+        logger.log('create todo end');
 
         const json = JSON.parse(body);
         const data = {
           id: json.data.createTodo.id,
           completed_at: json.data.createTodo.completed_at,
         };
-        console.log(data);
+        logger.log(data);
         if (options.onSuccess) return options.onSuccess(data);
         return resolve(data);
       });
@@ -131,7 +132,7 @@ function completeTodo(todo_id = null, options = {}) {
           id: json.data.completeTodo.id,
           completed_at: json.data.completeTodo.completed_at,
         };
-        console.log(data);
+        logger.log(data);
         if (options.onSuccess) return options.onSuccess(data);
         return resolve(data);
       });
