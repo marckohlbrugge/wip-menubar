@@ -1,5 +1,3 @@
-const promiseIpc = require('electron-promise-ipc');
-
 try {
   require('electron-reloader')(module);
 } catch (err) {}
@@ -13,6 +11,7 @@ const store = require('./store');
 const pjson = require('../package.json');
 const wip = require('./wip');
 const debug = require('electron-debug');
+const ipc = require('electron-better-ipc');
 
 debug();
 
@@ -326,7 +325,7 @@ app.on('ready', () => {
     registerGlobalShortcut();
   }
 
-  promiseIpc.on('fetchPendingTodos', async filter => {
+  ipc.answerRenderer('fetchPendingTodos', async filter => {
     return await wip.pendingTodos(filter);
   });
 

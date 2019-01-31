@@ -1,7 +1,7 @@
 const { ipcRenderer, remote } = require('electron');
 const debounce = require('lodash.debounce');
 const store = require('../store');
-const promiseIpc = require('electron-promise-ipc');
+const ipc = require('electron-better-ipc');
 
 const todoBody = document.getElementById('todo-body');
 
@@ -56,20 +56,11 @@ const example = {
         this.data = [];
         return;
       }
-      this.isFetching = true;
-
-      promiseIpc
-        .send('fetchPendingTodos', this.name)
-        .then(todos => {
-          this.data = todos;
-        })
-        .catch(error => {
-          this.data = [];
-          throw error;
-        })
-        .finally(() => {
-          this.isFetching = false;
-        });
+      (async () => {
+        this.isFetching = true;
+        this.data = await ipc.callMain('fetchPendingTodos', this.name);
+        this.isFetching = false;
+      })();
     }, 500),
   },
 };
