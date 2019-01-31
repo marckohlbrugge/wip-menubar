@@ -9,10 +9,13 @@ const electronLocalshortcut = require('electron-localshortcut');
 const icon = require('./icon');
 const store = require('./store');
 const pjson = require('../package.json');
+const debug = require('electron-debug');
 const wip = require('./wip');
 
 wip.setDevMode(store.get('development'));
 wip.setApiKey(store.get('api-key'));
+
+debug();
 
 const {
   app,
