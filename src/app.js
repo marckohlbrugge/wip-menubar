@@ -114,6 +114,7 @@ app.on('ready', () => {
       alwaysOnTop: true,
       webPreferences: {
         devTools: true,
+        nodeIntegration: true,
       },
     });
 
@@ -154,6 +155,9 @@ app.on('ready', () => {
       minimizable: false,
       fullscreenable: false,
       show: false,
+      webPreferences: {
+        nodeIntegration: true,
+      },
     });
 
     preferencesWindow.loadURL(
