@@ -1,6 +1,6 @@
 const { ipcRenderer } = require('electron');
-
 const store = require('../store');
+const logger = require('electron-timber');
 
 const wipUsername = document.getElementById('wip-username');
 const shortcut = document.getElementById('shortcut');

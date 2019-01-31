@@ -12,6 +12,7 @@ const pjson = require('../package.json');
 const wip = require('./wip');
 const debug = require('electron-debug');
 const ipc = require('electron-better-ipc');
+const logger = require('electron-timber');
 
 debug();
 
@@ -80,11 +81,11 @@ app.on('ready', () => {
         onComposeClick();
       });
       if (!ret) {
-        console.log('registration failed');
+        logger.error('registration failed');
       }
     } catch (error) {
       // Probably invalid shortcut
-      console.log(error);
+      logger.error(error);
     }
   }
 
@@ -93,7 +94,7 @@ app.on('ready', () => {
       globalShortcut.unregister(store.get('shortcut'));
     } catch (error) {
       // Probably invalid (previous) shortcut
-      console.log(error);
+      logger.error(error);
     }
   }
 
@@ -417,12 +418,12 @@ app.on('ready', () => {
     var todo = wip.createTodo(value, completed);
 
     todo.then(result => {
-      console.log(result.id);
+      logger.log(result.id);
       event.sender.send('todoSaved', result);
     });
 
     todo.catch(() => {
-      console.log('oops');
+      logger.error('oops');
     });
   }
 
@@ -430,12 +431,12 @@ app.on('ready', () => {
     var todo = wip.completeTodo(todo_id);
 
     todo.then(result => {
-      console.log(result.id);
+      logger.log(result.id);
       event.sender.send('todoSaved', result);
     });
 
     todo.catch(() => {
-      console.log('oops');
+      logger.error('oops');
     });
   }
 
