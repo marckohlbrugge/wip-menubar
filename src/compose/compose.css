@@ -10,7 +10,12 @@ body::-webkit-scrollbar {
 main {
   -webkit-user-select: none;
   background: black;
-  border-radius: 0.3em;
+  border-radius: 0.4em;
+}
+
+main.expanded {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
 }
 
 .fa-check {
@@ -33,4 +38,39 @@ main {
 
 #todo-body:focus {
   box-shadow: none;
+}
+
+/* Autocomplete */
+.autocomplete {
+  border-radius: 0.4em;
+}
+
+.dropdown-menu {
+  padding-top: 0;
+  border-top: 1px #111 solid;
+}
+
+.autocomplete .dropdown-content {
+  background-color: #000;
+  box-shadow: none;
+  border-radius: 0;
+  padding: 0;
+  border-bottom-left-radius: 0.4rem;
+  border-bottom-right-radius: 0.4rem;
+  overflow: hidden;
+}
+
+.dropdown-item {
+  color: #eee;
+  font-size: 1.1em;
+}
+
+.autocomplete .dropdown-item.is-hovered {
+  background-color: #036BDF;
+  color: white;
+}
+
+a.dropdown-item:hover {
+  background-color: #222;
+  color: #fff;
 }

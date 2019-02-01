@@ -28,13 +28,18 @@ const example = {
     };
   },
   methods: {
-    keydown: function() {
+    keydown: function(event) {
+      if ([37, 38, 39, 40].includes(event.keyCode)) {
+        console.log(event);
+        return;
+      }
       if (this.name.match(/^\/todo\b/i)) {
         this.icon = 'hourglass-half';
       } else {
         this.icon = 'check';
         this.getAsyncData();
       }
+      return true;
     },
     submitForm: function() {
       todoBody.disabled = true;
@@ -55,11 +60,15 @@ const example = {
     getAsyncData: debounce(function() {
       if (!this.name.length) {
         this.data = [];
+        document.querySelector('main').classList.remove('expanded');
         return;
       }
       (async () => {
         this.isFetching = true;
         this.data = await ipc.callMain('fetchPendingTodos', this.name);
+        if(this.data) {
+          document.querySelector('main').classList.add('expanded');
+        }
         this.isFetching = false;
       })();
     }, 500),

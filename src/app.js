@@ -103,7 +103,7 @@ app.on('ready', () => {
   function createComposeWindow() {
     composeWindow = new BrowserWindow({
       width: 600,
-      height: 200,
+      height: 300,
       frame: false,
       show: false,
       resizable: false,
