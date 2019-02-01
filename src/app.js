@@ -291,7 +291,8 @@ app.on('ready', () => {
 
     setTimeout(requestViewerData, 1000 * 60 * store.get('syncInterval'));
 
-    wip.viewer()
+    wip
+      .viewer()
       .then(data => {
         tray.setContextMenu(
           createTrayMenu(

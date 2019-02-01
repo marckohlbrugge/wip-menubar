@@ -1,6 +1,5 @@
 const { ipcRenderer, remote } = require('electron');
 const debounce = require('lodash.debounce');
-const store = require('../store');
 const ipc = require('electron-better-ipc');
 const logger = require('electron-timber');
 
@@ -30,7 +29,6 @@ const example = {
   methods: {
     keydown: function(event) {
       if ([37, 38, 39, 40].includes(event.keyCode)) {
-        console.log(event);
         return;
       }
       if (this.name.match(/^\/todo\b/i)) {
@@ -66,9 +64,9 @@ const example = {
       (async () => {
         this.isFetching = true;
         this.data = await ipc.callMain('fetchPendingTodos', this.name);
-        if(this.data) {
-          document.querySelector('main').classList.add('expanded');
-        }
+        document
+          .querySelector('main')
+          .classList.toggle('expanded', this.data.length);
         this.isFetching = false;
       })();
     }, 500),
@@ -77,16 +75,3 @@ const example = {
 
 const app = new Vue(example);
 app.$mount('#app');
-
-const form = new Vue({
-  // our data
-  data: {
-    name: '',
-    email: '',
-  },
-
-  // our methods
-  methods: {},
-});
-
-form.$mount('#todo-form');
