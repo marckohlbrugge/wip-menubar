@@ -19,7 +19,7 @@ function viewer(options = {}) {
 
     request.on('response', response => {
       if (response.statusCode !== 200) {
-        logger.error("viewer error");
+        logger.error('viewer error');
         if (options.onFailure) return options.onFailure(response);
         return reject(response);
       }
