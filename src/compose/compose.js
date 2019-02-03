@@ -5,7 +5,7 @@ const logger = require('electron-timber');
 
 const todoBody = document.getElementById('todo-body');
 
-ipcRenderer.on('todoSaved', (event, todo) => {
+ipcRenderer.on('todoSaved', () => {
   var window = remote.getCurrentWindow();
   window.close();
 });
@@ -20,14 +20,38 @@ const example = {
   data() {
     return {
       data: [],
+      attachments: [],
       name: '',
       selected: null,
       isFetching: false,
       icon: 'check',
+      isDragging: false,
     };
   },
   methods: {
+    dragenter: function(event) {
+      console.log("drag enter");
+      this.isDragging = true;
+    },
+    dragleave: function(event) {
+      console.log("drag leave");
+      this.isDragging = false;
+    },
+    drop: function(event) {
+      event.preventDefault();
+      this.dragleave();
+
+      for (let file of event.dataTransfer.files) {
+        console.log(file);
+        let path = file.path;
+        let file_copy = { path: file.path, name: file.name, size: file.size, obj: file };
+        this.attachments.push({ file: file_copy, url: URL.createObjectURL(file) });
+      }
+
+      return false;
+    },
     keydown: function(event) {
+      // Ignore arrow keys
       if ([37, 38, 39, 40].includes(event.keyCode)) {
         return;
       }
@@ -44,11 +68,11 @@ const example = {
 
       if (app.selected) {
         // Completed an existing todo
-        ipcRenderer.send('completeTodo', app.selected.id);
+        ipcRenderer.send('completeTodo', app.selected.id, this.attachments);
         logger.log('selected', app.selected.id);
       } else {
         // New todo
-        ipcRenderer.send('createTodo', app.name);
+        ipcRenderer.send('createTodo', app.name, this.attachments);
         logger.log(app.name);
         logger.log('new todo');
       }
