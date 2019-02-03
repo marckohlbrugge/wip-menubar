@@ -60,6 +60,8 @@ WIP's menu bar icon is updated depending on your current streak status:
 
 This app is almost a 1:1 copy of [streaker](https://github.com/jamieweavis/streaker) by [Jamie Weavis](https://github.com/jamieweavis). Major props to him for open sourcing his work.
 
-## License
+## Copyright
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
+© 2019 Marc Köhlbrugge
+
+Menubar for WIP is [source-available](https://en.wikipedia.org/wiki/Source-available_software) software. ([license](LICENSE.md))
