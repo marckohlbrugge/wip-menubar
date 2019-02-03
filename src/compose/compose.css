@@ -11,12 +11,36 @@ main {
   -webkit-user-select: none;
   background: black;
   border-radius: 0.4em;
+  position: relative;
 }
 
 main.expanded {
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
 }
+
+.drag {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  bottom: 0;
+  background-color: rgba(0,0,0,0.9);
+  color: white;
+  pointer-events: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.drag div {
+  margin: 0.3em;
+  color: #999,
+  width: 100%;
+  text-align: center;
+  border-radius: 0.3rem;
+}
+
 
 .fa-check {
   color: lightgreen;

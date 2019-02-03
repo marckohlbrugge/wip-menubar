@@ -17,6 +17,19 @@
   <body>
     <main>
       <div id="app" class="container">
+
+        <!-- Drag Overlay -->
+        <div class="drag" v-show="isDragging">
+          <div>Drop here to attach…</div>
+        </div>
+
+        <ul>
+          <li v-for="attachment in attachments">
+            <!-- <img v-bind:src="attachment.url" /> -->
+            {{ attachment.file.name }}
+          </li>
+        </ul>
+
         <b-autocomplete
           id="todo-body"
           v-model="name"
@@ -30,6 +43,9 @@
           placeholder="Press return to save…"
           @keyup.native="keydown"
           @keydown.native.enter="submitForm"
+          @drop.native="drop"
+          @dragenter.native="dragenter"
+          @dragleave.native="dragleave"
           @select="option => selected = option"
         >
         </b-autocomplete>

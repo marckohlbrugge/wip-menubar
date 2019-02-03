@@ -417,14 +417,14 @@ app.on('ready', () => {
     event.sender.send('NotificationTimeSet');
   }
 
-  async function createTodo(event, value) {
+  async function createTodo(event, value, attachments) {
     const completed = !value.match(/^\/todo\b/i);
     value = value.replace(/^\/(todo|done)\b/i, '');
-    var todo = wip.createTodo(value, completed);
+    var todo = wip.createTodo(value, completed, attachments);
+    event.sender.send('todoSaved');
 
     todo.then(result => {
       logger.log(result.id);
-      event.sender.send('todoSaved', result);
     });
 
     todo.catch(() => {
@@ -432,12 +432,12 @@ app.on('ready', () => {
     });
   }
 
-  async function completeTodo(event, todo_id) {
-    var todo = wip.completeTodo(todo_id);
+  async function completeTodo(event, todo_id, attachments) {
+    var todo = wip.completeTodo(todo_id, attachments);
+    event.sender.send('todoSaved');
 
     todo.then(result => {
       logger.log(result.id);
-      event.sender.send('todoSaved', result);
     });
 
     todo.catch(() => {
