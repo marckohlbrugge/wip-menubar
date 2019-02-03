@@ -238,8 +238,8 @@ function pendingTodos(filter = null, options = {}) {
   });
 }
 
-function createPresignedUrl(file_name, options = {}) {
-  logger.log('Creating presigned URL for ', file_name);
+function createPresignedUrl(filename, options = {}) {
+  logger.log('Creating presigned URL for ', filename);
   return new Promise((resolve, reject) => {
     const request = makeRequest();
     let body = '';
@@ -269,7 +269,7 @@ function createPresignedUrl(file_name, options = {}) {
 
     const query = `
       mutation {
-        createPresignedUrl(input:{file_name:"${file_name}"}) {
+        createPresignedUrl(input:{filename:"${filename}"}) {
           url
           fields
           method
