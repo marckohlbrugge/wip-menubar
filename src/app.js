@@ -193,7 +193,7 @@ app.on('ready', () => {
     preferencesWindow = new BrowserWindow({
       title: `${pjson.name} - Preferences`,
       width: 300,
-      height: 585,
+      height: 455,
       resizable: false,
       maximizable: false,
       minimizable: false,
@@ -328,6 +328,11 @@ app.on('ready', () => {
     logger.log('requestViewerData()');
     return new Promise((resolve, reject) => {
       setTimeout(requestViewerData, 1000 * 60 * store.get('syncInterval'));
+
+      if(!store.get('oauth')) {
+        logger.warn('Aborting! No OAuth token present');
+        reject();
+      }
 
       wip.viewer()
         .then(data => {
