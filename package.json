@@ -24,6 +24,7 @@
     "electron-store": "^2.0.0",
     "electron-timber": "^0.5.1",
     "form-data": "^2.3.3",
+    "graphql-request": "^1.8.2",
     "lodash.debounce": "^4.0.8",
     "vue": "^2.5.22"
   },
