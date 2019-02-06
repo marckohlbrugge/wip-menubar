@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../../node_modules/bulma/css/bulma.min.css" />
+    <link
+      rel="stylesheet"
+      href="../../node_modules/@fortawesome/fontawesome-free/css/all.min.css"
+    />
+    <link rel="stylesheet" href="./oauth.css" />
+  </head>
+
+  <body>
+    <main id="setup">
+      <h1>
+        🚧 Menubar for WIP
+      </h1>
+      <p>To get started, please <a href="#" id="oauth">request an authorization code</a> for your WIP profile
+      and enter it below.</p>
+
+      <!-- Authorization Code -->
+      <div class="field">
+        <div class="control has-icons-left has-icons-right">
+          <input
+            id="authorization-code"
+            type="text"
+            class="input"
+            placeholder="authorization code"
+          />
+          <span class="icon is-left"> <i class="fas fa-key"></i> </span>
+          <span class="icon is-right">
+            <i id="authorization-code-status" class="fas"></i>
+          </span>
+        </div>
+      </div>
+    </main>
+
+    <main id="finished">
+      <h2>👋 Welcome <span id="firstName"></span></h2>
+      <p>You are successfully signed in.<p>
+      <p>To get started explore the menubar or press <code
+        id="shortcut">shortcut</code> to add a new
+      todo.</p>
+      <button id="closeWindow">Close window</button>
+    </main>
+
+    <script src="./oauth.js"></script>
+  </body>
+</html>

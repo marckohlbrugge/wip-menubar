@@ -17,7 +17,7 @@ const logger = require('electron-timber');
 debug();
 
 wip.setDevMode(store.get('development'));
-wip.setApiKey(store.get('api-key'));
+wip.setApiKey(store.get('oauth.access_token'));
 
 const {
   app,
@@ -31,6 +31,9 @@ const {
 } = electron;
 
 app.on('ready', () => {
+  logger.log('App ready');
+  logger.log('Using access token:', store.get('oauth.access_token'));
+
   const autoLauncher = new AutoLaunch({ name: pjson.name });
   const tray = new Tray(icon.done);
   let composeWindow = null;
@@ -76,6 +79,7 @@ app.on('ready', () => {
   Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 
   function registerGlobalShortcut() {
+    logger.log('registerGlobalShortcut()');
     try {
       const ret = globalShortcut.register(store.get('shortcut'), () => {
         onComposeClick();
@@ -90,6 +94,7 @@ app.on('ready', () => {
   }
 
   function unregisterGlobalShortcut() {
+    logger.log('unregisterGlobalShortcut()');
     try {
       globalShortcut.unregister(store.get('shortcut'));
     } catch (error) {
@@ -145,6 +150,45 @@ app.on('ready', () => {
     composeWindow.focus();
   }
 
+  function createOAuthWindow() {
+    logger.log('createOAuthWindow()');
+
+    let oauthWindow = new BrowserWindow({
+      backgroundColor: "#000000",
+      title: `${pjson.name} - OAuth`,
+      width: 400,
+      height: 240,
+      frame: false,
+      resizable: false,
+      maximizable: false,
+      minimizable: false,
+      fullscreenable: false,
+      alwaysOnTop: true,
+      show: true,
+      webPreferences: {
+        nodeIntegration: true,
+      },
+    });
+
+    oauthWindow.loadURL(
+      `file://${__dirname}/oauth/oauth.html`,
+    );
+
+    oauthWindow.on('ready-to-show', () => {
+      oauthWindow.show();
+      if (process.platform === 'darwin') {
+        app.dock.show();
+      }
+    });
+
+    oauthWindow.on('closed', () => {
+      oauthWindow = null;
+      if (process.platform === 'darwin') {
+        app.dock.hide();
+      }
+    });
+  }
+
   function createPreferencesWindow() {
     preferencesWindow = new BrowserWindow({
       title: `${pjson.name} - Preferences`,
@@ -186,15 +230,8 @@ app.on('ready', () => {
     preferencesWindow.focus();
   }
 
-  function createTrayMenu(
-    completedCount,
-    currentStreak,
-    bestStreak,
-    products,
-    streaking,
-  ) {
-    const username = store.get('username') || 'Username not set';
-    const wipProfileUrl = `https://wip.chat/@${username}`;
+  function createTrayMenu() {
+    const wipProfileUrl = `https://wip.chat/@${store.get('viewer.username')}`;
 
     let menuTemplate = new Array();
 
@@ -204,7 +241,7 @@ app.on('ready', () => {
 
     menuTemplate = menuTemplate.concat([
       {
-        label: username,
+        label: store.get('viewer.username'),
         click: () => shell.openExternal(wipProfileUrl),
         accelerator: 'CmdOrCtrl+O',
       },
@@ -216,10 +253,10 @@ app.on('ready', () => {
       },
     ]);
 
-    if (Array.isArray(products)) {
+    if (Array.isArray(store.get('viewer.products'))) {
       let submenu = new Array();
 
-      products.forEach(function(product) {
+      store.get('viewer.products').forEach(function(product) {
         submenu.push({
           label: product.name,
           click: () => shell.openExternal(product.url),
@@ -253,15 +290,15 @@ app.on('ready', () => {
       { type: 'separator' },
     ]);
 
-    if (streaking) {
+    if (store.get('viewer.streaking')) {
       menuTemplate.push({ label: `You shipped today.`, enabled: false });
     } else {
       menuTemplate.push({ label: `Time Left: ${timeLeft()}`, enabled: false });
     }
 
     menuTemplate = menuTemplate.concat([
-      { label: `Current Streak: ${currentStreak}`, enabled: false },
-      { label: `Best Streak: ${bestStreak}`, enabled: false },
+      { label: `Current Streak: ${store.get('viewer.currentStreak')}`, enabled: false },
+      { label: `Best Streak: ${store.get('viewer.bestStreak')}`, enabled: false },
       { type: 'separator' },
     ]);
 
@@ -276,49 +313,34 @@ app.on('ready', () => {
     return Menu.buildFromTemplate(menuTemplate);
   }
 
-  function requestViewerData() {
-    const username = store.get('username');
-    if (!username) {
+  function reloadTray(success) {
+    if (success) {
+      tray.setImage(icon.load);
+      tray.setContextMenu(createTrayMenu());
+      tray.setImage(store.get('viewer.streaking') ? icon.done : icon.todo);
+    } else {
+      tray.setContextMenu(createTrayMenu('Error', 'Error', 'Error', 'Error'));
       tray.setImage(icon.fail);
-      tray.setContextMenu(createTrayMenu(0, 0, 0, 0));
-      return;
     }
-
-    tray.setImage(icon.load);
-    tray.setContextMenu(
-      createTrayMenu('Loading...', 'Loading...', 'Loading...', 'Loading...'),
-    );
-
-    setTimeout(requestViewerData, 1000 * 60 * store.get('syncInterval'));
-
-    wip
-      .viewer()
-      .then(data => {
-        tray.setContextMenu(
-          createTrayMenu(
-            data.completedTodos,
-            data.currentStreak,
-            data.bestStreak,
-            data.products,
-            data.streaking,
-          ),
-        );
-        tray.setImage(data.streaking ? icon.done : icon.todo);
-      })
-      .catch(() => {
-        tray.setContextMenu(createTrayMenu('Error', 'Error', 'Error', 'Error'));
-        tray.setImage(icon.fail);
-      });
   }
 
-  async function setUsername(event, username) {
-    try {
-      store.set('username', username);
-      requestViewerData();
-      event.sender.send('usernameSet', !!username);
-    } catch (error) {
-      event.sender.send('usernameSet', false);
-    }
+  function requestViewerData() {
+    logger.log('requestViewerData()');
+    return new Promise((resolve, reject) => {
+      setTimeout(requestViewerData, 1000 * 60 * store.get('syncInterval'));
+
+      wip.viewer()
+        .then(data => {
+          store.set('viewer', data);
+          reloadTray(true);
+          return resolve();
+        })
+        .catch(() => {
+          // TODO: clear viewer data?
+          reloadTray(false);
+          return reject();
+        });
+    });
   }
 
   // Unregisters current shortcut, sets shortcut variable to new choice, and
@@ -335,17 +357,19 @@ app.on('ready', () => {
     return await wip.pendingTodos(filter);
   });
 
-  // Stores API Key in config.
-  //
-  // TODO: Verify key using API
-  async function setApiKey(event, api_key) {
+  async function setAuthorizationCode(event, authorization_code) {
     try {
-      store.set('api-key', api_key);
-      wip.apiKey = store.get('api-key');
-      requestViewerData();
-      event.sender.send('apiKeySet', !!api_key);
+      console.log('getting access token');
+      const oauth = await wip.getAccessToken(authorization_code);
+      console.log(oauth);
+      store.set('oauth', oauth);
+      wip.setApiKey(store.get('oauth.access_token'));
+      await requestViewerData();
+      const data = { success: true, firstName: store.get('viewer.firstName'), shortcut: store.get('shortcut') };
+      event.sender.send('authorizationCodeSet', data);
     } catch (error) {
-      event.sender.send('apiKeySet', false);
+      const data = { succcess: false };
+      event.sender.send('authorizationCodeSet', data);
     }
   }
 
@@ -445,6 +469,26 @@ app.on('ready', () => {
     });
   }
 
+  async function resetOAuth(event) {
+    logger.log('resetOAuth()');
+
+    // Clear out store
+    store.set('oauth', {});
+    store.set('viewer', {});
+
+    // Unset WIP API Key
+    wip.setApiKey(null);
+
+    // Reload menu
+    requestViewerData();
+
+    // Ask for new OAuth
+    createOAuthWindow();
+
+    // Close Preferences Window
+    preferencesWindow.close();
+  }
+
   const job = new CronJob({
     cronTime: '0 0 20 00 * *',
     async onTick() {
@@ -477,8 +521,7 @@ app.on('ready', () => {
 
   app.on('window-all-closed', () => {});
   tray.on('right-click', requestViewerData);
-  ipcMain.on('setUsername', setUsername);
-  ipcMain.on('setApiKey', setApiKey);
+  ipcMain.on('setAuthorizationCode', setAuthorizationCode);
   ipcMain.on('setShortcut', setShortcut);
   ipcMain.on('setSyncInterval', setSyncInterval);
   ipcMain.on('activateLaunchAtLogin', activateLaunchAtLogin);
@@ -487,10 +530,13 @@ app.on('ready', () => {
   ipcMain.on('setNotificationTime', setNotificationTime);
   ipcMain.on('createTodo', createTodo);
   ipcMain.on('completeTodo', completeTodo);
+  ipcMain.on('resetOAuth', resetOAuth);
 
-  requestViewerData();
-
-  if (!store.get('api-key')) {
-    createPreferencesWindow();
+  if (!store.get('oauth.access_token')) {
+    // Ask user to connect
+    createOAuthWindow();
+  } else {
+    // Load all data
+    requestViewerData();
   }
 });
