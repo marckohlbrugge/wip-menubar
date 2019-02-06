@@ -1,0 +1,42 @@
+html {
+  background: black;
+}
+
+body {
+  color: #eee;
+  -webkit-app-region: drag;
+  user-select: none;
+}
+
+
+main {
+  padding: 2em;
+}
+
+p {
+  font-size: 1.2em;
+  margin-bottom: 1em;
+}
+
+a, a:visited {
+  color: white;
+  text-decoration: underline;
+  font-weight: bold;
+
+}
+
+h1 {
+  color: white;
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+h2 {
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+code {
+  background-color: #444;
+  color: white;
+}

@@ -33,7 +33,8 @@ function viewer(options = {}) {
       response.on('end', () => {
         const json = JSON.parse(body);
         const data = {
-          completedCount: 123, // json.data.viewer.completed_todos_count,
+          username: json.data.viewer.username,
+          firstName: json.data.viewer.first_name,
           currentStreak: json.data.viewer.streak,
           bestStreak: json.data.viewer.best_streak,
           streaking: json.data.viewer.streaking,
@@ -47,6 +48,7 @@ function viewer(options = {}) {
       {
         viewer {
           id
+          username
           first_name
           streak
           best_streak
@@ -239,7 +241,7 @@ function pendingTodos(filter = null, options = {}) {
 }
 
 function createPresignedUrl(filename, options = {}) {
-  logger.log('Creating presigned URL for ', filename);
+  logger.log('Creating presigned URL for ' + filename);
   return new Promise((resolve, reject) => {
     const request = makeRequest();
     let body = '';
@@ -281,6 +283,56 @@ function createPresignedUrl(filename, options = {}) {
   });
 }
 
+function getAccessToken(code) {
+  logger.log('getAccessToken(' + code + ')');
+  return new Promise((resolve, reject) => {
+    let request_options = { method: 'POST', path: '/oauth/token' };
+
+    if (devMode) {
+      request_options.protocol = 'http:';
+      request_options.hostname = 'wip.test';
+      request_options.port = 80;
+    } else {
+      request_options.protocol = 'https:';
+      request_options.hostname = 'wip.chat';
+      request_options.port = 443;
+    }
+
+    const request = net.request(request_options);
+    // request.setHeader('Content-Type', 'application/json');
+    request.setHeader('Accept', 'application/json');
+    request.setHeader('Content-Type', 'application/x-www-form-urlencoded');
+    let body = '';
+
+    request.on('response', response => {
+      if (response.statusCode !== 200) {
+        console.warn('Rejected with status code ' + response.statusCode);
+        console.warn(response);
+        return reject(response);
+      }
+
+      response.on('data', chunk => {
+        body += chunk.toString();
+      });
+
+      response.on('end', () => {
+        const json = JSON.parse(body);
+        return resolve(json);
+      });
+    });
+
+    const params = {
+      client_id: '3225b01300130110b77dfce9bff5fd3d99807c1f77d9ba554fb3b885ee0a3c3c',
+      // client_secret: '68ff04b568e93156d7009a34bd3b572b1e6796435da571067f28a78d20645f35',
+      code: code,
+      grant_type: 'authorization_code',
+      redirect_uri: 'urn:ietf:wg:oauth:2.0:oob',
+    };
+    // request.write(params.stringify());
+    request.end(`client_id=3225b01300130110b77dfce9bff5fd3d99807c1f77d9ba554fb3b885ee0a3c3c&client_secret=68ff04b568e93156d7009a34bd3b572b1e6796435da571067f28a78d20645f35&code=${code}&grant_type=authorization_code&redirect_uri=urn:ietf:wg:oauth:2.0:oob`);
+  });
+}
+
 function makeRequest() {
   let request_options = { method: 'POST', path: '/graphql' };
 
@@ -303,7 +355,7 @@ function makeRequest() {
 }
 
 function prepareQuery(query) {
-  console.log(query);
+  logger.log(query);
   return JSON.stringify({ query: query });
 }
 
@@ -315,4 +367,5 @@ module.exports = {
   createPresignedUrl: createPresignedUrl,
   setApiKey: setApiKey,
   setDevMode: setDevMode,
+  getAccessToken: getAccessToken,
 };
