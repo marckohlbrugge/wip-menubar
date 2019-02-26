@@ -6,6 +6,7 @@ const { GraphQLClient } = require('graphql-request');
 
 let devMode = false;
 let apiKey;
+let clientId;
 
 function client() {
   const endpoint = devMode ? 'http://wip.test/graphql' : 'https://wip.chat/graphql';
@@ -21,8 +22,16 @@ function setDevMode(value) {
   devMode = value;
 }
 
+function getDevMode() {
+  return devMode;
+}
+
 function setApiKey(value) {
   apiKey = value;
+}
+
+function setClientId(value) {
+  clientId = value;
 }
 
 function viewer(options = {}) {
@@ -237,16 +246,14 @@ function getAccessToken(code) {
       });
     });
 
-    const client_id = 'fa6c704654ae36a8cf9104e05ba01f972ef3f2e00a8c12f4b9d510b23d88640c';
-
     const params = {
-      client_id: client_id,
+      client_id: clientId,
       code: code,
       grant_type: 'authorization_code',
       redirect_uri: 'urn:ietf:wg:oauth:2.0:oob',
     };
     // request.write(params.stringify());
-    request.end(`client_id=${client_id}&code=${code}&grant_type=authorization_code&redirect_uri=urn:ietf:wg:oauth:2.0:oob`);
+    request.end(`client_id=${clientId}&code=${code}&grant_type=authorization_code&redirect_uri=urn:ietf:wg:oauth:2.0:oob`);
   });
 }
 
@@ -257,6 +264,8 @@ module.exports = {
   completeTodo: completeTodo,
   createPresignedUrl: createPresignedUrl,
   setApiKey: setApiKey,
+  setClientId: setClientId,
   setDevMode: setDevMode,
+  getDevMode: getDevMode,
   getAccessToken: getAccessToken,
 };
