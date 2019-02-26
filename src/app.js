@@ -18,6 +18,8 @@ debug();
 
 wip.setApiKey(store.get('oauth.access_token'));
 
+global.syncInterval = 15; // in minutes
+
 // Run this whenever app changes between dev / production mode
 function initMode() {
   global.clientId = store.get('development') ? 'fa6c704654ae36a8cf9104e05ba01f972ef3f2e00a8c12f4b9d510b23d88640c' : '2838c353e4d9b2ff6b35ba59e7a2051d43abbc43bc4cfdd263db5b88f6f75eb6';
@@ -204,7 +206,7 @@ app.on('ready', () => {
     preferencesWindow = new BrowserWindow({
       title: `${pjson.name} - Preferences`,
       width: 300,
-      height: 455,
+      height: 370,
       resizable: false,
       maximizable: false,
       minimizable: false,
@@ -338,7 +340,7 @@ app.on('ready', () => {
   function requestViewerData() {
     logger.log('requestViewerData()');
     return new Promise((resolve, reject) => {
-      setTimeout(requestViewerData, 1000 * 60 * store.get('syncInterval'));
+      setTimeout(requestViewerData, 1000 * 60 * global.syncInterval);
 
       if (!store.get('oauth')) {
         logger.warn('Aborting! No OAuth token present');
@@ -411,11 +413,6 @@ app.on('ready', () => {
     output += minutes % 60 == 1 ? ` minute` : ` minutes`;
 
     return output;
-  }
-
-  function setSyncInterval(event, interval) {
-    store.set('syncInterval', interval);
-    event.sender.send('syncIntervalSet');
   }
 
   function activateLaunchAtLogin(event, isEnabled) {
@@ -541,7 +538,6 @@ app.on('ready', () => {
   tray.on('right-click', requestViewerData);
   ipcMain.on('setAuthorizationCode', setAuthorizationCode);
   ipcMain.on('setShortcut', setShortcut);
-  ipcMain.on('setSyncInterval', setSyncInterval);
   ipcMain.on('activateLaunchAtLogin', activateLaunchAtLogin);
   ipcMain.on('activateDevelopmentMode', activateDevelopmentMode);
   ipcMain.on('activateNotifications', activateNotifications);
