@@ -329,9 +329,10 @@ app.on('ready', () => {
     return new Promise((resolve, reject) => {
       setTimeout(requestViewerData, 1000 * 60 * store.get('syncInterval'));
 
-      if(!store.get('oauth')) {
+      if (!store.get('oauth')) {
         logger.warn('Aborting! No OAuth token present');
-        reject();
+        return;
+        // reject();
       }
 
       wip.viewer()
@@ -343,7 +344,8 @@ app.on('ready', () => {
         .catch(() => {
           // TODO: clear viewer data?
           reloadTray(false);
-          return reject();
+          // return reject();
+          return resolve();
         });
     });
   }

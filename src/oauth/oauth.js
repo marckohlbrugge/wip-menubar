@@ -3,7 +3,8 @@ const { remote, ipcRenderer, shell } = require('electron');
 const oauth_button = document.getElementById('oauth');
 
 oauth_button.addEventListener('click', () => {
-  const url = 'http://wip.test/oauth/authorize?client_id=3225b01300130110b77dfce9bff5fd3d99807c1f77d9ba554fb3b885ee0a3c3c&response_type=code&redirect_uri=urn:ietf:wg:oauth:2.0:oob';
+  // TODO: add production support
+  const url = 'http://wip.test/oauth/authorize?client_id=fa6c704654ae36a8cf9104e05ba01f972ef3f2e00a8c12f4b9d510b23d88640c&response_type=code&redirect_uri=urn:ietf:wg:oauth:2.0:oob';
   shell.openExternal(url);
 });
 

@@ -44,16 +44,21 @@ function viewer(options = {}) {
         }
       }
     `;
-    const json = await client().request(query);
-    const data = {
-      username: json.viewer.username,
-      firstName: json.viewer.first_name,
-      currentStreak: json.viewer.streak,
-      bestStreak: json.viewer.best_streak,
-      streaking: json.viewer.streaking,
-      products: json.viewer.products,
-    };
-    return resolve(data);
+    try {
+      const json = await client().request(query);
+      const data = {
+        username: json.viewer.username,
+        firstName: json.viewer.first_name,
+        currentStreak: json.viewer.streak,
+        bestStreak: json.viewer.best_streak,
+        streaking: json.viewer.streaking,
+        products: json.viewer.products,
+      };
+      return resolve(data);
+    } catch (error) {
+      logger.warn(error);
+      return resolve();
+    }
   });
 }
 
@@ -232,15 +237,16 @@ function getAccessToken(code) {
       });
     });
 
+    const client_id = 'fa6c704654ae36a8cf9104e05ba01f972ef3f2e00a8c12f4b9d510b23d88640c';
+
     const params = {
-      client_id: '3225b01300130110b77dfce9bff5fd3d99807c1f77d9ba554fb3b885ee0a3c3c',
-      // client_secret: '68ff04b568e93156d7009a34bd3b572b1e6796435da571067f28a78d20645f35',
+      client_id: client_id,
       code: code,
       grant_type: 'authorization_code',
       redirect_uri: 'urn:ietf:wg:oauth:2.0:oob',
     };
     // request.write(params.stringify());
-    request.end(`client_id=3225b01300130110b77dfce9bff5fd3d99807c1f77d9ba554fb3b885ee0a3c3c&code=${code}&grant_type=authorization_code&redirect_uri=urn:ietf:wg:oauth:2.0:oob`);
+    request.end(`client_id=${client_id}&code=${code}&grant_type=authorization_code&redirect_uri=urn:ietf:wg:oauth:2.0:oob`);
   });
 }
 
