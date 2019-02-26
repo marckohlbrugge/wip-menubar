@@ -16,8 +16,14 @@ const logger = require('electron-timber');
 
 debug();
 
+const clientId = 'fa6c704654ae36a8cf9104e05ba01f972ef3f2e00a8c12f4b9d510b23d88640c';
+
 wip.setDevMode(store.get('development'));
 wip.setApiKey(store.get('oauth.access_token'));
+wip.setClientId(clientId);
+
+global.oauthUrl = wip.getDevMode() ? 'http://wip.test' : 'https://wip.chat';
+global.oauthUrl = global.oauthUrl + `/oauth/authorize?client_id=${clientId}&response_type=code&redirect_uri=urn:ietf:wg:oauth:2.0:oob`;
 
 const {
   app,
