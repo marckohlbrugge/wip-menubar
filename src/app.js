@@ -140,6 +140,7 @@ app.on('ready', () => {
 
     composeWindow.on('ready-to-show', () => {
       composeWindow.show();
+      composeWindow.focus();
     });
 
     // Hide window when it loses focus
@@ -152,15 +153,17 @@ app.on('ready', () => {
     });
 
     electronLocalshortcut.register(composeWindow, 'Esc', () => {
-      composeWindow.close();
+      composeWindow.hide();
     });
   }
 
   function onComposeClick() {
     if (composeWindow === null) {
       return createComposeWindow();
+    } else {
+      composeWindow.show();
+      composeWindow.focus();
     }
-    composeWindow.focus();
   }
 
   function createOAuthWindow() {
