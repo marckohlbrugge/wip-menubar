@@ -3,7 +3,6 @@ const store = require('../store');
 const logger = require('electron-timber');
 
 const shortcut = document.getElementById('shortcut');
-const wipSyncInterval = document.getElementById('wip-sync-interval');
 const launchAtLoginCheckbox = document.getElementById(
   'launch-at-login-checkbox',
 );
@@ -23,7 +22,6 @@ document.addEventListener('click', function(event) {
 });
 
 shortcut.value = store.get('shortcut');
-wipSyncInterval.value = store.get('syncInterval');
 launchAtLoginCheckbox.checked = store.get('autoLaunch');
 developmentModeCheckbox.checked = store.get('development');
 notificationCheckbox.checked = store.get('notification.isEnabled');
@@ -37,16 +35,6 @@ shortcut.addEventListener('input', () => {
   shortcutTypingTimer = setTimeout(() => {
     ipcRenderer.send('setShortcut', shortcut.value);
   }, 1000);
-});
-
-wipSyncInterval.addEventListener('input', () => {
-  if (isInvalid(wipSyncInterval)) return;
-  const syncInterval = parseInt(wipSyncInterval.value, 10);
-  if (syncInterval > 0) {
-    ipcRenderer.send('setSyncInterval', syncInterval);
-  } else {
-    wipSyncInterval.classList.add('is-warning');
-  }
 });
 
 launchAtLoginCheckbox.addEventListener('change', () => {
