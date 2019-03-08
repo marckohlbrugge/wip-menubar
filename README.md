@@ -14,7 +14,7 @@ Download the latest version of WIP from the **[GitHub releases](https://github.c
 
 ## Features
 
-- Quickly create a todo with a system-wide shortcut (`Ctrl+Space`)
+- Quickly create a todo with a system-wide shortcut (<kbd>control</kbd> + <kbd>space</kbd>)
 - See your current streak & best streak
 - Notification when you haven't shipped today
 - See time left to keep your streak
