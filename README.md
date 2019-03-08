@@ -57,7 +57,7 @@ WIP's menu bar icon is updated depending on your current streak status:
 
 ## Credits
 
-This app is almost a 1:1 copy of [streaker](https://github.com/jamieweavis/streaker) by [Jamie Weavis](https://github.com/jamieweavis). Major props to him for open sourcing his work.
+This app started of as a fork of, and is heavily inspired by [streaker](https://github.com/jamieweavis/streaker) by [Jamie Weavis](https://github.com/jamieweavis). Major props to him for open sourcing his work.
 
 ## Copyright
 
