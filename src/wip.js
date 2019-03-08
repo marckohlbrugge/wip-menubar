@@ -9,7 +9,7 @@ let apiKey;
 let clientId;
 
 function client() {
-  const endpoint = devMode ? 'http://wip.test/graphql' : 'https://wip.chat/graphql';
+  const endpoint = devMode ? 'http://wip.test:5000/graphql' : 'https://wip.chat/graphql';
 
   return new GraphQLClient(endpoint, {
     headers: {
