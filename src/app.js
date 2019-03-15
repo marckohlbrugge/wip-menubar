@@ -513,8 +513,9 @@ app.on('ready', () => {
       const data = await wip.viewer();
       if (!data.streaking && Notification.isSupported()) {
         new Notification({
-          title: pjson.name,
-          body: "You haven't yet shipped today",
+          title: "Don't lose your WIP streak!",
+          body: 'Make sure to complete a todo soon.',
+          icon: 'build/icon1024.png',
         }).show();
       }
     },
