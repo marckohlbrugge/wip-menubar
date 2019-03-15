@@ -1,0 +1,24 @@
+directories:
+  output: release
+appId: chat.wip.menubar
+productName: WIP Menubar
+files:
+  - src/
+  - resources/
+  - embedded.provisionprofile
+mac:
+  category: public.app-category.productivity
+  entitlements: build/entitlements.mac.plist
+  icon: resources/app.icns
+  darkModeSupport: true
+  target:
+    - pkg
+    - dmg
+    - zip
+    - mas
+mas:
+  type: distribution
+  category: public.app-category.productivity
+  entitlements: build/entitlements.mas.plist
+  icon: resources/app.icns
+  darkModeSupport: true
