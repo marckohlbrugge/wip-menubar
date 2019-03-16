@@ -52,6 +52,8 @@ app.on('ready', () => {
   let composeWindow = null;
   let preferencesWindow = null;
 
+  tray.setImage(icon.load);
+
   // Create the Application's main menu
   var template = [
     {
@@ -246,77 +248,81 @@ app.on('ready', () => {
     preferencesWindow.focus();
   }
 
-  function createTrayMenu() {
-    const wipProfileUrl = `https://wip.chat/@${store.get('viewer.username')}`;
-
+  function createTrayMenu(error = false) {
     let menuTemplate = new Array();
 
-    if (store.get('development')) {
-      menuTemplate.push({ label: 'Development Mode', enabled: false });
-    }
-
-    menuTemplate = menuTemplate.concat([
-      {
-        label: store.get('viewer.username'),
-        click: () => shell.openExternal(wipProfileUrl),
-        accelerator: 'CmdOrCtrl+O',
-      },
-      { type: 'separator' },
-      {
-        label: 'New Todo...',
-        accelerator: store.get('shortcut'),
-        click: onComposeClick,
-      },
-    ]);
-
-    if (Array.isArray(store.get('viewer.products'))) {
-      let submenu = new Array();
-
-      store.get('viewer.products').forEach(function(product) {
-        submenu.push({
-          label: product.name,
-          click: () => shell.openExternal(product.url),
-        });
-      });
-
-      menuTemplate.push({ label: 'Products', submenu: submenu });
-    }
-
-    menuTemplate = menuTemplate.concat([
-      { type: 'separator' },
-      {
-        label: `Open Chat…`,
-        click: () => shell.openExternal(`tg://resolve?domain=wipchat`),
-      },
-      {
-        label: `Open Questions…`,
-        click: () => shell.openExternal(`https://wip.chat/questions`),
-      },
-      { type: 'separator' },
-      {
-        label: 'Reload',
-        accelerator: 'CmdOrCtrl+R',
-        click: requestViewerData,
-      },
-      {
-        label: 'Preferences...',
-        accelerator: 'CmdOrCtrl+,',
-        click: onPreferencesClick,
-      },
-      { type: 'separator' },
-    ]);
-
-    if (store.get('viewer.streaking')) {
-      menuTemplate.push({ label: `You shipped today.`, enabled: false });
+    if(error) {
+      menuTemplate.push({ label: `Error: ${error}`, enabled: false });
     } else {
-      menuTemplate.push({ label: `Time Left: ${timeLeft()}`, enabled: false });
-    }
+      const wipProfileUrl = `https://wip.chat/@${store.get('viewer.username')}`;
 
-    menuTemplate = menuTemplate.concat([
-      { label: `Current Streak: ${store.get('viewer.currentStreak')}`, enabled: false },
-      { label: `Best Streak: ${store.get('viewer.bestStreak')}`, enabled: false },
-      { type: 'separator' },
-    ]);
+      if (store.get('development')) {
+        menuTemplate.push({ label: 'Development Mode', enabled: false });
+      }
+
+      menuTemplate = menuTemplate.concat([
+        {
+          label: store.get('viewer.username'),
+          click: () => shell.openExternal(wipProfileUrl),
+          accelerator: 'CmdOrCtrl+O',
+        },
+        { type: 'separator' },
+        {
+          label: 'New Todo...',
+          accelerator: store.get('shortcut'),
+          click: onComposeClick,
+        },
+      ]);
+
+      if (Array.isArray(store.get('viewer.products')) && store.get('viewer.products').length) {
+        let submenu = new Array();
+
+        store.get('viewer.products').forEach(function(product) {
+          submenu.push({
+            label: product.name,
+            click: () => shell.openExternal(product.url),
+          });
+        });
+
+        menuTemplate.push({ label: 'Products', submenu: submenu });
+      }
+
+      menuTemplate = menuTemplate.concat([
+        { type: 'separator' },
+        {
+          label: `Open Chat…`,
+          click: () => shell.openExternal(`tg://resolve?domain=wipchat`),
+        },
+        {
+          label: `Open Questions…`,
+          click: () => shell.openExternal(`https://wip.chat/questions`),
+        },
+        { type: 'separator' },
+        {
+          label: 'Reload',
+          accelerator: 'CmdOrCtrl+R',
+          click: requestViewerData,
+        },
+        {
+          label: 'Preferences...',
+          accelerator: 'CmdOrCtrl+,',
+          click: onPreferencesClick,
+        },
+        { type: 'separator' },
+      ]);
+
+      if (store.get('viewer.streaking')) {
+        menuTemplate.push({ label: `You shipped today.`, enabled: false });
+      } else {
+        menuTemplate.push({ label: `Time Left: ${timeLeft()}`, enabled: false });
+      }
+
+      menuTemplate = menuTemplate.concat([
+        { label: `Current Streak: ${store.get('viewer.currentStreak')}`, enabled: false },
+        { label: `Best Streak: ${store.get('viewer.bestStreak')}`, enabled: false },
+        { type: 'separator' },
+      ]);
+    }
 
     menuTemplate = menuTemplate.concat([
       {
@@ -329,37 +335,43 @@ app.on('ready', () => {
     return Menu.buildFromTemplate(menuTemplate);
   }
 
-  function reloadTray(success) {
-    if (success) {
+  function reloadTray(error) {
+    if (error) {
+      tray.setContextMenu(createTrayMenu(error));
+      tray.setImage(icon.fail);
+    } else {
       tray.setImage(icon.load);
       tray.setContextMenu(createTrayMenu());
       tray.setImage(store.get('viewer.streaking') ? icon.done : icon.todo);
-    } else {
-      tray.setContextMenu(createTrayMenu('Error', 'Error', 'Error', 'Error'));
-      tray.setImage(icon.fail);
     }
   }
 
   function requestViewerData() {
     logger.log('requestViewerData()');
     return new Promise((resolve, reject) => {
-      setTimeout(requestViewerData, 1000 * 60 * global.syncInterval);
-
       if (!store.get('oauth')) {
-        logger.warn('Aborting! No OAuth token present');
+        logger.error('Aborting! No OAuth token present');
         return;
         // reject();
       }
 
+      setTimeout(requestViewerData, 1000 * 60 * global.syncInterval);
+
       wip.viewer()
         .then(data => {
           store.set('viewer', data);
-          reloadTray(true);
+          reloadTray();
           return resolve();
         })
-        .catch(() => {
+        .catch((error) => {
+          if(error == 'This endpoint requires a valid token') {
+            logger.error("yay");
+            resetOAuth();
+          } else {
+            logger.error("dasdasa");
+          }
           // TODO: clear viewer data?
-          reloadTray(false);
+          reloadTray(error);
           // return reject();
           return resolve();
         });
@@ -487,7 +499,7 @@ app.on('ready', () => {
     });
   }
 
-  async function resetOAuth(event) {
+  async function resetOAuth() {
     logger.log('resetOAuth()');
 
     // Clear out store
@@ -498,7 +510,7 @@ app.on('ready', () => {
     wip.setApiKey(null);
 
     // Reload menu
-    requestViewerData();
+    reloadTray("Connect your account")
 
     // Ask for new OAuth
     createOAuthWindow();
@@ -530,7 +542,7 @@ app.on('ready', () => {
   }
 
   process.on('uncaughtException', () => {
-    tray.setContextMenu(createTrayMenu('Error', 'Error', 'Error', 'Error'));
+    tray.setContextMenu(createTrayMenu("Uncaught exception"));
     tray.setImage(icon.fail);
   });
 

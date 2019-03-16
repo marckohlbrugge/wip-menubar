@@ -65,8 +65,7 @@ function viewer(options = {}) {
       };
       return resolve(data);
     } catch (error) {
-      logger.warn(error);
-      return resolve();
+      return reject(error.response.errors[0].message);
     }
   });
 }
