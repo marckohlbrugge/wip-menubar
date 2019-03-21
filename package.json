@@ -71,6 +71,7 @@
     "format": "prettier --write './src/**/*.{js,html}'",
     "lint": "eslint .",
     "pack": "build --dir",
-    "start": "node_modules/electron/dist/Electron.app/Contents/MacOS/Electron src/app.js"
+    "start": "node_modules/electron/dist/Electron.app/Contents/MacOS/Electron src/app.js",
+    "release": "build -mwl"
   }
 }

@@ -6,6 +6,7 @@ files:
   - src/
   - resources/
   - embedded.provisionprofile
+
 mac:
   category: public.app-category.productivity
   entitlements: build/entitlements.mac.plist
@@ -16,11 +17,7 @@ mac:
     CFBundleURLSchemes:
       - wip
     CFBundleURLName: chat.wip.menubar
-  target:
-    - pkg
-    - dmg
-    - zip
-    - mas
+
 mas:
   type: distribution
   category: public.app-category.productivity
@@ -29,3 +26,9 @@ mas:
   darkModeSupport: true
   extendInfo:
     LSUIElement: 1
+
+publish:
+  provider: github
+  repo: wip-menubar
+  owner: marckohlbrugge
+  vPrefixedTagName: true
