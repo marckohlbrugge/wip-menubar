@@ -13,6 +13,7 @@ const wip = require('./wip');
 const debug = require('electron-debug');
 const ipc = require('electron-better-ipc');
 const logger = require('electron-timber');
+const { autoUpdater } = require('electron-updater');
 
 debug();
 
@@ -48,6 +49,8 @@ app.on('ready', () => {
   logger.log('Using access token:', store.get('oauth.access_token'));
 
   initMode();
+
+  autoUpdater.checkForUpdatesAndNotify();
 
   // const autoLauncher = new AutoLaunch({ name: pjson.name });
   const tray = new Tray(icon.done);
