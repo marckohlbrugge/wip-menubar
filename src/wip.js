@@ -9,7 +9,9 @@ let apiKey;
 let clientId;
 
 function client() {
-  const endpoint = devMode ? 'http://wip.test:5000/graphql' : 'https://wip.chat/graphql';
+  const endpoint = devMode
+    ? 'http://wip.test:5000/graphql'
+    : 'https://wip.chat/graphql';
 
   return new GraphQLClient(endpoint, {
     headers: {
@@ -65,8 +67,8 @@ function viewer(options = {}) {
       };
       return resolve(data);
     } catch (error) {
-      if(error.type == 'system' && error.code == 'ENOTFOUND') {
-        return reject("No internet connection");
+      if (error.type == 'system' && error.code == 'ENOTFOUND') {
+        return reject('No internet connection');
       } else {
         return reject(error.response.errors[0].message);
       }
@@ -78,7 +80,7 @@ function uploadFile(presigned_url, file) {
   return new Promise((resolve, reject) => {
     const form = new FormData();
 
-    for(let field of Object.keys(presigned_url.fields)){
+    for (let field of Object.keys(presigned_url.fields)) {
       form.append(field, presigned_url.fields[field]);
     }
 
@@ -100,11 +102,15 @@ function createTodo(todo = null, completed = true, files = []) {
   return new Promise(async (resolve, reject) => {
     let keys = new Array();
 
-    if(files.length > 0) {
+    if (files.length > 0) {
       for (const file of files) {
         const presigned_url = await createPresignedUrl(file.file.name);
         await uploadFile(presigned_url, file);
-        keys.push({ key: presigned_url.fields['key'], size: file.file.size, filename: file.file.name });
+        keys.push({
+          key: presigned_url.fields['key'],
+          size: file.file.size,
+          filename: file.file.name,
+        });
       }
     }
 
@@ -121,7 +127,7 @@ function createTodo(todo = null, completed = true, files = []) {
       body: todo,
       completed_at: completed ? new Date().toISOString() : null,
       attachments: keys,
-    }
+    };
     const json = await client().request(mutation, variables);
     const data = {
       id: json.createTodo.id,
@@ -134,11 +140,15 @@ function createTodo(todo = null, completed = true, files = []) {
 function completeTodo(todo_id = null, files = [], options = {}) {
   return new Promise(async (resolve, reject) => {
     let keys = new Array();
-    if(files.length > 0) {
+    if (files.length > 0) {
       for (const file of files) {
         const presigned_url = await createPresignedUrl(file.file.name);
         await uploadFile(presigned_url, file);
-        keys.push({ key: presigned_url.fields['key'], size: file.file.size, filename: file.file.name });
+        keys.push({
+          key: presigned_url.fields['key'],
+          size: file.file.size,
+          filename: file.file.name,
+        });
       }
     }
 
@@ -153,7 +163,7 @@ function completeTodo(todo_id = null, files = [], options = {}) {
     const variables = {
       id: todo_id,
       attachments: keys,
-    }
+    };
     const json = await client().request(mutation, variables);
     const data = {
       id: json.completeTodo.id,
@@ -256,7 +266,9 @@ function getAccessToken(code) {
       redirect_uri: 'urn:ietf:wg:oauth:2.0:oob',
     };
     // request.write(params.stringify());
-    request.end(`client_id=${clientId}&code=${code}&grant_type=authorization_code&redirect_uri=urn:ietf:wg:oauth:2.0:oob`);
+    request.end(
+      `client_id=${clientId}&code=${code}&grant_type=authorization_code&redirect_uri=urn:ietf:wg:oauth:2.0:oob`,
+    );
   });
 }
 
