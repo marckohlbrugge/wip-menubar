@@ -65,7 +65,11 @@ function viewer(options = {}) {
       };
       return resolve(data);
     } catch (error) {
-      return reject(error.response.errors[0].message);
+      if(error.type == 'system' && error.code == 'ENOTFOUND') {
+        return reject("No internet connection");
+      } else {
+        return reject(error.response.errors[0].message);
+      }
     }
   });
 }
