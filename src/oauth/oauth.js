@@ -8,7 +8,9 @@ oauth_button.addEventListener('click', () => {
 });
 
 const authorizationCode = document.getElementById('authorization-code');
-const authorizationCodeStatus = document.getElementById('authorization-code-status');
+const authorizationCodeStatus = document.getElementById(
+  'authorization-code-status',
+);
 
 let authorizationCodeTypingTimer;
 authorizationCode.addEventListener('input', () => {
@@ -28,13 +30,12 @@ authorizationCode.addEventListener('input', () => {
 });
 
 ipcRenderer.on('authorizationCodeSet', (event, data) => {
-
   authorizationCode.parentElement.classList.remove('is-loading');
   authorizationCode.classList.toggle('is-danger', !data.success);
   authorizationCodeStatus.classList.toggle('fa-check', data.success);
   authorizationCodeStatus.classList.toggle('fa-times', !data.success);
 
-  if(data.success) {
+  if (data.success) {
     document.getElementById('setup').style.display = 'none';
     document.getElementById('finished').style.display = 'block';
     document.getElementById('firstName').innerHTML = data.firstName;

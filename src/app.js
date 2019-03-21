@@ -23,9 +23,15 @@ global.syncInterval = 15; // in minutes
 
 // Run this whenever app changes between dev / production mode
 function initMode() {
-  global.clientId = store.get('development') ? 'fa6c704654ae36a8cf9104e05ba01f972ef3f2e00a8c12f4b9d510b23d88640c' : '2838c353e4d9b2ff6b35ba59e7a2051d43abbc43bc4cfdd263db5b88f6f75eb6';
-  global.oauthUrl = store.get('development') ? 'http://wip.test' : 'https://wip.chat';
-  global.oauthUrl = global.oauthUrl + `/oauth/authorize?client_id=${clientId}&response_type=code&redirect_uri=urn:ietf:wg:oauth:2.0:oob`;
+  global.clientId = store.get('development')
+    ? 'fa6c704654ae36a8cf9104e05ba01f972ef3f2e00a8c12f4b9d510b23d88640c'
+    : '2838c353e4d9b2ff6b35ba59e7a2051d43abbc43bc4cfdd263db5b88f6f75eb6';
+  global.oauthUrl = store.get('development')
+    ? 'http://wip.test'
+    : 'https://wip.chat';
+  global.oauthUrl =
+    global.oauthUrl +
+    `/oauth/authorize?client_id=${clientId}&response_type=code&redirect_uri=urn:ietf:wg:oauth:2.0:oob`;
 
   wip.setDevMode(store.get('development'));
   wip.setClientId(global.clientId);
@@ -59,8 +65,14 @@ app.on('ready', () => {
 
   tray.setImage(icon.load);
 
-  let onlineStatusWindow = new BrowserWindow({ width: 0, height: 0, show: false });
-  onlineStatusWindow.loadURL(`file://${__dirname}/onlinestatus/onlinestatus.html`);
+  let onlineStatusWindow = new BrowserWindow({
+    width: 0,
+    height: 0,
+    show: false,
+  });
+  onlineStatusWindow.loadURL(
+    `file://${__dirname}/onlinestatus/onlinestatus.html`,
+  );
 
   // Create the Application's main menu
   var template = [
@@ -180,7 +192,7 @@ app.on('ready', () => {
     logger.log('createOAuthWindow()');
 
     let oauthWindow = new BrowserWindow({
-      backgroundColor: "#000000",
+      backgroundColor: '#000000',
       title: `${pjson.name} - OAuth`,
       width: 400,
       height: 240,
@@ -196,9 +208,7 @@ app.on('ready', () => {
       },
     });
 
-    oauthWindow.loadURL(
-      `file://${__dirname}/oauth/oauth.html`,
-    );
+    oauthWindow.loadURL(`file://${__dirname}/oauth/oauth.html`);
 
     oauthWindow.on('ready-to-show', () => {
       oauthWindow.show();
@@ -259,7 +269,7 @@ app.on('ready', () => {
   function createTrayMenu(error = false) {
     let menuTemplate = new Array();
 
-    if(error) {
+    if (error) {
       menuTemplate.push({ label: `Error: ${error}`, enabled: false });
     } else {
       const wipProfileUrl = `https://wip.chat/@${store.get('viewer.username')}`;
@@ -282,7 +292,10 @@ app.on('ready', () => {
         },
       ]);
 
-      if (Array.isArray(store.get('viewer.products')) && store.get('viewer.products').length) {
+      if (
+        Array.isArray(store.get('viewer.products')) &&
+        store.get('viewer.products').length
+      ) {
         let submenu = new Array();
 
         store.get('viewer.products').forEach(function(product) {
@@ -323,12 +336,21 @@ app.on('ready', () => {
       if (store.get('viewer.streaking')) {
         menuTemplate.push({ label: `You shipped today.`, enabled: false });
       } else {
-        menuTemplate.push({ label: `Time Left: ${timeLeft()}`, enabled: false });
+        menuTemplate.push({
+          label: `Time Left: ${timeLeft()}`,
+          enabled: false,
+        });
       }
 
       menuTemplate = menuTemplate.concat([
-        { label: `Current Streak: ${store.get('viewer.currentStreak')}`, enabled: false },
-        { label: `Best Streak: ${store.get('viewer.bestStreak')}`, enabled: false },
+        {
+          label: `Current Streak: ${store.get('viewer.currentStreak')}`,
+          enabled: false,
+        },
+        {
+          label: `Best Streak: ${store.get('viewer.bestStreak')}`,
+          enabled: false,
+        },
         { type: 'separator' },
       ]);
     }
@@ -366,18 +388,19 @@ app.on('ready', () => {
 
       setTimeout(requestViewerData, 1000 * 60 * global.syncInterval);
 
-      wip.viewer()
+      wip
+        .viewer()
         .then(data => {
           store.set('viewer', data);
           reloadTray();
           return resolve();
         })
-        .catch((error) => {
-          if(error == 'This endpoint requires a valid token') {
-            logger.error("yay");
+        .catch(error => {
+          if (error == 'This endpoint requires a valid token') {
+            logger.error('yay');
             resetOAuth();
           } else {
-            logger.error("dasdasa");
+            logger.error('dasdasa');
           }
           // TODO: clear viewer data?
           reloadTray(error);
@@ -409,7 +432,11 @@ app.on('ready', () => {
       store.set('oauth', oauth);
       wip.setApiKey(store.get('oauth.access_token'));
       await requestViewerData();
-      const data = { success: true, firstName: store.get('viewer.firstName'), shortcut: store.get('shortcut') };
+      const data = {
+        success: true,
+        firstName: store.get('viewer.firstName'),
+        shortcut: store.get('shortcut'),
+      };
       event.sender.send('authorizationCodeSet', data);
     } catch (error) {
       const data = { succcess: false };
@@ -512,7 +539,7 @@ app.on('ready', () => {
   async function onlineStatusChange(event, status) {
     logger.log(status);
 
-    if(status == 'online') {
+    if (status == 'online') {
       requestViewerData();
     }
   }
@@ -528,7 +555,7 @@ app.on('ready', () => {
     wip.setApiKey(null);
 
     // Reload menu
-    reloadTray("Connect your account")
+    reloadTray('Connect your account');
 
     // Ask for new OAuth
     createOAuthWindow();
@@ -560,7 +587,7 @@ app.on('ready', () => {
   }
 
   process.on('uncaughtException', () => {
-    tray.setContextMenu(createTrayMenu("Uncaught exception"));
+    tray.setContextMenu(createTrayMenu('Uncaught exception'));
     tray.setImage(icon.fail);
   });
 

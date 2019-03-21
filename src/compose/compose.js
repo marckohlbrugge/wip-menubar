@@ -30,11 +30,11 @@ const example = {
   },
   methods: {
     dragenter: function(event) {
-      console.log("drag enter");
+      console.log('drag enter');
       this.isDragging = true;
     },
     dragleave: function(event) {
-      console.log("drag leave");
+      console.log('drag leave');
       this.isDragging = false;
     },
     drop: function(event) {
@@ -44,8 +44,16 @@ const example = {
       for (let file of event.dataTransfer.files) {
         console.log(file);
         let path = file.path;
-        let file_copy = { path: file.path, name: file.name, size: file.size, obj: file };
-        this.attachments.push({ file: file_copy, url: URL.createObjectURL(file) });
+        let file_copy = {
+          path: file.path,
+          name: file.name,
+          size: file.size,
+          obj: file,
+        };
+        this.attachments.push({
+          file: file_copy,
+          url: URL.createObjectURL(file),
+        });
       }
 
       return false;
