@@ -1,4 +1,4 @@
-<p align="center"><img src="./build/icon.png" height="64" alt="WIP Logo"></p>
+<p align="center"><img src="./build/icon1024.png" height="64" alt="WIP Logo"></p>
 <h3 align="center">WIP</h3>
 <p align="center">🚧 WIP menubar app<p>
 <p align="center">
