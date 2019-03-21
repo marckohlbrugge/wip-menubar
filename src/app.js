@@ -3,7 +3,7 @@ try {
 } catch (err) {}
 
 const electron = require('electron');
-const AutoLaunch = require('auto-launch');
+// const AutoLaunch = require('auto-launch');
 const { CronJob, CronTime } = require('cron');
 const electronLocalshortcut = require('electron-localshortcut');
 const icon = require('./icon');
@@ -41,18 +41,23 @@ const {
   Tray,
 } = electron;
 
+// app.setAsDefaultProtocolClient('wip');
+
 app.on('ready', () => {
   logger.log('App ready');
   logger.log('Using access token:', store.get('oauth.access_token'));
 
   initMode();
 
-  const autoLauncher = new AutoLaunch({ name: pjson.name });
+  // const autoLauncher = new AutoLaunch({ name: pjson.name });
   const tray = new Tray(icon.done);
   let composeWindow = null;
   let preferencesWindow = null;
 
   tray.setImage(icon.load);
+
+  let onlineStatusWindow = new BrowserWindow({ width: 0, height: 0, show: false });
+  onlineStatusWindow.loadURL(`file://${__dirname}/onlinestatus/onlinestatus.html`);
 
   // Create the Application's main menu
   var template = [
@@ -291,7 +296,8 @@ app.on('ready', () => {
         { type: 'separator' },
         {
           label: `Open Chat…`,
-          click: () => shell.openExternal(`tg://resolve?domain=wipchat`),
+          click: () => shell.openExternal(`https://t.me/wipchat`),
+          // click: () => shell.openExternal(`tg://resolve?domain=wipchat`),
         },
         {
           label: `Open Questions…`,
@@ -432,7 +438,8 @@ app.on('ready', () => {
 
   function activateLaunchAtLogin(event, isEnabled) {
     store.set('autoLaunch', isEnabled);
-    isEnabled ? autoLauncher.enable() : autoLauncher.disable();
+    // isEnabled ? autoLauncher.enable() : autoLauncher.disable();
+    app.setLoginItemSettings({ openAtLogin: isEnabled });
     event.sender.send('activateLaunchAtLoginSet');
   }
 
@@ -499,6 +506,14 @@ app.on('ready', () => {
     });
   }
 
+  async function onlineStatusChange(event, status) {
+    logger.log(status);
+
+    if(status == 'online') {
+      requestViewerData();
+    }
+  }
+
   async function resetOAuth() {
     logger.log('resetOAuth()');
 
@@ -561,6 +576,7 @@ app.on('ready', () => {
   ipcMain.on('createTodo', createTodo);
   ipcMain.on('completeTodo', completeTodo);
   ipcMain.on('resetOAuth', resetOAuth);
+  ipcMain.on('onlineStatusChanged', onlineStatusChange);
 
   if (!store.get('oauth.access_token')) {
     // Ask user to connect

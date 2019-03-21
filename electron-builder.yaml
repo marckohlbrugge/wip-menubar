@@ -1,7 +1,7 @@
 directories:
   output: release
 appId: chat.wip.menubar
-productName: WIP Menubar
+productName: WIP
 files:
   - src/
   - resources/
@@ -11,6 +11,11 @@ mac:
   entitlements: build/entitlements.mac.plist
   icon: resources/app.icns
   darkModeSupport: true
+  extendInfo:
+    LSUIElement: 1
+    CFBundleURLSchemes:
+      - wip
+    CFBundleURLName: chat.wip.menubar
   target:
     - pkg
     - dmg
@@ -22,3 +27,5 @@ mas:
   entitlements: build/entitlements.mas.plist
   icon: resources/app.icns
   darkModeSupport: true
+  extendInfo:
+    LSUIElement: 1
