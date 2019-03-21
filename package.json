@@ -1,7 +1,7 @@
 {
   "name": "WIP",
   "description": "Menubar app for WIP",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "author": "Marc Köhlbrugge <hey@marckohlbrugge.com>",
   "bugs": {
     "url": "https://github.com/marckohlbrugge/wip-menubar/issues"
@@ -16,6 +16,7 @@
     "electron-localshortcut": "^3.1.0",
     "electron-store": "^2.0.0",
     "electron-timber": "^0.5.1",
+    "electron-updater": "^4.0.6",
     "form-data": "^2.3.3",
     "graphql-request": "^1.8.2",
     "lodash.debounce": "^4.0.8",
