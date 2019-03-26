@@ -516,6 +516,7 @@ app.on('ready', () => {
 
     todo.then(result => {
       logger.log(result.id);
+      requestViewerData();
     });
 
     todo.catch(() => {
@@ -529,6 +530,7 @@ app.on('ready', () => {
 
     todo.then(result => {
       logger.log(result.id);
+      requestViewerData();
     });
 
     todo.catch(() => {
