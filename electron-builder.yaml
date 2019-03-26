@@ -32,3 +32,6 @@ publish:
   repo: wip-menubar
   owner: marckohlbrugge
   vPrefixedTagName: true
+
+linux:
+  category: ProjectManagement
