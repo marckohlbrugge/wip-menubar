@@ -2,3 +2,4 @@ node_modules/
 dist/
 embedded.provisionprofile
 release/
+.env
