@@ -310,11 +310,11 @@ app.on('ready', () => {
 
       menuTemplate = menuTemplate.concat([
         { type: 'separator' },
-        {
-          label: `Open Chat…`,
-          click: () => shell.openExternal(`https://t.me/wipchat`),
-          // click: () => shell.openExternal(`tg://resolve?domain=wipchat`),
-        },
+        // {
+        //   label: `Open Chat…`,
+        //   click: () => shell.openExternal(`https://t.me/wipchat`),
+        //   // click: () => shell.openExternal(`tg://resolve?domain=wipchat`),
+        // },
         {
           label: `Open Questions…`,
           click: () => shell.openExternal(`https://wip.chat/questions`),
