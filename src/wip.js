@@ -229,7 +229,7 @@ function getAccessToken(code) {
     if (devMode) {
       request_options.protocol = 'http:';
       request_options.hostname = 'wip.test';
-      request_options.port = 80;
+      request_options.port = 5000;
     } else {
       request_options.protocol = 'https:';
       request_options.hostname = 'wip.chat';
