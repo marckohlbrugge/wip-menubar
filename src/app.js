@@ -325,14 +325,19 @@ app.on('ready', () => {
           accelerator: 'CmdOrCtrl+R',
           click: requestViewerData,
         },
-        {
-          label: 'Preferences...',
-          accelerator: 'CmdOrCtrl+,',
-          click: onPreferencesClick,
-        },
-        { type: 'separator' },
-      ]);
+     ]);
+    }
 
+    menuTemplate.push(
+      {
+        label: 'Preferences...',
+        accelerator: 'CmdOrCtrl+,',
+        click: onPreferencesClick,
+      },
+      { type: 'separator' },
+    );
+
+    if (!error) {
       if (store.get('viewer.streaking')) {
         menuTemplate.push({ label: `You shipped today.`, enabled: false });
       } else {
