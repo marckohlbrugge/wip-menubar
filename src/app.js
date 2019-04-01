@@ -55,6 +55,7 @@ app.on('ready', () => {
 
   // const autoLauncher = new AutoLaunch({ name: pjson.name });
   const tray = new Tray(icon.done);
+  let oauthWindow = null;
   let composeWindow = null;
   let preferencesWindow = null;
 
@@ -183,10 +184,18 @@ app.on('ready', () => {
     }
   }
 
+  function showOAuthWindow() {
+    if (oauthWindow === null) {
+      return createOAuthWindow();
+    } else {
+      oauthWindow.focus();
+    }
+  }
+
   function createOAuthWindow() {
     logger.log('createOAuthWindow()');
 
-    let oauthWindow = new BrowserWindow({
+    oauthWindow = new BrowserWindow({
       backgroundColor: '#000000',
       title: `${pjson.name} - OAuth`,
       width: 400,
@@ -560,7 +569,7 @@ app.on('ready', () => {
     reloadTray('Connect your account');
 
     // Ask for new OAuth
-    createOAuthWindow();
+    showOAuthWindow();
 
     // Close Preferences Window
     preferencesWindow.close();
@@ -612,7 +621,7 @@ app.on('ready', () => {
 
   if (!store.get('oauth.access_token')) {
     // Ask user to connect
-    createOAuthWindow();
+    showOAuthWindow();
   } else {
     // Load all data
     requestViewerData();
