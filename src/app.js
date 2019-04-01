@@ -26,15 +26,10 @@ function initMode() {
   global.clientId = store.get('development')
     ? 'fa6c704654ae36a8cf9104e05ba01f972ef3f2e00a8c12f4b9d510b23d88640c'
     : '2838c353e4d9b2ff6b35ba59e7a2051d43abbc43bc4cfdd263db5b88f6f75eb6';
-  global.oauthUrl = store.get('development')
-    ? 'http://wip.test'
-    : 'https://wip.chat';
-  global.oauthUrl =
-    global.oauthUrl +
-    `/oauth/authorize?client_id=${clientId}&response_type=code&redirect_uri=urn:ietf:wg:oauth:2.0:oob`;
-
   wip.setDevMode(store.get('development'));
   wip.setClientId(global.clientId);
+
+  global.oauthUrl = wip.getOAuthURL();
 }
 
 const {

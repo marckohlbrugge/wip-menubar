@@ -36,6 +36,14 @@ function setClientId(value) {
   clientId = value;
 }
 
+function getOAuthURL() {
+  var base = devMode
+    ? 'http://wip.test:5000'
+    : 'https://wip.chat';
+
+  return `${base}/oauth/authorize?client_id=${clientId}&response_type=code&redirect_uri=urn:ietf:wg:oauth:2.0:oob`;
+}
+
 function viewer(options = {}) {
   return new Promise(async (resolve, reject) => {
     const query = `
@@ -283,4 +291,5 @@ module.exports = {
   setDevMode: setDevMode,
   getDevMode: getDevMode,
   getAccessToken: getAccessToken,
+  getOAuthURL: getOAuthURL,
 };
