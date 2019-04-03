@@ -23,9 +23,7 @@ authorizationCode.addEventListener('input', () => {
   authorizationCodeStatus.classList.remove('fa-times');
 
   authorizationCodeTypingTimer = setTimeout(() => {
-    console.log('setting…');
-    console.log(authorizationCode.value);
-    ipcRenderer.send('setAuthorizationCode', authorizationCode.value);
+    ipcRenderer.send('setAuthorizationCode', authorizationCode.value.trim());
   }, 1000);
 });
 
