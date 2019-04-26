@@ -524,8 +524,8 @@ app.on('ready', () => {
   async function createTodo(event, value, attachments) {
     if (value.match(/^\/help\b/i)) {
       // Executing /help command
-      shell.openExternal("https://wip.chat/help#menubar")
-      event.sender.send('todoSaved')
+      shell.openExternal('https://wip.chat/help#menubar');
+      event.sender.send('todoSaved');
     } else {
       // Creating a todo
       const completed = !value.match(/^\/todo\b/i);
