@@ -166,7 +166,7 @@ app.on('ready', () => {
       if (composeWindow.webContents.isDevToolsFocused()) {
         // Ignore
       } else {
-        composeWindow.close();
+        composeWindow.hide();
       }
     });
 
