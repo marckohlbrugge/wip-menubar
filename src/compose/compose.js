@@ -65,6 +65,8 @@ const example = {
       }
       if (this.name.match(/^\/todo\b/i)) {
         this.icon = 'hourglass-half';
+      } else if (this.name.match(/^\/help\b/i)) {
+        this.icon = 'life-ring';
       } else {
         this.icon = 'check';
         this.getAsyncData();

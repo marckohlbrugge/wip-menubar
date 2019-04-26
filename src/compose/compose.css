@@ -50,6 +50,10 @@ main.expanded {
   color: orange;
 }
 
+.fa-life-ring {
+  color: lightblue;
+}
+
 #todo-body {
   border-color: transparent;
   background-color: black;
