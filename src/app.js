@@ -522,19 +522,26 @@ app.on('ready', () => {
   }
 
   async function createTodo(event, value, attachments) {
-    const completed = !value.match(/^\/todo\b/i);
-    value = value.replace(/^\/(todo|done)\b/i, '');
-    var todo = wip.createTodo(value, completed, attachments);
-    event.sender.send('todoSaved');
+    if (value.match(/^\/help\b/i)) {
+      // Executing /help command
+      shell.openExternal("https://wip.chat/help#menubar")
+      event.sender.send('todoSaved')
+    } else {
+      // Creating a todo
+      const completed = !value.match(/^\/todo\b/i);
+      value = value.replace(/^\/(todo|done)\b/i, '');
+      var todo = wip.createTodo(value, completed, attachments);
+      event.sender.send('todoSaved');
 
-    todo.then(result => {
-      logger.log(result.id);
-      requestViewerData();
-    });
+      todo.then(result => {
+        logger.log(result.id);
+        requestViewerData();
+      });
 
-    todo.catch(() => {
-      logger.error('oops');
-    });
+      todo.catch(() => {
+        logger.error('oops');
+      });
+    }
   }
 
   async function completeTodo(event, todo_id, attachments) {
