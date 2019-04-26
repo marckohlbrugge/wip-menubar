@@ -162,9 +162,13 @@ app.on('ready', () => {
     });
 
     // Hide window when it loses focus
-    // composeWindow.on('blur', event => {
-    //   composeWindow.close();
-    // });
+    composeWindow.on('blur', () => {
+      if (composeWindow.webContents.isDevToolsFocused()) {
+        // Ignore
+      } else {
+        composeWindow.close();
+      }
+    });
 
     composeWindow.on('closed', () => {
       composeWindow = null;
