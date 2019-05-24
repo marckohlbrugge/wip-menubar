@@ -59,6 +59,14 @@ const example = {
       return false;
     },
     keydown: function(event) {
+      if (event.keyCode == 40 && this.name.match(/^\s*$/) && !this.isFetching && !this.data) {
+        this.icon = 'check';
+        this.getAsyncData();
+        return;
+      }
+      if (!this.name.length) {
+        return;
+      }
       // Ignore arrow keys
       if ([37, 38, 39, 40].includes(event.keyCode)) {
         return;
@@ -86,15 +94,8 @@ const example = {
         logger.log(app.name);
         logger.log('new todo');
       }
-
-      // if (isInvalid(todoBody)) return;
     },
     getAsyncData: debounce(function() {
-      if (!this.name.length) {
-        this.data = [];
-        document.querySelector('main').classList.remove('expanded');
-        return;
-      }
       (async () => {
         this.isFetching = true;
         this.data = await ipc.callMain('fetchPendingTodos', this.name);

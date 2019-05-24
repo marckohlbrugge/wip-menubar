@@ -8,6 +8,9 @@ files:
   - embedded.provisionprofile
 
 mac:
+  target:
+    - default
+    - mas
   category: public.app-category.productivity
   entitlements: build/entitlements.mac.plist
   icon: resources/app.icns

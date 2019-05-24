@@ -186,7 +186,7 @@ function pendingTodos(filter = null, options = {}) {
     const query = `
       query ($filter: String) {
         viewer {
-          todos(filter: $filter, completed: false, limit: 100) {
+          todos(filter: $filter, completed: false, limit: 100, order:"created_at:desc") {
             id
             body
           }
@@ -194,7 +194,7 @@ function pendingTodos(filter = null, options = {}) {
       }
     `;
     const variables = {
-      filter: filter,
+      filter: filter.trim(),
     };
     const json = await client().request(query, variables);
     const data = json.viewer.todos;
