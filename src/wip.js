@@ -56,6 +56,7 @@ function viewer(options = {}) {
           best_streak
           completed_todos_count
           streaking
+          time_zone
           products {
             name
             url
@@ -71,6 +72,7 @@ function viewer(options = {}) {
         currentStreak: json.viewer.streak,
         bestStreak: json.viewer.best_streak,
         streaking: json.viewer.streaking,
+        time_zone: json.viewer.time_zone,
         products: json.viewer.products,
       };
       return resolve(data);

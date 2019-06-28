@@ -14,6 +14,7 @@ const debug = require('electron-debug');
 const ipc = require('electron-better-ipc');
 const logger = require('electron-timber');
 const { autoUpdater } = require('electron-updater');
+const moment = require('moment');
 
 debug();
 
@@ -439,9 +440,7 @@ app.on('ready', () => {
 
   async function setAuthorizationCode(event, authorization_code) {
     try {
-      console.log('getting access token');
       const oauth = await wip.getAccessToken(authorization_code);
-      console.log(oauth);
       store.set('oauth', oauth);
       wip.setApiKey(store.get('oauth.access_token'));
       await requestViewerData();
@@ -458,20 +457,15 @@ app.on('ready', () => {
   }
 
   function timeLeft() {
-    const now = new Date();
+    moment.tz.setDefault(store.get('viewer.time_zone'));
 
-    let midnight = new Date(now.valueOf());
-    midnight.setHours(24);
-    midnight.setMinutes(0 - now.getTimezoneOffset());
-    midnight.setSeconds(0);
-    midnight.setMilliseconds(0);
+    var now = moment();
+    var midnight = now.clone().endOf('day');
 
-    const timeDifference = midnight.getTime() - now.getTime();
+    const minutes = Math.abs(now.diff(midnight, 'minutes'));
+    const hours = Math.abs(now.diff(midnight, 'hours'));
 
-    const minutes = Math.floor(timeDifference / 60000);
-    const hours = Math.floor(minutes / 60);
-
-    let output = `${hours % 24}`;
+    let output = hours;
     output += hours % 24 == 1 ? ` hour` : ` hours`;
     output += `, ${minutes % 60}`;
     output += minutes % 60 == 1 ? ` minute` : ` minutes`;
