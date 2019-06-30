@@ -94,7 +94,23 @@ function uploadFile(presigned_url, file) {
       form.append(field, presigned_url.fields[field]);
     }
 
-    form.append('file', fs.createReadStream(file.file.path));
+    if (file.file.path) {
+      // Actual image on disk
+      form.append('file', fs.createReadStream(file.file.path));
+    } else {
+      // Pasted image
+      var regex = /^data:(.+);base64,(.*)$/;
+      var matches = file.base64.match(regex);
+      var content_type = matches[1];
+      var data = matches[2];
+      var buffer = new Buffer(data, 'base64');
+
+      form.append('file', buffer, {
+        filename: file.file.name,
+        contentType: content_type,
+        knownLength: file.file.size,
+      });
+    }
 
     form.submit(presigned_url.url, function(error, response) {
       response.resume();
