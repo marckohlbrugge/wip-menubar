@@ -94,6 +94,8 @@ function uploadFile(presigned_url, file) {
       form.append(field, presigned_url.fields[field]);
     }
 
+    // FIXME: Pasted images have no path, and file.file.obj is emptied
+    logger.log(file.file.obj);
     form.append('file', fs.createReadStream(file.file.path));
 
     form.submit(presigned_url.url, function(error, response) {

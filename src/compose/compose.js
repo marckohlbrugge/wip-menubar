@@ -29,6 +29,17 @@ const example = {
     };
   },
   methods: {
+    paste: function(event) {
+      let clipboard_items = event.clipboardData.items;
+
+      for (var i = 0; i < clipboard_items.length; i++) {
+        let item = clipboard_items[i];
+
+        if(item.kind == "file" && item.type.match("^image/")) {
+          this.addAttachment(item.getAsFile(), "Pasted Image");
+        }
+      }
+    },
     dragenter: function(event) {
       console.log('drag enter');
       this.isDragging = true;
@@ -42,18 +53,7 @@ const example = {
       this.dragleave();
 
       for (let file of event.dataTransfer.files) {
-        console.log(file);
-        let path = file.path;
-        let file_copy = {
-          path: file.path,
-          name: file.name,
-          size: file.size,
-          obj: file,
-        };
-        this.attachments.push({
-          file: file_copy,
-          url: URL.createObjectURL(file),
-        });
+        this.addAttachment(file);
       }
 
       return false;
@@ -80,6 +80,23 @@ const example = {
         this.getAsyncData();
       }
       return true;
+    },
+    addAttachment: function(file, file_name = null) {
+      if (file_name) {
+        file_name = [file_name, file.name.split('.').pop()].join('.');
+      }
+
+      let file_copy = {
+        path: file.path,
+        name: file_name || file.name,
+        size: file.size,
+        obj: file,
+      };
+
+      this.attachments.push({
+        file: file_copy,
+        url: URL.createObjectURL(file),
+      });
     },
     submitForm: function() {
       todoBody.disabled = true;
