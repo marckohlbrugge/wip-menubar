@@ -1,11 +1,11 @@
-const { ipcRenderer, remote } = require('electron');
+const { remote } = require('electron');
 const debounce = require('lodash.debounce');
-const ipc = require('electron-better-ipc');
+const { ipcRenderer: ipc } = require('electron-better-ipc');
 const logger = require('electron-timber');
 
 const todoBody = document.getElementById('todo-body');
 
-ipcRenderer.on('todoSaved', () => {
+ipc.on('todoSaved', () => {
   var window = remote.getCurrentWindow();
   window.close();
 });
@@ -115,11 +115,11 @@ const example = {
 
       if (app.selected) {
         // Completed an existing todo
-        ipcRenderer.send('completeTodo', app.selected.id, this.attachments);
+        ipc.send('completeTodo', app.selected.id, this.attachments);
         logger.log('selected', app.selected.id);
       } else {
         // New todo
-        ipcRenderer.send('createTodo', app.name, this.attachments);
+        ipc.send('createTodo', app.name, this.attachments);
         logger.log(app.name);
         logger.log('new todo');
       }
