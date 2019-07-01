@@ -41,11 +41,9 @@ const example = {
       }
     },
     dragenter: function(event) {
-      console.log('drag enter');
       this.isDragging = true;
     },
     dragleave: function(event) {
-      console.log('drag leave');
       this.isDragging = false;
     },
     drop: function(event) {
@@ -108,6 +106,9 @@ const example = {
         };
         reader.readAsDataURL(file);
       }
+    },
+    removeAttachment: function(index) {
+      this.attachments.splice(index, 1);
     },
     submitForm: function() {
       todoBody.disabled = true;

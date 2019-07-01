@@ -102,3 +102,55 @@ a.dropdown-item:hover {
   background-color: #222;
   color: #fff;
 }
+
+.attachments:not(:empty) {
+  padding: 0.5em 0.5em 0 0.5em;
+}
+
+.attachments {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.attachment {
+  color: #888;
+  display: flex;
+  align-items: stretch;
+  background-color: #222;
+  padding: 0.2em 1em 0.2em 0.5em;
+  border-radius: 0.3em;
+  margin-right: 0.2em;
+  margin-bottom: 0.2em;
+}
+
+.attachment:hover {
+  color: #fff;
+  cursor: pointer;
+}
+
+.attachment:hover .close:before,
+.attachment:hover .close:after {
+  background-color: #fff;
+}
+
+.close {
+  margin-top: 0.35em;
+  padding-left: 0.7em;
+}
+.close:hover {
+  color: white;
+}
+
+.close:before, .close:after {
+  position: absolute;
+  content: ' ';
+  height: 0.8em;
+  width: 2px;
+  background-color: currentColor;
+}
+.close:before {
+  transform: rotate(45deg);
+}
+.close:after {
+  transform: rotate(-45deg);
+}
