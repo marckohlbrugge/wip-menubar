@@ -581,7 +581,7 @@ app.on('ready', () => {
   }
 
   const job = new CronJob({
-    cronTime: '0 0 20 00 * *',
+    cronTime: '0 */20 * * *',
     async onTick() {
       const data = await wip.viewer();
       if (!data.streaking && Notification.isSupported()) {
