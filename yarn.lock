@@ -1017,12 +1017,12 @@ ejs@^2.6.2:
   resolved "https://registry.yarnpkg.com/ejs/-/ejs-2.6.2.tgz#3a32c63d1cd16d11266cd4703b14fec4e74ab4f6"
   integrity sha512-PcW2a0tyTuPHz3tWyYqtK6r1fZ3gp+3Sop8Ph+ZYN81Ob5rwmbHEzaqs10N3BEsaGTkh/ooniXK+WwszGlc2+Q==
 
-electron-better-ipc@0.3:
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/electron-better-ipc/-/electron-better-ipc-0.3.0.tgz#e59e2f00195d4391c8c896a557a226b4ffc72fbd"
-  integrity sha512-yfMasvk4wHvgQlPJYgSKfkT8hjzEp/Zw5zVWlBsW0nX7rnHSUMbH3cMy732FOmTNebdhYqXqdVtuOogIJk9lVA==
+electron-better-ipc@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/electron-better-ipc/-/electron-better-ipc-1.0.1.tgz#ec5f397d44ce1225d826461ff93881912fe68490"
+  integrity sha512-4okAJoeY2+NXsPLYE+ccVn2NSDRCqMAAV1Kp5YzNRGki505p9nXuM6+d2QAlZ1OWyQxXmDm0B+eezjQL55uF/A==
   dependencies:
-    type-fest "^0.3.1"
+    serialize-error "^5.0.0"
 
 electron-builder@^20.38.4:
   version "20.44.4"
@@ -3766,7 +3766,7 @@ type-check@~0.3.2:
   dependencies:
     prelude-ls "~1.1.2"
 
-type-fest@^0.3.0, type-fest@^0.3.1:
+type-fest@^0.3.0:
   version "0.3.1"
   resolved "https://registry.yarnpkg.com/type-fest/-/type-fest-0.3.1.tgz#63d00d204e059474fe5e1b7c011112bbd1dc29e1"
   integrity sha512-cUGJnCdr4STbePCgqNFbpVNCepa+kAVohJs1sLhxzdH+gnEoOd8VhbYa7pD3zZYGiURWM2xzEII3fQcRizDkYQ==
