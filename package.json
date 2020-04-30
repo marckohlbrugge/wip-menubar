@@ -24,7 +24,7 @@
     "vue": "^2.5.22"
   },
   "devDependencies": {
-    "electron": "7",
+    "electron": "8",
     "electron-builder": "^20.38.4",
     "electron-reloader": "0.3",
     "eslint": "6",
