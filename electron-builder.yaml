@@ -15,6 +15,7 @@ mac:
   entitlements: build/entitlements.mac.plist
   icon: resources/app.icns
   darkModeSupport: true
+  hardenedRuntime: true
   extendInfo:
     LSUIElement: 1
     CFBundleURLSchemes:
