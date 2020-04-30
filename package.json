@@ -26,7 +26,7 @@
   "devDependencies": {
     "electron": "8",
     "electron-builder": "^20.38.4",
-    "electron-reloader": "0.3",
+    "electron-reloader": "^1.0.1",
     "eslint": "6",
     "eslint-config-prettier": "6",
     "eslint-plugin-prettier": "^3.0.1",
