@@ -9,8 +9,8 @@ files:
 
 mac:
   target:
-    - default
     - mas
+    - dmg
   category: public.app-category.productivity
   entitlements: build/entitlements.mac.plist
   icon: resources/app.icns
@@ -26,8 +26,11 @@ mas:
   type: distribution
   category: public.app-category.productivity
   entitlements: build/entitlements.mas.plist
+  entitlementsInherit: build/entitlements.mas.inherit.plist
+  provisioningProfile: embedded.provisionprofile
   icon: resources/app.icns
   darkModeSupport: true
+  hardenedRuntime: false
   extendInfo:
     LSUIElement: 1
 
