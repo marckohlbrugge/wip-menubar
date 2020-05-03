@@ -66,6 +66,9 @@ app.on('ready', () => {
     width: 0,
     height: 0,
     show: false,
+    webPreferences: {
+      nodeIntegration: true
+    }
   });
   onlineStatusWindow.loadURL(
     `file://${__dirname}/onlinestatus/onlinestatus.html`,
