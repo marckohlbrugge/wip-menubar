@@ -26,6 +26,7 @@ const example = {
       isFetching: false,
       icon: 'check',
       isDragging: false,
+      placeholder: 'Press return to complete todo…'
     };
   },
   methods: {
@@ -71,10 +72,12 @@ const example = {
       }
       if (this.name.match(/^\/todo\b/i)) {
         this.icon = 'hourglass-half';
+        this.placeholder = 'Press return to save pending todo…';
       } else if (this.name.match(/^\/help\b/i)) {
         this.icon = 'life-ring';
       } else {
         this.icon = 'check';
+        this.placeholder = 'Press return to completed todo…';
         this.getAsyncData();
       }
       return true;
