@@ -42,7 +42,7 @@
           autofocus="true"
           :icon="icon"
           icon-pack="fas"
-          placeholder="Press return to save…"
+          :placeholder="placeholder"
           @keyup.native="keydown"
           @keydown.native.enter="submitForm"
           @drop.native="drop"
