@@ -555,6 +555,10 @@ app.on('ready', () => {
     });
   }
 
+  async function setCurrentTodo(event, todo_body) {
+    tray.setTitle(todo_body);
+  }
+
   async function onlineStatusChange(event, status) {
     logger.log(status);
 
@@ -626,6 +630,7 @@ app.on('ready', () => {
   ipcMain.on('completeTodo', completeTodo);
   ipcMain.on('resetOAuth', resetOAuth);
   ipcMain.on('onlineStatusChanged', onlineStatusChange);
+  ipcMain.on('setCurrentTodo', setCurrentTodo);
 
   if (!store.get('oauth.access_token')) {
     // Ask user to connect

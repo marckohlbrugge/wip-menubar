@@ -11,6 +11,7 @@ const placeholders = {
 
 const keyCodes = {
   enter: 13,
+  alt: 18,
   arrows: {
     left: 37,
     up: 38,
@@ -88,11 +89,7 @@ const example = {
     },
 
     keydown: function(event) {
-      if (
-        event.keyCode == keyCodes.arrows.down &&
-        !this.isFetching &&
-        this.data.length == 0
-      ) {
+      if (event.keyCode == keyCodes.arrows.down && !this.isFetching && this.data.length == 0) {
         this.setState('done');
         this.getAsyncData();
         return;
@@ -104,7 +101,15 @@ const example = {
       }
 
       if (!this.name.length) return;
+
       if (Object.values(keyCodes.arrows).includes(event.keyCode)) return;
+
+      if (event.keyCode == keyCodes.alt) {
+        // var todo_id = document.querySelector(".dropdown-item.is-hovered .todo__id").textContent;
+        var todo_body = document.querySelector('.dropdown-item.is-hovered .todo__body').textContent;
+        if (todo_body) ipc.send('setCurrentTodo', ' ' + todo_body);
+        return;
+      }
 
       if (this.name.match(/^\/todo\b/i)) {
         this.setState('todo');
