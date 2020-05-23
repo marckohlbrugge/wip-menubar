@@ -54,6 +54,7 @@ WIP's menu bar icon is updated depending on your current streak status:
 
 - `yarn start` to run the app.
 - `yarn dist` to build apps for distribution.
+- `APPLE_ID=foobar@example.com APPLE_ID_PASSWORD=foo-bar yarn dist` to build apps for distribution.
 
 ## Credits
 
