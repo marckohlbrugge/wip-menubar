@@ -7,7 +7,6 @@
     "url": "https://github.com/marckohlbrugge/wip-menubar/issues"
   },
   "dependencies": {
-    "@fortawesome/fontawesome-free": "^5.6.3",
     "buefy": "0.8",
     "bulma": "^0.7.2",
     "cron": "^1.6.0",
