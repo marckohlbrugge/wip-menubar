@@ -1,20 +1,28 @@
 const { remote } = require('electron');
 const debounce = require('lodash.debounce');
 const { ipcRenderer: ipc } = require('electron-better-ipc');
-const logger = require('electron-timber');
 
 const todoBody = document.getElementById('todo-body');
+
+const placeholders = {
+  done: 'Press return to complete todo…',
+  todo: 'Press return to add pending todo…',
+};
+
+const keyCodes = {
+  enter: 13,
+  arrows: {
+    left: 37,
+    up: 38,
+    right: 39,
+    down: 40,
+  },
+};
 
 ipc.on('todoSaved', () => {
   var window = remote.getCurrentWindow();
   window.close();
 });
-
-function isInvalid(input) {
-  const valid = !input.value && !input.disabled;
-  input.classList.toggle('is-warning', valid);
-  return valid;
-}
 
 const example = {
   data() {
@@ -24,9 +32,10 @@ const example = {
       name: '',
       selected: null,
       isFetching: false,
-      icon: 'check',
+      icon: 'done',
       isDragging: false,
-      placeholder: 'Press return to complete todo…'
+      placeholder: placeholders.done,
+      state: 'done',
     };
   },
   methods: {
@@ -36,17 +45,20 @@ const example = {
       for (var i = 0; i < clipboard_items.length; i++) {
         let item = clipboard_items[i];
 
-        if(item.kind == "file" && item.type.match("^image/")) {
-          this.addAttachment(item.getAsFile(), "Pasted Image");
+        if (item.kind == 'file' && item.type.match('^image/')) {
+          this.addAttachment(item.getAsFile(), 'Pasted Image');
         }
       }
     },
-    dragenter: function(event) {
+
+    dragenter: function() {
       this.isDragging = true;
     },
-    dragleave: function(event) {
+
+    dragleave: function() {
       this.isDragging = false;
     },
+
     drop: function(event) {
       event.preventDefault();
       this.dragleave();
@@ -57,29 +69,55 @@ const example = {
 
       return false;
     },
-    keydown: function(event) {
-      if (event.keyCode == 40 && this.name.match(/^\s*$/) && !this.isFetching && !this.data) {
-        this.icon = 'check';
-        this.getAsyncData();
-        return;
-      }
-      if (!this.name.length) {
-        return;
-      }
-      // Ignore arrow keys
-      if ([37, 38, 39, 40].includes(event.keyCode)) {
-        return;
-      }
-      if (this.name.match(/^\/todo\b/i)) {
-        this.icon = 'hourglass-half';
-        this.placeholder = 'Press return to save pending todo…';
-      } else if (this.name.match(/^\/help\b/i)) {
+
+    setState(value) {
+      if (value == 'done') {
+        this.state = 'done';
+        this.icon = 'done';
+        this.placeholder = placeholders.done;
+      } else if (value == 'todo') {
+        this.state = 'todo';
+        this.icon = 'todo';
+        this.placeholder = placeholders.todo;
+      } else if (value == 'help') {
+        this.state = 'help';
         this.icon = 'life-ring';
       } else {
-        this.icon = 'check';
-        this.placeholder = 'Press return to completed todo…';
+        alert(`Incorrect state: ${value}`);
+      }
+    },
+
+    keydown: function(event) {
+      if (
+        event.keyCode == keyCodes.arrows.down &&
+        !this.isFetching &&
+        this.data.length == 0
+      ) {
+        this.setState('done');
+        this.getAsyncData();
+        return;
+      }
+
+      if ([keyCodes.arrows.up, keyCodes.arrows.down].includes(event.keyCode)) {
+        this.setState('done');
+        return;
+      }
+
+      if (!this.name.length) return;
+      if (Object.values(keyCodes.arrows).includes(event.keyCode)) return;
+
+      if (this.name.match(/^\/todo\b/i)) {
+        this.setState('todo');
+      } else if (this.name.match(/^\/help\b/i)) {
+        this.setState('help');
+      } else if (this.name.match(/^\/done\b/i)) {
+        this.setState('done');
+      }
+
+      if (this.state == 'done') {
         this.getAsyncData();
       }
+
       return true;
     },
     addAttachment: function(file, file_name = null) {
@@ -113,18 +151,27 @@ const example = {
     removeAttachment: function(index) {
       this.attachments.splice(index, 1);
     },
+    select: function(option) {
+      this.selected = option;
+    },
+    iconClick: function() {
+      if (this.state == 'todo') {
+        this.name = this.name.replace(/^\/todo ?/, '');
+        this.setState('done');
+      } else if (this.state == 'done') {
+        this.name = this.name.replace(/^\/done ?/, '');
+        this.setState('todo');
+      } else if (this.state == 'help') {
+        this.setState('done');
+      }
+    },
     submitForm: function() {
       todoBody.disabled = true;
 
       if (app.selected) {
-        // Completed an existing todo
         ipc.send('completeTodo', app.selected.id, this.attachments);
-        logger.log('selected', app.selected.id);
       } else {
-        // New todo
         ipc.send('createTodo', app.name, this.attachments);
-        logger.log(app.name);
-        logger.log('new todo');
       }
     },
     getAsyncData: debounce(function() {

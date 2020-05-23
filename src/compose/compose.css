@@ -41,19 +41,6 @@ main.expanded {
   border-radius: 0.3rem;
 }
 
-
-.fa-check {
-  color: lightgreen;
-}
-
-.fa-hourglass-half {
-  color: orange;
-}
-
-.fa-life-ring {
-  color: lightblue;
-}
-
 #todo-body {
   border-color: transparent;
   background-color: black;
@@ -75,7 +62,7 @@ main.expanded {
 
 .dropdown-menu {
   padding-top: 0;
-  border-top: 1px #111 solid;
+  border-top: 1px #222 solid;
 }
 
 .autocomplete .dropdown-content {
@@ -94,8 +81,8 @@ main.expanded {
 }
 
 .autocomplete .dropdown-item.is-hovered {
-  background-color: #036BDF;
-  color: white;
+  background-color: #F8D730;
+  color: black;
 }
 
 a.dropdown-item:hover {
@@ -153,4 +140,40 @@ a.dropdown-item:hover {
 }
 .close:after {
   transform: rotate(-45deg);
+}
+
+.todo {
+  display: flex;
+}
+
+.todo__id {
+  display: none;
+}
+
+.todo__focus {
+  margin-right: .2rem
+}
+
+
+i.custom.done, i.custom.todo {
+  font-size: 1.6em;
+  line-height: .75em;
+  vertical-align: -.0667em;
+  height: 1em;
+  width: 1em;
+  display: block;
+  background-size: contain;
+  color: lightgreen;
+  -webkit-mask-position: center center;
+  -webkit-mask-repeat: no-repeat;
+}
+
+i.custom.done {
+  -webkit-mask-image: url(done.svg);
+  background: #F8D730;
+}
+
+i.custom.todo {
+  -webkit-mask-image: url(todo.svg);
+  background: #333;
 }
