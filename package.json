@@ -128,7 +128,8 @@
     },
     "linux": {
       "executableName": "wip",
-      "category": "ProjectManagement"
+      "category": "Productivity",
+      "publish": ["github"]
     }
   }
 }
