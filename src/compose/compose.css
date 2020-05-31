@@ -169,11 +169,11 @@ i.custom.done, i.custom.todo {
 }
 
 i.custom.done {
-  -webkit-mask-image: url(done.svg);
+  -webkit-mask-image: url(./done.svg);
   background: #F8D730;
 }
 
 i.custom.todo {
-  -webkit-mask-image: url(todo.svg);
+  -webkit-mask-image: url(./todo.svg);
   background: #333;
 }
