@@ -1,7 +1,7 @@
 {
   "name": "WIP",
   "description": "Menubar app for WIP",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "author": "Marc Köhlbrugge <hey@marckohlbrugge.com>",
   "bugs": {
     "url": "https://github.com/marckohlbrugge/wip-menubar/issues"
@@ -127,6 +127,7 @@
       "vPrefixedTagName": true
     },
     "linux": {
+      "executableName": "wip",
       "category": "ProjectManagement"
     }
   }
