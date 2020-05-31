@@ -54,7 +54,7 @@ app.on('ready', () => {
 
   autoUpdater.checkForUpdatesAndNotify();
 
-  // const autoLauncher = new AutoLaunch({ name: pjson.name });
+  const autoLauncher = new AutoLaunch({ name: pjson.name });
   const tray = new Tray(icon.done);
   let oauthWindow = null;
   let composeWindow = null;
