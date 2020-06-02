@@ -171,7 +171,8 @@ const example = {
       if (app.selected) {
         ipc.send('completeTodo', app.selected.id, this.attachments);
       } else {
-        ipc.send('createTodo', app.name, this.attachments);
+        let completed = this.state == 'done';
+        ipc.send('createTodo', app.name, this.attachments, completed);
       }
     },
     getAsyncData: debounce(function() {
