@@ -518,14 +518,13 @@ app.on('ready', () => {
     event.sender.send('NotificationTimeSet');
   }
 
-  async function createTodo(event, value, attachments) {
+  async function createTodo(event, value, attachments, completed) {
     if (value.match(/^\/help\b/i)) {
       // Executing /help command
       shell.openExternal('https://wip.chat/help#menubar');
       event.sender.send('todoSaved');
     } else {
       // Creating a todo
-      const completed = !value.match(/^\/todo\b/i);
       value = value.replace(/^\/(todo|done)\b/i, '');
       var todo = wip.createTodo(value, completed, attachments);
       event.sender.send('todoSaved');
