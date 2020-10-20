@@ -284,7 +284,7 @@ app.on('ready', () => {
     if (error) {
       menuTemplate.push({ label: `Error: ${error}`, enabled: false });
     } else {
-      const wipProfileUrl = `https://wip.chat/@${store.get('viewer.username')}`;
+      const wipProfileUrl = `https://wip.co/@${store.get('viewer.username')}`;
 
       if (store.get('development')) {
         menuTemplate.push({ label: 'Development Mode', enabled: false });
@@ -329,7 +329,7 @@ app.on('ready', () => {
         // },
         {
           label: `Open Questions…`,
-          click: () => shell.openExternal(`https://wip.chat/questions`),
+          click: () => shell.openExternal(`https://wip.co/questions`),
         },
         { type: 'separator' },
         {
@@ -521,7 +521,7 @@ app.on('ready', () => {
   async function createTodo(event, value, attachments, completed) {
     if (value.match(/^\/help\b/i)) {
       // Executing /help command
-      shell.openExternal('https://wip.chat/help#menubar');
+      shell.openExternal('https://wip.co/help#menubar');
       event.sender.send('todoSaved');
     } else {
       // Creating a todo
