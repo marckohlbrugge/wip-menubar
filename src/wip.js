@@ -11,7 +11,7 @@ let clientId;
 function client() {
   const endpoint = devMode
     ? 'http://wip.test:5000/graphql'
-    : 'https://wip.chat/graphql';
+    : 'https://wip.co/graphql';
 
   return new GraphQLClient(endpoint, {
     headers: {
@@ -39,7 +39,7 @@ function setClientId(value) {
 function getOAuthURL() {
   var base = devMode
     ? 'http://wip.test:5000'
-    : 'https://wip.chat';
+    : 'https://wip.co';
 
   return `${base}/oauth/authorize?client_id=${clientId}&response_type=code&redirect_uri=urn:ietf:wg:oauth:2.0:oob`;
 }
@@ -258,7 +258,7 @@ function getAccessToken(code) {
       request_options.port = 5000;
     } else {
       request_options.protocol = 'https:';
-      request_options.hostname = 'wip.chat';
+      request_options.hostname = 'wip.co';
       request_options.port = 443;
     }
 
