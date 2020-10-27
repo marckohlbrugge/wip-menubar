@@ -1,5 +1,5 @@
 html, body {
-  background: transparent;
+  background: black;
 }
 
 /* Hide scrollbar on Linux */
@@ -9,7 +9,6 @@ body::-webkit-scrollbar {
 
 main {
   -webkit-user-select: none;
-  background: black;
   border-radius: 0.4em;
   position: relative;
 }
@@ -62,7 +61,6 @@ main.expanded {
 
 .dropdown-menu {
   padding-top: 0;
-  border-top: 1px #222 solid;
 }
 
 .autocomplete .dropdown-content {
@@ -73,6 +71,7 @@ main.expanded {
   border-bottom-left-radius: 0.2rem;
   border-bottom-right-radius: 0.2rem;
   overflow: hidden;
+  border-top: 1px #222 solid;
 }
 
 .dropdown-item {

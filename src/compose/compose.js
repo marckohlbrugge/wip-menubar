@@ -190,3 +190,18 @@ const example = {
 
 const app = new Vue(example);
 app.$mount('#app');
+
+resize();
+
+function resize() {
+  let containerHeight = document.querySelector(".container").offsetHeight;
+  let dropdownHeight = document.querySelector(".dropdown-menu").offsetHeight;
+
+  let totalHeight = containerHeight + dropdownHeight;
+
+  ipc.send('resize', totalHeight);
+}
+
+const resizeObserver = new ResizeObserver(resize, { box : 'border-box' })
+resizeObserver.observe(document.querySelector(".dropdown-menu"))
+resizeObserver.observe(document.querySelector(".container"))
