@@ -43,3 +43,22 @@ code {
   background-color: #444;
   color: white;
 }
+
+i.fas.fa-key {
+  font-size: 1em;
+  line-height: 1em;
+  vertical-align: -0.1em;
+  height: 1em;
+  width: 1em;
+  display: block;
+  background-size: contain;
+  color: lightgreen;
+  -webkit-mask-position: center center;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-image: url(./key.svg);
+  background: #ccc;
+}
+
+input, input:active, input:focus {
+  border-width: 0 !important;
+}
