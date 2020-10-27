@@ -129,7 +129,9 @@
     "linux": {
       "executableName": "wip",
       "category": "Productivity",
-      "publish": ["github"]
+      "publish": [
+        "github"
+      ]
     }
   }
 }
