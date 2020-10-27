@@ -143,14 +143,13 @@ app.on('ready', () => {
   function createComposeWindow() {
     composeWindow = new BrowserWindow({
       width: 600,
-      height: 300,
+      height: 54,
       frame: false,
       show: false,
       resizable: false,
       maximizable: false,
       minimizable: false,
       fullscreenable: false,
-      transparent: true,
       alwaysOnTop: true,
       webPreferences: {
         devTools: true,
@@ -562,6 +561,10 @@ app.on('ready', () => {
     }
   }
 
+  async function resize(event, height) {
+    composeWindow.setSize(600, height)
+  }
+
   async function resetOAuth() {
     logger.log('resetOAuth()');
 
@@ -625,6 +628,7 @@ app.on('ready', () => {
   ipcMain.on('completeTodo', completeTodo);
   ipcMain.on('resetOAuth', resetOAuth);
   ipcMain.on('onlineStatusChanged', onlineStatusChange);
+  ipcMain.on('resize', resize);
 
   if (!store.get('oauth.access_token')) {
     // Ask user to connect
