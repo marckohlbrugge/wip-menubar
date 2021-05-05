@@ -1,6 +1,7 @@
-const { remote } = require('electron');
 const debounce = require('lodash.debounce');
 const { ipcRenderer: ipc } = require('electron-better-ipc');
+const Vue = require('vue');
+const { closeCurrent } = require('../ipc/renderer');
 
 const todoBody = document.getElementById('todo-body');
 
@@ -19,10 +20,7 @@ const keyCodes = {
   },
 };
 
-ipc.on('todoSaved', () => {
-  var window = remote.getCurrentWindow();
-  window.close();
-});
+ipc.on('todoSaved', () => closeCurrent());
 
 const example = {
   data() {
@@ -194,14 +192,14 @@ app.$mount('#app');
 resize();
 
 function resize() {
-  let containerHeight = document.querySelector(".container").offsetHeight;
-  let dropdownHeight = document.querySelector(".dropdown-menu").offsetHeight;
+  let containerHeight = document.querySelector('.container').offsetHeight;
+  let dropdownHeight = document.querySelector('.dropdown-menu').offsetHeight;
 
   let totalHeight = containerHeight + dropdownHeight;
 
   ipc.send('resize', totalHeight);
 }
 
-const resizeObserver = new ResizeObserver(resize, { box : 'border-box' })
-resizeObserver.observe(document.querySelector(".dropdown-menu"))
-resizeObserver.observe(document.querySelector(".container"))
+const resizeObserver = new ResizeObserver(resize, { box: 'border-box' });
+resizeObserver.observe(document.querySelector('.dropdown-menu'));
+resizeObserver.observe(document.querySelector('.container'));

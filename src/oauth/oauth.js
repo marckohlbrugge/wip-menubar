@@ -1,9 +1,10 @@
-const { remote, ipcRenderer, shell } = require('electron');
+const { ipcRenderer, shell } = require('electron');
+const { getGlobal, closeCurrent } = require('../ipc/renderer');
 
 const oauth_button = document.getElementById('oauth');
 
-oauth_button.addEventListener('click', () => {
-  const oauthUrl = remote.getGlobal('oauthUrl');
+oauth_button.addEventListener('click', async () => {
+  const oauthUrl = await getGlobal('oauthUrl');
   shell.openExternal(oauthUrl);
 });
 
@@ -48,5 +49,5 @@ function isInvalid(input) {
 }
 
 document.getElementById('closeWindow').addEventListener('click', () => {
-  remote.getCurrentWindow().close();
+  closeCurrent();
 });
