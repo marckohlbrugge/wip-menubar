@@ -14,9 +14,11 @@ const pjson = require('../package.json');
 const wip = require('./wip');
 const debug = require('electron-debug');
 const { ipcMain: ipc } = require('electron-better-ipc');
-const logger = require('electron-timber');
+const logger = require('electron-log');
 const { autoUpdater } = require('electron-updater');
 const moment = require('moment');
+
+require('./ipc/main');
 
 debug();
 
@@ -70,7 +72,6 @@ app.on('ready', () => {
     show: false,
     webPreferences: {
       nodeIntegration: true,
-      enableRemoteModule: true,
       contextIsolation: false,
     },
   });
@@ -158,7 +159,7 @@ app.on('ready', () => {
       webPreferences: {
         devTools: true,
         nodeIntegration: true,
-        enableRemoteModule: true,
+
         contextIsolation: false,
       },
     });
@@ -222,7 +223,6 @@ app.on('ready', () => {
       show: true,
       webPreferences: {
         nodeIntegration: true,
-        enableRemoteModule: true,
         contextIsolation: false,
       },
     });
@@ -256,7 +256,7 @@ app.on('ready', () => {
       show: false,
       webPreferences: {
         nodeIntegration: true,
-        enableRemoteModule: true,
+
         contextIsolation: false,
       },
     });

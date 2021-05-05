@@ -1,5 +1,5 @@
 const { ipcMain, BrowserWindow } = require('electron');
-const logger = require('electron-timber');
+const logger = require('electron-log');
 const { Channels } = require('./channels');
 
 ipcMain.handle(Channels.GET_GLOBAL, async (evt, key) => {

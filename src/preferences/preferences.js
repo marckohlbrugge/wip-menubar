@@ -1,6 +1,6 @@
 const { ipcRenderer } = require('electron');
 const store = require('../store');
-const logger = require('electron-timber');
+// const logger = require('electron-log');
 
 const shortcut = document.getElementById('shortcut');
 const launchAtLoginCheckbox = document.getElementById(
