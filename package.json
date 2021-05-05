@@ -23,8 +23,8 @@
     "vue": "^2.5.22"
   },
   "devDependencies": {
-    "electron": "8",
-    "electron-builder": "^22.6.0",
+    "electron": "^12.0.6",
+    "electron-builder": "^22.11.1",
     "electron-builder-notarize": "^1.1.2",
     "electron-reloader": "^1.0.1",
     "eslint": "6",
@@ -70,6 +70,7 @@
     "dist-m": "electron-builder -m",
     "dist-w": "electron-builder -w",
     "dist-l": "electron-builder -l",
+    "dist-m-arm": "electron-builder -m --arm64",
     "pack": "electron-builder --dir",
     "format": "prettier --write './src/**/*.{js,html}'",
     "lint": "eslint .",
