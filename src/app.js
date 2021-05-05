@@ -1,6 +1,8 @@
 try {
   require('electron-reloader')(module);
-} catch (err) {}
+} catch (err) {
+  console.warn('Failed to import electron', err.message);
+}
 
 const electron = require('electron');
 // const AutoLaunch = require('auto-launch');
@@ -67,8 +69,10 @@ app.on('ready', () => {
     height: 0,
     show: false,
     webPreferences: {
-      nodeIntegration: true
-    }
+      nodeIntegration: true,
+      enableRemoteModule: true,
+      contextIsolation: false,
+    },
   });
   onlineStatusWindow.loadURL(
     `file://${__dirname}/onlinestatus/onlinestatus.html`,
@@ -154,6 +158,8 @@ app.on('ready', () => {
       webPreferences: {
         devTools: true,
         nodeIntegration: true,
+        enableRemoteModule: true,
+        contextIsolation: false,
       },
     });
 
@@ -216,6 +222,8 @@ app.on('ready', () => {
       show: true,
       webPreferences: {
         nodeIntegration: true,
+        enableRemoteModule: true,
+        contextIsolation: false,
       },
     });
 
@@ -248,6 +256,8 @@ app.on('ready', () => {
       show: false,
       webPreferences: {
         nodeIntegration: true,
+        enableRemoteModule: true,
+        contextIsolation: false,
       },
     });
 
@@ -336,7 +346,7 @@ app.on('ready', () => {
           accelerator: 'CmdOrCtrl+R',
           click: requestViewerData,
         },
-     ]);
+      ]);
     }
 
     menuTemplate.push(
@@ -395,7 +405,7 @@ app.on('ready', () => {
 
   function requestViewerData() {
     logger.log('requestViewerData()');
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve /*, _reject */) => {
       if (!store.get('oauth')) {
         logger.error('Aborting! No OAuth token present');
         return;
@@ -562,7 +572,7 @@ app.on('ready', () => {
   }
 
   async function resize(event, height) {
-    composeWindow.setSize(600, height)
+    composeWindow.setSize(600, height);
   }
 
   async function resetOAuth() {
