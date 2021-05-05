@@ -1,6 +1,5 @@
 const debounce = require('lodash.debounce');
 const { ipcRenderer: ipc } = require('electron-better-ipc');
-const Vue = require('vue');
 const { closeCurrent } = require('../ipc/renderer');
 
 const todoBody = document.getElementById('todo-body');
