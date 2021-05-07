@@ -17,6 +17,7 @@ const { ipcMain: ipc } = require('electron-better-ipc');
 const logger = require('electron-log');
 const { autoUpdater } = require('electron-updater');
 const moment = require('moment');
+const { NetChecker } = require('./onlinestatus/NetChecker');
 
 require('./ipc/main');
 
@@ -65,19 +66,6 @@ app.on('ready', () => {
   let preferencesWindow = null;
 
   tray.setImage(icon.load);
-
-  let onlineStatusWindow = new BrowserWindow({
-    width: 0,
-    height: 0,
-    show: false,
-    webPreferences: {
-      nodeIntegration: true,
-      contextIsolation: false,
-    },
-  });
-  onlineStatusWindow.loadURL(
-    `file://${__dirname}/onlinestatus/onlinestatus.html`,
-  );
 
   // Create the Application's main menu
   var template = [
@@ -563,10 +551,10 @@ app.on('ready', () => {
     });
   }
 
-  async function onlineStatusChange(event, status) {
-    logger.log(status);
+  async function onlineStatusChange(status) {
+    logger.log('Network status changed', status);
 
-    if (status == 'online') {
+    if (status === true) {
       requestViewerData();
     }
   }
@@ -637,7 +625,6 @@ app.on('ready', () => {
   ipcMain.on('createTodo', createTodo);
   ipcMain.on('completeTodo', completeTodo);
   ipcMain.on('resetOAuth', resetOAuth);
-  ipcMain.on('onlineStatusChanged', onlineStatusChange);
   ipcMain.on('resize', resize);
 
   if (!store.get('oauth.access_token')) {
@@ -647,4 +634,6 @@ app.on('ready', () => {
     // Load all data
     requestViewerData();
   }
+
+  NetChecker.inst().on(NetChecker.EVENTS.changed, onlineStatusChange);
 });
