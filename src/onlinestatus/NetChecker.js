@@ -33,7 +33,7 @@ class NetChecker extends EventEmitter {
         logger.warn('Failed to check online status', e);
         setStatus(false);
       } finally {
-        this.timer = setTimeout(() => setTimer, 3000);
+        this.timer = setTimeout(() => setTimer(), 3000);
       }
     };
 
