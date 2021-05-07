@@ -21,9 +21,12 @@
     "is-online": "^9.0.0",
     "lodash.debounce": "^4.0.8",
     "moment-timezone": "^0.5.25",
-    "vue": "^2.5.22"
+    "vue": "^2.5.22",
+    "webpack-cli": "^4.7.0"
   },
   "devDependencies": {
+    "@fortawesome/fontawesome-free": "^5.15.3",
+    "css-loader": "^5.2.4",
     "electron": "^12.0.6",
     "electron-builder": "^22.11.1",
     "electron-builder-notarize": "^1.1.2",
@@ -31,9 +34,17 @@
     "eslint": "6",
     "eslint-config-prettier": "6",
     "eslint-plugin-prettier": "^3.0.1",
+    "file-loader": "^6.2.0",
+    "glob": "^7.1.7",
+    "html-webpack-plugin": "^5.3.1",
     "husky": "2",
     "lint-staged": "^8.0.4",
-    "prettier": "^1.15.3"
+    "mini-css-extract-plugin": "^1.6.0",
+    "prettier": "^1.15.3",
+    "sass": "^1.32.12",
+    "sass-loader": "^11.0.1",
+    "webpack": "^5.36.2",
+    "webpack-bundle-analyzer": "^4.4.1"
   },
   "homepage": "https://github.com/marckohlbrugge/wip-menubar#readme",
   "husky": {
