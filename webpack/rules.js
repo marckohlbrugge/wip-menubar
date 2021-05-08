@@ -41,10 +41,16 @@
     };
   })();
 
+  const node = {
+    test: /.node$/,
+    loader: 'node-loader',
+  };
+
   exports.rules = {
     file,
     css,
     pug,
     typescript,
+    node,
   };
 }

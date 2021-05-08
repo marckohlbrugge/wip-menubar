@@ -54,7 +54,7 @@ module.exports = {
   },
   plugins: [
     new webpack.DefinePlugin({
-      IS_PRODUCTION: true,
+      IS_PRODUCTION: JSON.stringify(true),
     }),
     new MiniCssExtractPlugin(),
     ...pages,
