@@ -31,6 +31,7 @@
     "electron-builder": "^22.11.1",
     "electron-builder-notarize": "^1.1.2",
     "electron-reloader": "^1.0.1",
+    "encoding": "^0.1.13",
     "eslint": "6",
     "eslint-config-prettier": "6",
     "eslint-plugin-prettier": "^3.0.1",
@@ -40,11 +41,13 @@
     "husky": "2",
     "lint-staged": "^8.0.4",
     "mini-css-extract-plugin": "^1.6.0",
+    "node-loader": "^2.0.0",
     "prettier": "^1.15.3",
     "sass": "^1.32.12",
     "sass-loader": "^11.0.1",
     "webpack": "^5.36.2",
-    "webpack-bundle-analyzer": "^4.4.1"
+    "webpack-bundle-analyzer": "^4.4.1",
+    "webpack-dev-server": "^3.11.2"
   },
   "homepage": "https://github.com/marckohlbrugge/wip-menubar#readme",
   "husky": {
@@ -78,6 +81,10 @@
     "url": "git+https://github.com/marckohlbrugge/wip-menubar.git"
   },
   "scripts": {
+    "main:release": "webpack --mode production --config ./webpack/main.cfg.js",
+    "main:dev": "webpack --mode development --config ./webpack/main.cfg.js",
+    "render:release": "webpack --mode production --config ./webpack/renderer.cfg.js",
+    "render:start": "webpack serve --mode development --config ./webpack/renderer.cfg.js",
     "dist": "electron-builder -mwl",
     "dist-m": "electron-builder -m",
     "dist-w": "electron-builder -w",
