@@ -3,27 +3,22 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-eval' filesystem; img-src 'self' data:" />
-    <link rel="stylesheet" href="../../node_modules/bulma/css/bulma.min.css" />
-    <link rel="stylesheet" href="../../node_modules/buefy/dist/buefy.min.css" />
-    <link rel="stylesheet" href="./compose.css" />
-    <script src="../../node_modules/vue/dist/vue.min.js"></script>
-    <script src="../../node_modules/buefy/dist/buefy.min.js"></script>
   </head>
 
   <body>
-
-
     <main>
       <div id="app" class="container">
-
         <!-- Drag Overlay -->
         <div class="drag" v-show="isDragging">
           <div>Drop here to attach…</div>
         </div>
 
         <ul class="attachments">
-          <li v-for="(attachment, index) in attachments" class="attachment" @click="removeAttachment(index)">
+          <li
+            v-for="(attachment, index) in attachments"
+            class="attachment"
+            @click="removeAttachment(index)"
+          >
             <div>{{ attachment.file.name }}</div>
             <!-- <img v-bind:src="attachment.base64" height="50" width="50" /> -->
             <div class="close"></div>
@@ -52,15 +47,14 @@
           icon-clickable="true"
           @icon-click="iconClick"
         >
-        <template slot-scope="props">
-          <div class="todo">
-            <div class="todo__id">{{ props.option.id }}</div>
-            <div class="todo__body">{{ props.option.body }}</div>
-          </div>
-        </template>
+          <template slot-scope="props">
+            <div class="todo">
+              <div class="todo__id">{{ props.option.id }}</div>
+              <div class="todo__body">{{ props.option.body }}</div>
+            </div>
+          </template>
         </b-autocomplete>
       </div>
     </main>
-    <script src="./compose.js"></script>
   </body>
 </html>
