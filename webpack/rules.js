@@ -7,7 +7,7 @@
     loader: 'file-loader',
     options: {
       esModule: false,
-      outputPath: 'assets/static',
+      outputPath: 'assets',
       name: '[name].[contenthash].[ext]',
     },
   };

@@ -40,8 +40,8 @@ module.exports = {
     ...entries,
   },
   output: {
-    filename: 'pages/[name].[fullhash].js',
-    publicPath: '/',
+    filename: '[name].[fullhash].js',
+    publicPath: '',
   },
   optimization: {
     splitChunks: {
@@ -53,10 +53,10 @@ module.exports = {
     rules: [rules.css, rules.file],
   },
   plugins: [
+    new MiniCssExtractPlugin(),
     new webpack.DefinePlugin({
       IS_PRODUCTION: JSON.stringify(true),
     }),
-    new MiniCssExtractPlugin(),
     ...pages,
     // new BundleAnalyzerPlugin(),
   ],
