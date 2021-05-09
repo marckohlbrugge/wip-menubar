@@ -1,5 +1,6 @@
 const webpack = require('webpack');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+const CopyPlugin = require('copy-webpack-plugin');
 const path = require('path');
 
 const { rules } = require('./rules');
@@ -16,6 +17,9 @@ module.exports = {
     rules: [rules.node],
   },
   plugins: [
+    new CopyPlugin({
+      patterns: [{ from: 'icons', to: 'icons' }],
+    }),
     new webpack.DefinePlugin({
       IS_PRODUCTION: JSON.stringify(true),
     }),
