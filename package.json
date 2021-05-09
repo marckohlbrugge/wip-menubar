@@ -26,6 +26,7 @@
   },
   "devDependencies": {
     "@fortawesome/fontawesome-free": "^5.15.3",
+    "copy-webpack-plugin": "^8.1.1",
     "css-loader": "^5.2.4",
     "electron": "^12.0.6",
     "electron-builder": "^22.11.1",
@@ -43,6 +44,7 @@
     "mini-css-extract-plugin": "^1.6.0",
     "node-loader": "^2.0.0",
     "prettier": "^1.15.3",
+    "rimraf": "^3.0.2",
     "sass": "^1.32.12",
     "sass-loader": "^11.0.1",
     "webpack": "^5.36.2",
@@ -75,16 +77,16 @@
       "git add"
     ]
   },
-  "main": "src/app.js",
+  "main": "dist/electron-main.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/marckohlbrugge/wip-menubar.git"
   },
   "scripts": {
     "main:release": "webpack --mode production --config ./webpack/main.cfg.js",
-    "main:dev": "webpack --mode development --config ./webpack/main.cfg.js",
     "render:release": "webpack --mode production --config ./webpack/renderer.cfg.js",
     "render:start": "webpack serve --mode development --config ./webpack/renderer.cfg.js",
+    "build:release": "rimraf dist && yarn main:release && yarn render:release",
     "dist": "electron-builder -mwl",
     "dist-m": "electron-builder -m",
     "dist-w": "electron-builder -w",
@@ -103,8 +105,10 @@
     "appId": "chat.wip.menubar",
     "productName": "WIP",
     "files": [
-      "src/",
+      "src/icons/**",
+      "dist/**/*",
       "resources/",
+      "!node_modules/**/*",
       "embedded.provisionprofile"
     ],
     "afterSign": "electron-builder-notarize",
