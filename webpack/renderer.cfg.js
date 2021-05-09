@@ -32,32 +32,38 @@ function getEntries(chunks = ['vendor']) {
 const { pages, entries } = getEntries();
 console.log('Total pages:', entries);
 
-/** @type {import('webpack').Configuration} */
-module.exports = {
-  target: 'electron-renderer',
-  context: path.resolve(__dirname, '../src'),
-  entry: {
-    ...entries,
-  },
-  output: {
-    filename: '[name].[fullhash].js',
-    publicPath: '',
-  },
-  optimization: {
-    splitChunks: {
-      chunks: 'all',
-      name: 'vendor',
+module.exports = function(env, argv) {
+  const IS_PRODUCTION = argv.mode === 'production';
+
+  /** @type {import('webpack').Configuration} */
+  const cfg = {
+    target: 'electron-renderer',
+    context: path.resolve(__dirname, '../src'),
+    entry: {
+      ...entries,
     },
-  },
-  module: {
-    rules: [rules.css, rules.file],
-  },
-  plugins: [
-    new MiniCssExtractPlugin(),
-    new webpack.DefinePlugin({
-      IS_PRODUCTION: JSON.stringify(true),
-    }),
-    ...pages,
-    // new BundleAnalyzerPlugin(),
-  ],
+    output: {
+      filename: '[name].[fullhash].js',
+      publicPath: '',
+    },
+    optimization: {
+      splitChunks: {
+        chunks: 'all',
+        name: 'vendor',
+      },
+    },
+    module: {
+      rules: [rules.css, rules.file],
+    },
+    plugins: [
+      new MiniCssExtractPlugin(),
+      new webpack.DefinePlugin({
+        IS_PRODUCTION: JSON.stringify(IS_PRODUCTION),
+      }),
+      ...pages,
+      // new BundleAnalyzerPlugin(),
+    ],
+  };
+
+  return cfg;
 };
