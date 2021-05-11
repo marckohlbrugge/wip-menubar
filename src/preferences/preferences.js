@@ -1,3 +1,5 @@
+require('./preferences.css');
+
 const { ipcRenderer } = require('electron');
 const store = require('../store');
 // const logger = require('electron-log');

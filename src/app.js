@@ -18,6 +18,7 @@ const logger = require('electron-log');
 const { autoUpdater } = require('electron-updater');
 const moment = require('moment');
 const { NetChecker } = require('./onlinestatus/NetChecker');
+const urls = require('./urls');
 
 require('./ipc/main');
 
@@ -152,7 +153,7 @@ app.on('ready', () => {
       },
     });
 
-    composeWindow.loadURL(`file://${__dirname}/compose/compose.html`);
+    composeWindow.loadURL(urls.getPath('compose'));
 
     composeWindow.on('ready-to-show', () => {
       composeWindow.show();
@@ -215,7 +216,7 @@ app.on('ready', () => {
       },
     });
 
-    oauthWindow.loadURL(`file://${__dirname}/oauth/oauth.html`);
+    oauthWindow.loadURL(urls.getPath('oauth'));
 
     oauthWindow.on('ready-to-show', () => {
       oauthWindow.show();
@@ -249,9 +250,7 @@ app.on('ready', () => {
       },
     });
 
-    preferencesWindow.loadURL(
-      `file://${__dirname}/preferences/preferences.html`,
-    );
+    preferencesWindow.loadURL(urls.getPath('preferences'));
 
     preferencesWindow.on('ready-to-show', () => {
       preferencesWindow.show();

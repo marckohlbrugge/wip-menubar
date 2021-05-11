@@ -1,6 +1,12 @@
+require('./compose.css');
+
 const debounce = require('lodash.debounce');
 const { ipcRenderer: ipc } = require('electron-better-ipc');
 const { closeCurrent } = require('../ipc/renderer');
+
+const Vue = require('vue/dist/vue.js');
+const Buefy = require('buefy').default;
+Vue.use(Buefy);
 
 const todoBody = document.getElementById('todo-body');
 
@@ -195,10 +201,9 @@ function resize() {
   let dropdownHeight = document.querySelector('.dropdown-menu').offsetHeight;
 
   let totalHeight = containerHeight + dropdownHeight;
-
   ipc.send('resize', totalHeight);
 }
 
 const resizeObserver = new ResizeObserver(resize, { box: 'border-box' });
-resizeObserver.observe(document.querySelector('.dropdown-menu'));
+// resizeObserver.observe(document.querySelector('.dropdown-menu'));
 resizeObserver.observe(document.querySelector('.container'));

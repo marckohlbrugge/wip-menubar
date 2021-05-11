@@ -1,3 +1,4 @@
+require('./oauth.css');
 const { ipcRenderer, shell } = require('electron');
 const { getGlobal, closeCurrent } = require('../ipc/renderer');
 
