@@ -12,9 +12,18 @@ module.exports = function(env, argv) {
   const cfg = {
     target: 'electron-main',
     context: path.resolve(__dirname, '../src'),
-    entry: path.resolve(__dirname, '../src/app.js'),
+    entry: {
+      'electron-main': path.resolve(__dirname, '../src/app.js'),
+      'electron-preload': path.resolve(__dirname, '../src/preload.js'),
+    },
     output: {
-      filename: 'electron-main.js',
+      filename: '[name].js',
+    },
+    optimization: {
+      splitChunks: {
+        chunks: 'all',
+        name: 'main-vendor',
+      },
     },
     module: {
       rules: [rules.node],
