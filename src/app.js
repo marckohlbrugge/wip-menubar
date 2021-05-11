@@ -13,7 +13,6 @@ const store = require('./store');
 const pjson = require('../package.json');
 const wip = require('./wip');
 const debug = require('electron-debug');
-const { ipcMain: ipc } = require('electron-better-ipc');
 const logger = require('electron-log');
 const { autoUpdater } = require('electron-updater');
 const moment = require('moment');
@@ -146,10 +145,8 @@ app.on('ready', () => {
       fullscreenable: false,
       alwaysOnTop: true,
       webPreferences: {
-        devTools: true,
-        nodeIntegration: true,
-
-        contextIsolation: false,
+        contextIsolation: true,
+        preload: `${__dirname}/preload.js`,
       },
     });
 
@@ -211,8 +208,8 @@ app.on('ready', () => {
       alwaysOnTop: true,
       show: true,
       webPreferences: {
-        nodeIntegration: true,
-        contextIsolation: false,
+        contextIsolation: true,
+        preload: `${__dirname}/preload.js`,
       },
     });
 
@@ -244,9 +241,8 @@ app.on('ready', () => {
       fullscreenable: false,
       show: false,
       webPreferences: {
-        nodeIntegration: true,
-
-        contextIsolation: false,
+        contextIsolation: true,
+        preload: `${__dirname}/preload.js`,
       },
     });
 
@@ -433,7 +429,7 @@ app.on('ready', () => {
     registerGlobalShortcut();
   }
 
-  ipc.answerRenderer('fetchPendingTodos', async filter => {
+  ipcMain.handle('fetchPendingTodos', async (evt, filter) => {
     return await wip.pendingTodos(filter);
   });
 
@@ -579,7 +575,7 @@ app.on('ready', () => {
     showOAuthWindow();
 
     // Close Preferences Window
-    preferencesWindow.close();
+    if (preferencesWindow) preferencesWindow.close();
   }
 
   const job = new CronJob({

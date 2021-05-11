@@ -1,8 +1,9 @@
 require('./preferences.css');
-
-const { ipcRenderer } = require('electron');
-const store = require('../store');
-// const logger = require('electron-log');
+const preload = window.context;
+const {
+  electron: { ipcRenderer, shell },
+  store,
+} = preload;
 
 const shortcut = document.getElementById('shortcut');
 const launchAtLoginCheckbox = document.getElementById(
@@ -15,7 +16,6 @@ const notificationCheckbox = document.getElementById('notification-checkbox');
 const notificationTime = document.getElementById('notification-time');
 
 // Open all links in external browser
-let shell = require('electron').shell;
 document.addEventListener('click', function(event) {
   if (event.target.tagName === 'A' && event.target.href.startsWith('http')) {
     event.preventDefault();
