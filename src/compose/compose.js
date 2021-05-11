@@ -1,6 +1,15 @@
-const { remote } = require('electron');
+require('./compose.css');
+
+const preload = window.context;
+const {
+  utils: { closeCurrent },
+  electron: { ipcRenderer: ipc },
+} = preload;
 const debounce = require('lodash.debounce');
-const { ipcRenderer: ipc } = require('electron-better-ipc');
+
+const Vue = require('vue/dist/vue.js');
+const Buefy = require('buefy').default;
+Vue.use(Buefy);
 
 const todoBody = document.getElementById('todo-body');
 
@@ -19,10 +28,7 @@ const keyCodes = {
   },
 };
 
-ipc.on('todoSaved', () => {
-  var window = remote.getCurrentWindow();
-  window.close();
-});
+ipc.on('todoSaved', () => closeCurrent());
 
 const example = {
   data() {
@@ -178,7 +184,7 @@ const example = {
     getAsyncData: debounce(function() {
       (async () => {
         this.isFetching = true;
-        this.data = await ipc.callMain('fetchPendingTodos', this.name);
+        this.data = await ipc.invoke('fetchPendingTodos', this.name);
         document
           .querySelector('main')
           .classList.toggle('expanded', this.data.length);
@@ -194,14 +200,13 @@ app.$mount('#app');
 resize();
 
 function resize() {
-  let containerHeight = document.querySelector(".container").offsetHeight;
-  let dropdownHeight = document.querySelector(".dropdown-menu").offsetHeight;
+  let containerHeight = document.querySelector('.container').offsetHeight;
+  let dropdownHeight = document.querySelector('.dropdown-menu').offsetHeight;
 
   let totalHeight = containerHeight + dropdownHeight;
-
   ipc.send('resize', totalHeight);
 }
 
-const resizeObserver = new ResizeObserver(resize, { box : 'border-box' })
-resizeObserver.observe(document.querySelector(".dropdown-menu"))
-resizeObserver.observe(document.querySelector(".container"))
+const resizeObserver = new ResizeObserver(resize, { box: 'border-box' });
+resizeObserver.observe(document.querySelector('.dropdown-menu'));
+resizeObserver.observe(document.querySelector('.container'));

@@ -10,29 +10,45 @@
     "buefy": "0.8",
     "bulma": "^0.7.2",
     "cron": "^1.6.0",
-    "electron-better-ipc": "^1.0.1",
     "electron-debug": "3",
     "electron-localshortcut": "^3.1.0",
-    "electron-store": "^5.1.1",
-    "electron-timber": "^0.5.1",
+    "electron-log": "^4.3.5",
+    "electron-store": "^8.0.0",
     "electron-updater": "^4.0.6",
     "form-data": "^2.3.3",
     "graphql-request": "^1.8.2",
+    "is-online": "^9.0.0",
     "lodash.debounce": "^4.0.8",
     "moment-timezone": "^0.5.25",
-    "vue": "^2.5.22"
+    "vue": "^2.5.22",
+    "webpack-cli": "^4.7.0"
   },
   "devDependencies": {
-    "electron": "8",
-    "electron-builder": "^22.6.0",
+    "@fortawesome/fontawesome-free": "^5.15.3",
+    "copy-webpack-plugin": "^8.1.1",
+    "css-loader": "^5.2.4",
+    "electron": "^12.0.6",
+    "electron-builder": "^22.11.1",
     "electron-builder-notarize": "^1.1.2",
     "electron-reloader": "^1.0.1",
+    "encoding": "^0.1.13",
     "eslint": "6",
     "eslint-config-prettier": "6",
     "eslint-plugin-prettier": "^3.0.1",
+    "file-loader": "^6.2.0",
+    "glob": "^7.1.7",
+    "html-webpack-plugin": "^5.3.1",
     "husky": "2",
     "lint-staged": "^8.0.4",
-    "prettier": "^1.15.3"
+    "mini-css-extract-plugin": "^1.6.0",
+    "node-loader": "^2.0.0",
+    "prettier": "^1.15.3",
+    "rimraf": "^3.0.2",
+    "sass": "^1.32.12",
+    "sass-loader": "^11.0.1",
+    "webpack": "^5.36.2",
+    "webpack-bundle-analyzer": "^4.4.1",
+    "webpack-dev-server": "^3.11.2"
   },
   "homepage": "https://github.com/marckohlbrugge/wip-menubar#readme",
   "husky": {
@@ -60,21 +76,26 @@
       "git add"
     ]
   },
-  "main": "src/app.js",
+  "main": "dist/electron-main.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/marckohlbrugge/wip-menubar.git"
   },
   "scripts": {
+    "main:release": "webpack --mode production --config ./webpack/main.cfg.js",
+    "render:release": "webpack --mode production --config ./webpack/renderer.cfg.js",
+    "render:start": "webpack serve --mode development --config ./webpack/renderer.cfg.js",
+    "build:release": "rimraf dist && yarn main:release && yarn render:release",
     "dist": "electron-builder -mwl",
     "dist-m": "electron-builder -m",
     "dist-w": "electron-builder -w",
     "dist-l": "electron-builder -l",
+    "dist-m-arm": "electron-builder -m --arm64",
     "pack": "electron-builder --dir",
     "format": "prettier --write './src/**/*.{js,html}'",
     "lint": "eslint .",
     "start": "node_modules/electron/dist/Electron.app/Contents/MacOS/Electron src/app.js",
-    "release": "electron-builder -mwl"
+    "release": "yarn build:release && yarn dist"
   },
   "build": {
     "directories": {
@@ -83,8 +104,10 @@
     "appId": "chat.wip.menubar",
     "productName": "WIP",
     "files": [
-      "src/",
+      "src/icons/**",
+      "dist/**/*",
       "resources/",
+      "!node_modules/**/*",
       "embedded.provisionprofile"
     ],
     "afterSign": "electron-builder-notarize",

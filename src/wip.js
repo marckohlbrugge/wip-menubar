@@ -1,5 +1,5 @@
 const { net } = require('electron');
-const logger = require('electron-timber');
+const logger = require('electron-log');
 const FormData = require('form-data');
 const fs = require('fs');
 const { GraphQLClient } = require('graphql-request');
@@ -37,9 +37,7 @@ function setClientId(value) {
 }
 
 function getOAuthURL() {
-  var base = devMode
-    ? 'http://wip.test:5000'
-    : 'https://wip.co';
+  var base = devMode ? 'http://wip.test:5000' : 'https://wip.co';
 
   return `${base}/oauth/authorize?client_id=${clientId}&response_type=code&redirect_uri=urn:ietf:wg:oauth:2.0:oob`;
 }
