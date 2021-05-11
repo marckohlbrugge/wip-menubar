@@ -20,9 +20,7 @@ const context = {
   store: {
     get: key => store.get(key),
   },
-  // TODO: Remove me and use webpack bundler
-  require,
 };
-contextBridge.exposeInMainWorld('context', context);
 
+contextBridge.exposeInMainWorld('context', context);
 module.exports = context;

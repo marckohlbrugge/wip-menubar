@@ -5,9 +5,6 @@ const {
   utils: { closeCurrent },
   electron: { ipcRenderer: ipc },
 } = preload;
-
-// TODO: Use webpack bundle for it
-const { require } = preload;
 const debounce = require('lodash.debounce');
 
 const Vue = require('vue/dist/vue.js');
