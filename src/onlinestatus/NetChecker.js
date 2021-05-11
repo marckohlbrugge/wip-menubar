@@ -13,7 +13,8 @@ class NetChecker extends EventEmitter {
     return NetChecker.self;
   }
 
-  // TODO: Move setStatus and setTimer to private methods in ts
+  // Private
+
   constructor() {
     super();
     this.status = undefined;
