@@ -1,9 +1,14 @@
+@import 'bulma/css/bulma.min.css';
+@import '@fortawesome/fontawesome-free/css/all.min.css';
+
 html {
   background: black;
   overflow: hidden; /* hide scrollbar if contents (slightly) too large */
 }
 
-a, button, input {
+a,
+button,
+input {
   -webkit-app-region: no-drag;
 }
 
@@ -22,7 +27,8 @@ p {
   margin-bottom: 1em;
 }
 
-a, a:visited {
+a,
+a:visited {
   color: white;
   text-decoration: underline;
   font-weight: bold;
@@ -64,6 +70,8 @@ i.fas.fa-key {
   background: #ccc;
 }
 
-input, input:active, input:focus {
+input,
+input:active,
+input:focus {
   border-width: 0 !important;
 }

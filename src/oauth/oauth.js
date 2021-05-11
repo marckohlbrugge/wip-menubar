@@ -1,5 +1,7 @@
-const { ipcRenderer, shell } = require('electron');
-const { getGlobal, closeCurrent } = require('../ipc/renderer');
+require('./oauth.css');
+const preload = window.context; // require('../preload)
+const { shell, ipcRenderer } = preload.electron;
+const { getGlobal, closeCurrent } = preload.utils;
 
 const oauth_button = document.getElementById('oauth');
 

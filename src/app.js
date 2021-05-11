@@ -13,11 +13,11 @@ const store = require('./store');
 const pjson = require('../package.json');
 const wip = require('./wip');
 const debug = require('electron-debug');
-const { ipcMain: ipc } = require('electron-better-ipc');
 const logger = require('electron-log');
 const { autoUpdater } = require('electron-updater');
 const moment = require('moment');
 const { NetChecker } = require('./onlinestatus/NetChecker');
+const urls = require('./urls');
 
 require('./ipc/main');
 
@@ -145,14 +145,12 @@ app.on('ready', () => {
       fullscreenable: false,
       alwaysOnTop: true,
       webPreferences: {
-        devTools: true,
-        nodeIntegration: true,
-
-        contextIsolation: false,
+        contextIsolation: true,
+        preload: urls.getPreload(),
       },
     });
 
-    composeWindow.loadURL(`file://${__dirname}/compose/compose.html`);
+    composeWindow.loadURL(urls.getPath('compose'));
 
     composeWindow.on('ready-to-show', () => {
       composeWindow.show();
@@ -210,12 +208,12 @@ app.on('ready', () => {
       alwaysOnTop: true,
       show: true,
       webPreferences: {
-        nodeIntegration: true,
-        contextIsolation: false,
+        contextIsolation: true,
+        preload: urls.getPreload(),
       },
     });
 
-    oauthWindow.loadURL(`file://${__dirname}/oauth/oauth.html`);
+    oauthWindow.loadURL(urls.getPath('oauth'));
 
     oauthWindow.on('ready-to-show', () => {
       oauthWindow.show();
@@ -243,15 +241,12 @@ app.on('ready', () => {
       fullscreenable: false,
       show: false,
       webPreferences: {
-        nodeIntegration: true,
-
-        contextIsolation: false,
+        contextIsolation: true,
+        preload: urls.getPreload(),
       },
     });
 
-    preferencesWindow.loadURL(
-      `file://${__dirname}/preferences/preferences.html`,
-    );
+    preferencesWindow.loadURL(urls.getPath('preferences'));
 
     preferencesWindow.on('ready-to-show', () => {
       preferencesWindow.show();
@@ -434,7 +429,7 @@ app.on('ready', () => {
     registerGlobalShortcut();
   }
 
-  ipc.answerRenderer('fetchPendingTodos', async filter => {
+  ipcMain.handle('fetchPendingTodos', async (evt, filter) => {
     return await wip.pendingTodos(filter);
   });
 
@@ -580,7 +575,7 @@ app.on('ready', () => {
     showOAuthWindow();
 
     // Close Preferences Window
-    preferencesWindow.close();
+    if (preferencesWindow) preferencesWindow.close();
   }
 
   const job = new CronJob({
