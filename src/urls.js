@@ -18,6 +18,13 @@ function getPath(page) {
   return `${basePath}/${page}.html`;
 }
 
+function getPreload() {
+  return isProduction
+    ? `${app.getAppPath()}/dist/electron-preload.js`
+    : `${__dirname}/preload.js`;
+}
+
 module.exports = {
   getPath,
+  getPreload,
 };

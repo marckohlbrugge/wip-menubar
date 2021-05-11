@@ -146,7 +146,7 @@ app.on('ready', () => {
       alwaysOnTop: true,
       webPreferences: {
         contextIsolation: true,
-        preload: `${__dirname}/preload.js`,
+        preload: urls.getPreload(),
       },
     });
 
@@ -209,7 +209,7 @@ app.on('ready', () => {
       show: true,
       webPreferences: {
         contextIsolation: true,
-        preload: `${__dirname}/preload.js`,
+        preload: urls.getPreload(),
       },
     });
 
@@ -242,7 +242,7 @@ app.on('ready', () => {
       show: false,
       webPreferences: {
         contextIsolation: true,
-        preload: `${__dirname}/preload.js`,
+        preload: urls.getPreload(),
       },
     });
 
