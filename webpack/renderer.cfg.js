@@ -37,7 +37,7 @@ module.exports = function(env, argv) {
 
   /** @type {import('webpack').Configuration} */
   const cfg = {
-    target: 'electron-renderer',
+    target: 'web',
     context: path.resolve(__dirname, '../src'),
     entry: {
       ...entries,
