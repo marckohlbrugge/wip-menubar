@@ -1313,13 +1313,6 @@ ejs@^3.1.6:
   dependencies:
     jake "^10.6.1"
 
-electron-better-ipc@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/electron-better-ipc/-/electron-better-ipc-1.0.1.tgz#ec5f397d44ce1225d826461ff93881912fe68490"
-  integrity sha512-4okAJoeY2+NXsPLYE+ccVn2NSDRCqMAAV1Kp5YzNRGki505p9nXuM6+d2QAlZ1OWyQxXmDm0B+eezjQL55uF/A==
-  dependencies:
-    serialize-error "^5.0.0"
-
 electron-builder-notarize@^1.1.2:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/electron-builder-notarize/-/electron-builder-notarize-1.2.0.tgz#6db86173601513bcb667074f80322f8622e24ff9"
