@@ -429,7 +429,7 @@ app.on('ready', () => {
     registerGlobalShortcut();
   }
 
-  ipcMain.handle('fetchPendingTodos', async (evt, filter) => {
+  ipcMain.handle('fetchPendingTodos', async (event, filter) => {
     return await wip.pendingTodos(filter);
   });
 

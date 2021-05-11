@@ -18,10 +18,10 @@ class NetChecker extends EventEmitter {
     super();
     this.status = undefined;
 
-    const setStatus = st => {
-      if (this.status === st) return;
+    const setStatus = status => {
+      if (this.status === status) return;
 
-      this.status = st;
+      this.status = status;
       this.emit(NetChecker.EVENTS.changed, this.status);
     };
 
