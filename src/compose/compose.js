@@ -1,6 +1,6 @@
 require('./compose.css');
 
-const preload = window.context; // require('./preload');
+const preload = window.context;
 const {
   utils: { closeCurrent },
   electron: { ipcRenderer: ipc },
@@ -208,5 +208,5 @@ function resize() {
 }
 
 const resizeObserver = new ResizeObserver(resize, { box: 'border-box' });
-// resizeObserver.observe(document.querySelector('.dropdown-menu'));
+resizeObserver.observe(document.querySelector('.dropdown-menu'));
 resizeObserver.observe(document.querySelector('.container'));

@@ -1,5 +1,5 @@
 require('./oauth.css');
-const preload = window.context; // require('../preload)
+const preload = window.context;
 const { shell, ipcRenderer } = preload.electron;
 const { getGlobal, closeCurrent } = preload.utils;
 
