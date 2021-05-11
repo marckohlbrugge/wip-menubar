@@ -1,6 +1,12 @@
+const preload = window.context; // require('./preload');
+const {
+  utils: { closeCurrent },
+  electron: { ipcRenderer: ipc },
+} = preload;
+
+// TODO: Use webpack bundle for it
+const { require } = preload;
 const debounce = require('lodash.debounce');
-const { ipcRenderer: ipc } = require('electron-better-ipc');
-const { closeCurrent } = require('../ipc/renderer');
 
 const todoBody = document.getElementById('todo-body');
 
@@ -175,7 +181,7 @@ const example = {
     getAsyncData: debounce(function() {
       (async () => {
         this.isFetching = true;
-        this.data = await ipc.callMain('fetchPendingTodos', this.name);
+        this.data = await ipc.invoke('fetchPendingTodos', this.name);
         document
           .querySelector('main')
           .classList.toggle('expanded', this.data.length);
