@@ -211,7 +211,8 @@ app.on('ready', () => {
       show: true,
       webPreferences: {
         nodeIntegration: true,
-        contextIsolation: false,
+        contextIsolation: true,
+        preload: `${__dirname}/preload.js`,
       },
     });
 
@@ -580,7 +581,7 @@ app.on('ready', () => {
     showOAuthWindow();
 
     // Close Preferences Window
-    preferencesWindow.close();
+    if (preferencesWindow) preferencesWindow.close();
   }
 
   const job = new CronJob({
