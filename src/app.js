@@ -144,7 +144,6 @@ app.on('ready', () => {
       fullscreenable: false,
       alwaysOnTop: true,
       webPreferences: {
-        nodeIntegration: true,
         contextIsolation: true,
         preload: `${__dirname}/preload.js`,
       },
@@ -208,7 +207,6 @@ app.on('ready', () => {
       alwaysOnTop: true,
       show: true,
       webPreferences: {
-        nodeIntegration: true,
         contextIsolation: true,
         preload: `${__dirname}/preload.js`,
       },
@@ -242,7 +240,6 @@ app.on('ready', () => {
       fullscreenable: false,
       show: false,
       webPreferences: {
-        nodeIntegration: true,
         contextIsolation: true,
         preload: `${__dirname}/preload.js`,
       },
