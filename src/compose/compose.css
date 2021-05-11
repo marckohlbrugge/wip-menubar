@@ -1,4 +1,8 @@
-html, body {
+@import 'bulma/css/bulma.min.css';
+@import 'buefy/dist/buefy.min.css';
+
+html,
+body {
   background: black;
 }
 
@@ -25,7 +29,7 @@ main.expanded {
   right: 0;
   z-index: 10;
   bottom: 0;
-  background-color: rgba(0,0,0,0.9);
+  background-color: rgba(0, 0, 0, 0.9);
   color: white;
   pointer-events: none;
   display: flex;
@@ -34,7 +38,7 @@ main.expanded {
 }
 .drag div {
   margin: 0.3em;
-  color: #999,
+  color: #999;
   width: 100%;
   text-align: center;
   border-radius: 0.3rem;
@@ -80,7 +84,7 @@ main.expanded {
 }
 
 .autocomplete .dropdown-item.is-hovered {
-  background-color: #F8D730;
+  background-color: #f8d730;
   color: black;
 }
 
@@ -127,7 +131,8 @@ a.dropdown-item:hover {
   color: white;
 }
 
-.close:before, .close:after {
+.close:before,
+.close:after {
   position: absolute;
   content: ' ';
   height: 0.8em;
@@ -150,14 +155,14 @@ a.dropdown-item:hover {
 }
 
 .todo__focus {
-  margin-right: .2rem
+  margin-right: 0.2rem;
 }
 
-
-i.custom.done, i.custom.todo {
+i.custom.done,
+i.custom.todo {
   font-size: 1.6em;
-  line-height: .75em;
-  vertical-align: -.0667em;
+  line-height: 0.75em;
+  vertical-align: -0.0667em;
   height: 1em;
   width: 1em;
   display: block;
@@ -169,7 +174,7 @@ i.custom.done, i.custom.todo {
 
 i.custom.done {
   -webkit-mask-image: url(./done.svg);
-  background: #F8D730;
+  background: #f8d730;
 }
 
 i.custom.todo {

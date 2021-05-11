@@ -51,10 +51,13 @@ WIP's menu bar icon is updated depending on your current streak status:
 
 
 ## Development
-
-- `yarn start` to run the app.
+- `yarn render:start` to start the development renderer server.
+- `yarn render:release` to build release renderer bundle.
+- `yarn main:release` to build release main and preload bundles.
+- `yarn build:release` to prepare app for packaging.
+- `yarn start` to start the development main process.
 - `yarn dist` to build apps for distribution.
-- `APPLE_ID=foobar@example.com APPLE_ID_PASSWORD=foo-bar yarn dist` to build apps for distribution.
+- `APPLE_ID=foobar@example.com APPLE_ID_PASSWORD=foo-bar yarn release` to build apps for distribution.
 
 ## Credits
 
