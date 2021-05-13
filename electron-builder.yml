@@ -14,7 +14,6 @@ files:
 
 afterSign: electron-builder-notarize
 
-
 publish:
   provider: github
   repo: wip-menubar
@@ -23,14 +22,16 @@ publish:
 
 mac:
   target:
-  - mas
-  - dmg
-  - zip
+    - target: default
+      arch: universal
+    - target: mas
+      arch: universal
   category: public.app-category.productivity
   entitlements: build/entitlements.mac.plist
   icon: resources/app.icns
   darkModeSupport: true
   hardenedRuntime: true
+  gatekeeperAssess: true
   extendInfo:
     LSUIElement: 1
     CFBundleURLSchemes:
@@ -38,6 +39,9 @@ mac:
     CFBundleURLName: chat.wip.menubar
 
 mas:
+  target:
+    target: default
+    arch: universal
   type: distribution
   category: public.app-category.productivity
   entitlements: build/entitlements.mas.plist
@@ -50,7 +54,10 @@ mas:
     LSUIElement: 1
 
 linux:
+  target:
+  - AppImage
   executableName: wip
+  artifactName: ${productName}-${version}.${ext}
   category: Productivity
   publish:
   - github
