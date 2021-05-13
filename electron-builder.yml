@@ -1,0 +1,56 @@
+directories:
+  output: release
+
+appId: chat.wip.menubar
+
+productName: WIP
+
+files:
+- src/icons/**
+- dist/**/*
+- resources/
+- "!node_modules/**/*"
+- embedded.provisionprofile
+
+afterSign: electron-builder-notarize
+
+
+publish:
+  provider: github
+  repo: wip-menubar
+  owner: marckohlbrugge
+  vPrefixedTagName: true
+
+mac:
+  target:
+  - mas
+  - dmg
+  - zip
+  category: public.app-category.productivity
+  entitlements: build/entitlements.mac.plist
+  icon: resources/app.icns
+  darkModeSupport: true
+  hardenedRuntime: true
+  extendInfo:
+    LSUIElement: 1
+    CFBundleURLSchemes:
+    - wip
+    CFBundleURLName: chat.wip.menubar
+
+mas:
+  type: distribution
+  category: public.app-category.productivity
+  entitlements: build/entitlements.mas.plist
+  entitlementsInherit: build/entitlements.mas.inherit.plist
+  provisioningProfile: embedded.provisionprofile
+  icon: resource/app.icns
+  darkModeSupport: true
+  hardenedRuntime: false
+  extendInfo:
+    LSUIElement: 1
+
+linux:
+  executableName: wip
+  category: Productivity
+  publish:
+  - github
