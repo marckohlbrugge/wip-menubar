@@ -25,7 +25,6 @@
         @dragenter.native="setDragging(true)"
         @dragleave.native="setDragging(false)"
         @paste.native="paste"
-        @select="select"
         :icon-clickable="true"
         @icon-click="iconClick"
       >
@@ -61,7 +60,6 @@ export default {
     return {
       data: [],
       name: '',
-      selected: null,
       isFetching: false,
       isDragging: false,
       icon: DEFAULT_STATE.icon,
@@ -156,9 +154,6 @@ export default {
     },
     addAttachment: function (file, file_name = null) {
       this.$refs.attachments.addAttachment(file, file_name);
-    },
-    select: function (option) {
-      this.selected = option;
     },
     submitForm: function () {
       this.$refs.todoBody.disabled = true;
