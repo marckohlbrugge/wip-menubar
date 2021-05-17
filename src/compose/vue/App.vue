@@ -8,6 +8,7 @@
       <attachments ref="attachments" />
 
       <b-autocomplete
+        id="todo-body"
         ref="todoBody"
         v-model="name"
         :data="data"
