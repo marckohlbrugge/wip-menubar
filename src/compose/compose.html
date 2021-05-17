@@ -6,55 +6,6 @@
   </head>
 
   <body>
-    <main>
-      <div id="app" class="container">
-        <!-- Drag Overlay -->
-        <div class="drag" v-show="isDragging">
-          <div>Drop here to attach…</div>
-        </div>
-
-        <ul class="attachments">
-          <li
-            v-for="(attachment, index) in attachments"
-            class="attachment"
-            @click="removeAttachment(index)"
-          >
-            <div>{{ attachment.file.name }}</div>
-            <!-- <img v-bind:src="attachment.base64" height="50" width="50" /> -->
-            <div class="close"></div>
-          </li>
-        </ul>
-
-        <b-autocomplete
-          id="todo-body"
-          v-model="name"
-          :data="data"
-          :loading="isFetching"
-          field="body"
-          size="is-large"
-          autofocus="true"
-          :icon="icon"
-          icon-pack="custom"
-          :placeholder="placeholder"
-          dropdown-position="bottom"
-          @keyup.native="keydown"
-          @keydown.native.enter="submitForm"
-          @drop.native="drop"
-          @dragenter.native="dragenter"
-          @dragleave.native="dragleave"
-          @paste.native="paste"
-          @select="select"
-          :icon-clickable="true"
-          @icon-click="iconClick"
-        >
-          <template slot-scope="props">
-            <div class="todo">
-              <div class="todo__id">{{ props.option.id }}</div>
-              <div class="todo__body">{{ props.option.body }}</div>
-            </div>
-          </template>
-        </b-autocomplete>
-      </div>
-    </main>
+    <div id="app"></div>
   </body>
 </html>
