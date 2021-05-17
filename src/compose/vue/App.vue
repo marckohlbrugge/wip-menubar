@@ -13,7 +13,8 @@
         v-model="name"
         :data="data"
         :loading="isFetching"
-        field="body"
+        field="id"
+        :custom-formatter="formatInput"
         size="is-large"
         autofocus="true"
         :icon="icon"
@@ -26,13 +27,16 @@
         @dragenter.native="setDragging(true)"
         @dragleave.native="setDragging(false)"
         @paste.native="paste"
+        @select="select"
         :icon-clickable="true"
         @icon-click="iconClick"
       >
         <template slot-scope="props">
           <div class="todo">
             <div class="todo__id">{{ props.option.id }}</div>
-            <div class="todo__body">{{ props.option.body }}</div>
+            <div class="todo__body">
+              {{ props.option.body + ' .. ' + props.option.name }}
+            </div>
           </div>
         </template>
       </b-autocomplete>
@@ -53,14 +57,59 @@ const {
   DEFAULT_STATE,
 } = require('./helpers');
 
+const MODE = {
+  Todo: 0,
+  Hashtag: 1,
+};
+
+function isHashtag(input) {
+  const cursor = input.selectionStart;
+  const value = input.value;
+
+  const hash = value.lastIndexOf('#', cursor);
+  if (hash === -1) return;
+
+  const content = value.substr(hash, cursor - hash);
+  const isHashtag = /^(#\w+)$/i.test(content);
+  return isHashtag;
+
+  // if (!isHashtag) return;
+  const entries = value.substr(hash).match(/^#(\w+)/i);
+  console.log('Hashtag', content, entries[0]);
+}
+
+const mockHash = [
+  {
+    id: '15',
+    name: 'WIP',
+    hashtag: 'wip',
+    url: 'https://wip.co/products/wip',
+  },
+  {
+    id: '2303',
+    name: 'WIP Menubar',
+    hashtag: 'menubar',
+    url: 'https://wip.co/products/wipmenubar',
+  },
+  {
+    id: '181',
+    name: 'Startup Jobs',
+    hashtag: 'startupjobs',
+    url: 'https://wip.co/products/startupjobs',
+  },
+];
+
 export default {
   components: {
     Attachments,
   },
   data: function () {
     return {
-      data: [],
+      todos: [],
+      hashtags: mockHash,
       name: '',
+      selected: null,
+      mode: MODE.Todo,
       isFetching: false,
       isDragging: false,
       icon: DEFAULT_STATE.icon,
@@ -68,7 +117,19 @@ export default {
       state: DEFAULT_STATE_ENUM,
     };
   },
+  computed: {
+    inputField: function () {
+      return this.$refs.todoBody.$refs.input.$refs.input;
+    },
+    data: function () {
+      return this.mode === MODE.Todo ? this.todos : this.hashtags;
+    },
+  },
   methods: {
+    formatInput: function (option) {
+      if (this.mode === MODE.Todo) return option.body;
+      return this.name + ' ' + option.body;
+    },
     paste: function (event) {
       let clipboard_items = event.clipboardData.items;
 
@@ -109,10 +170,13 @@ export default {
     },
 
     keydown: function (event) {
+      this.mode = isHashtag(this.inputField) ? MODE.Hashtag : MODE.Todo;
+      if (this.mode === MODE.Hashtag) return;
+
       if (
         event.keyCode == KEY_CODES.arrows.down &&
         !this.isFetching &&
-        this.data.length == 0
+        this.todos.length == 0
       ) {
         this.setState(STATE_ENUM.Done);
         this.getAsyncData();
@@ -156,8 +220,13 @@ export default {
     addAttachment: function (file, file_name = null) {
       this.$refs.attachments.addAttachment(file, file_name);
     },
+    select: function (option) {
+      this.selected = option;
+    },
     submitForm: function () {
-      this.$refs.todoBody.disabled = true;
+      if (this.mode === MODE.Hashtag) return;
+
+      this.inputField.disabled = true;
       const attachments = this.$refs.attachments.getAttachments();
 
       if (this.selected) {
@@ -170,8 +239,8 @@ export default {
     getAsyncData: debounce(function () {
       (async () => {
         this.isFetching = true;
-        this.data = await ipc.invoke('fetchPendingTodos', this.name);
-        this.$refs.main.classList.toggle('expanded', this.data.length);
+        this.todos = await ipc.invoke('fetchPendingTodos', this.name);
+        this.$refs.main.classList.toggle('expanded', this.todos.length);
         this.isFetching = false;
       })();
     }, 500),

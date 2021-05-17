@@ -58,6 +58,7 @@ function viewer(options = {}) {
           products {
             name
             url
+            hashtag
           }
         }
       }
