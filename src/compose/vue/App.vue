@@ -121,7 +121,8 @@ export default {
       return (
         this.name.substr(0, hash) +
         option.hashtag +
-        this.name.substr(hash + this.selectedHashtag.length)
+        this.name.substr(hash + this.selectedHashtag.length) +
+        ' '
       );
     },
     paste: function (event) {
