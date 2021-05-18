@@ -123,7 +123,6 @@ export default {
         option.hashtag +
         this.name.substr(hash + this.selectedHashtag.length)
       );
-      return `${clean}${option.hashtag} `;
     },
     paste: function (event) {
       let clipboard_items = event.clipboardData.items;
