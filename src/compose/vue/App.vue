@@ -35,7 +35,7 @@
           <div class="todo">
             <div class="todo__id">{{ props.option.id }}</div>
             <div class="todo__body">
-              {{ props.option.body + ' .. ' + props.option.name }}
+              {{ props.option.body ? props.option.body : props.option.name }}
             </div>
           </div>
         </template>
@@ -62,7 +62,7 @@ const MODE = {
   Hashtag: 1,
 };
 
-function isHashtag(input) {
+function getHashtag(input) {
   const cursor = input.selectionStart;
   const value = input.value;
 
@@ -70,34 +70,12 @@ function isHashtag(input) {
   if (hash === -1) return;
 
   const content = value.substr(hash, cursor - hash);
-  const isHashtag = /^(#\w+)$/i.test(content);
-  return isHashtag;
+  const isHashtag = /^(#\w*)$/i.test(content);
+  if (!isHashtag) return;
 
-  // if (!isHashtag) return;
-  const entries = value.substr(hash).match(/^#(\w+)/i);
-  console.log('Hashtag', content, entries[0]);
+  const entries = value.substr(hash).match(/^#(\w*)/i);
+  return entries[1].toLowerCase();
 }
-
-const mockHash = [
-  {
-    id: '15',
-    name: 'WIP',
-    hashtag: 'wip',
-    url: 'https://wip.co/products/wip',
-  },
-  {
-    id: '2303',
-    name: 'WIP Menubar',
-    hashtag: 'menubar',
-    url: 'https://wip.co/products/wipmenubar',
-  },
-  {
-    id: '181',
-    name: 'Startup Jobs',
-    hashtag: 'startupjobs',
-    url: 'https://wip.co/products/startupjobs',
-  },
-];
 
 export default {
   components: {
@@ -106,7 +84,8 @@ export default {
   data: function () {
     return {
       todos: [],
-      hashtags: mockHash,
+      hashtags: [],
+      selectedHashtag: '',
       name: '',
       selected: null,
       mode: MODE.Todo,
@@ -122,13 +101,29 @@ export default {
       return this.$refs.todoBody.$refs.input.$refs.input;
     },
     data: function () {
-      return this.mode === MODE.Todo ? this.todos : this.hashtags;
+      return this.mode === MODE.Todo ? this.todos : this.filterHashtags;
+    },
+    filterHashtags: function () {
+      if (this.mode === MODE.Todo) return;
+      if (this.selectedHashtag === '') return this.hashtags;
+      return this.hashtags.filter((el) => {
+        return el.name.toLowerCase().includes(this.selectedHashtag);
+      });
     },
   },
   methods: {
     formatInput: function (option) {
       if (this.mode === MODE.Todo) return option.body;
-      return this.name + ' ' + option.body;
+      const hash = this.name.lastIndexOf(
+        this.selectedHashtag,
+        this.inputField.selectionStart,
+      );
+      return (
+        this.name.substr(0, hash) +
+        option.hashtag +
+        this.name.substr(hash + this.selectedHashtag.length)
+      );
+      return `${clean}${option.hashtag} `;
     },
     paste: function (event) {
       let clipboard_items = event.clipboardData.items;
@@ -170,8 +165,7 @@ export default {
     },
 
     keydown: function (event) {
-      this.mode = isHashtag(this.inputField) ? MODE.Hashtag : MODE.Todo;
-      if (this.mode === MODE.Hashtag) return;
+      if (this.isHashtag()) return;
 
       if (
         event.keyCode == KEY_CODES.arrows.down &&
@@ -236,6 +230,11 @@ export default {
         ipc.send('createTodo', this.name, attachments, completed);
       }
     },
+    isHashtag() {
+      this.selectedHashtag = getHashtag(this.inputField);
+      this.mode = this.selectedHashtag === undefined ? MODE.Todo : MODE.Hashtag;
+      return this.mode === MODE.Hashtag;
+    },
     getAsyncData: debounce(function () {
       (async () => {
         this.isFetching = true;
@@ -244,6 +243,29 @@ export default {
         this.isFetching = false;
       })();
     }, 500),
+    getHashtags: function () {
+      // return store.get('viewer.products');
+      this.hashtags = [
+        {
+          id: '15',
+          name: 'WIP',
+          hashtag: 'wip',
+        },
+        {
+          id: '2303',
+          name: 'WIP Menubar',
+          hashtag: 'menubar',
+        },
+        {
+          id: '181',
+          name: 'Startup Jobs',
+          hashtag: 'startupjobs',
+        },
+      ];
+    },
+  },
+  created: function () {
+    this.getHashtags();
   },
 };
 </script>
