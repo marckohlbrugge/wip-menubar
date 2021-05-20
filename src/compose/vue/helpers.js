@@ -1,4 +1,4 @@
-const KEY_CODES = {
+const KeyCodes = {
   enter: 13,
   arrows: {
     left: 37,
@@ -8,34 +8,42 @@ const KEY_CODES = {
   },
 };
 
-const STATE_ENUM = {
+const TodoState = {
   Done: 0,
   Todo: 1,
   Help: 2,
 };
 
-const STATE_DATA = {
-  [STATE_ENUM.Done]: {
+const TodoDesc = {
+  [TodoState.Done]: {
     placeholder: 'Press return to complete todo…',
     icon: 'done',
   },
-  [STATE_ENUM.Todo]: {
+  [TodoState.Todo]: {
     placeholder: 'Press return to add pending todo…',
     icon: 'todo',
   },
-  [STATE_ENUM.Help]: {
+  [TodoState.Help]: {
     placeholder: null,
     icon: 'life-ring',
   },
 };
 
-const DEFAULT_STATE_ENUM = STATE_ENUM.Done;
-const DEFAULT_STATE = STATE_DATA[DEFAULT_STATE_ENUM];
+const Mode = {
+  Todo: 0,
+  Hashtag: 1,
+};
+
+const DEFAULT_TODO_STATE = TodoState.Done;
+const DEFAULT_TODO_DATA = TodoDesc[DEFAULT_TODO_STATE];
+const DEFAULT_MODE = Mode.Todo;
 
 module.exports = {
-  KEY_CODES,
-  STATE_ENUM,
-  STATE_DATA,
-  DEFAULT_STATE_ENUM,
-  DEFAULT_STATE,
+  KeyCodes,
+  TodoState,
+  TodoDesc,
+  Mode,
+  DEFAULT_TODO_STATE,
+  DEFAULT_TODO_DATA,
+  DEFAULT_MODE,
 };

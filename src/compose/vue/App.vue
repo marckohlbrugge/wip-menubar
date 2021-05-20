@@ -57,17 +57,14 @@ const { ipcRenderer: ipc } = window.context.electron;
 const { fetchHashtags } = window.context.utils;
 
 const {
-  KEY_CODES,
-  STATE_ENUM,
-  DEFAULT_STATE_ENUM,
-  STATE_DATA,
-  DEFAULT_STATE,
+  KeyCodes,
+  TodoState,
+  TodoDesc,
+  Mode,
+  DEFAULT_TODO_STATE,
+  DEFAULT_TODO_DATA,
+  DEFAULT_MODE,
 } = require('./helpers');
-
-const MODE = {
-  Todo: 0,
-  Hashtag: 1,
-};
 
 function getHashtag(input) {
   const cursor = input.selectionStart;
@@ -95,12 +92,12 @@ export default {
       selectedHashtag: '',
       name: '',
       selected: null,
-      mode: MODE.Todo,
+      mode: DEFAULT_MODE,
       isFetching: false,
       isDragging: false,
-      icon: DEFAULT_STATE.icon,
-      placeholder: DEFAULT_STATE.placeholder,
-      state: DEFAULT_STATE_ENUM,
+      icon: DEFAULT_TODO_DATA.icon,
+      placeholder: DEFAULT_TODO_DATA.placeholder,
+      state: DEFAULT_TODO_STATE,
     };
   },
   computed: {
@@ -108,7 +105,7 @@ export default {
       return this.$refs.todoBody.$refs.input.$refs.input;
     },
     data: function () {
-      return this.mode === MODE.Todo ? this.todos : this.filterHashtags;
+      return this.mode === Mode.Todo ? this.todos : this.filterHashtags;
     },
     groupData: function () {
       const data = [];
@@ -123,7 +120,7 @@ export default {
       return data;
     },
     filterHashtags: function () {
-      if (this.mode === MODE.Todo) return [];
+      if (this.mode === Mode.Todo) return [];
       if (this.selectedHashtag === '') return this.hashtags;
       return this.hashtags.filter((el) => {
         return el.hashtag.toLowerCase().includes(this.selectedHashtag);
@@ -132,7 +129,7 @@ export default {
   },
   methods: {
     formatInput: function (option) {
-      if (this.mode === MODE.Todo || option.body) return option.body;
+      if (this.mode === Mode.Todo || option.body) return option.body;
       const hash = this.name.lastIndexOf(
         this.selectedHashtag,
         this.inputField.selectionStart,
@@ -172,7 +169,7 @@ export default {
     },
 
     setState(value) {
-      const state = STATE_DATA[String(value)];
+      const state = TodoDesc[String(value)];
       if (!state) {
         alert(`Incorrect state: ${value}`);
         return;
@@ -184,50 +181,50 @@ export default {
     },
 
     keydown: function (event) {
-      this.isHashtag();
+      this.captureHashtag();
 
       if (
-        event.keyCode == KEY_CODES.arrows.down &&
+        event.keyCode == KeyCodes.arrows.down &&
         !this.isFetching &&
         this.todos.length == 0
       ) {
-        this.setState(STATE_ENUM.Done);
+        this.setState(TodoState.Done);
         this.getAsyncData();
         return;
       }
 
-      const codes = [KEY_CODES.arrows.up, KEY_CODES.arrows.down];
+      const codes = [KeyCodes.arrows.up, KeyCodes.arrows.down];
       if (codes.includes(event.keyCode)) {
-        this.setState(STATE_ENUM.Done);
+        this.setState(TodoState.Done);
         return;
       }
 
       if (!this.name.length) return;
-      if (Object.values(KEY_CODES.arrows).includes(event.keyCode)) return;
+      if (Object.values(KeyCodes.arrows).includes(event.keyCode)) return;
 
       if (this.name.match(/^\/todo\b/i)) {
-        this.setState(STATE_ENUM.Todo);
+        this.setState(TodoState.Todo);
       } else if (this.name.match(/^\/help\b/i)) {
-        this.setState(STATE_ENUM.Help);
+        this.setState(TodoState.Help);
       } else if (this.name.match(/^\/done\b/i)) {
-        this.setState(STATE_ENUM.Done);
+        this.setState(TodoState.Done);
       }
 
-      if (this.state == STATE_ENUM.Done) {
+      if (this.state == TodoState.Done) {
         this.getAsyncData();
       }
 
       return true;
     },
     iconClick: function () {
-      if (this.state == STATE_ENUM.Todo) {
+      if (this.state == TodoState.Todo) {
         this.name = this.name.replace(/^\/todo ?/, '');
-        this.setState(STATE_ENUM.Done);
-      } else if (this.state == STATE_ENUM.Done) {
+        this.setState(TodoState.Done);
+      } else if (this.state == TodoState.Done) {
         this.name = this.name.replace(/^\/done ?/, '');
-        this.setState(STATE_ENUM.Todo);
-      } else if (this.state == STATE_ENUM.Help) {
-        this.setState(STATE_ENUM.Done);
+        this.setState(TodoState.Todo);
+      } else if (this.state == TodoState.Help) {
+        this.setState(TodoState.Done);
       }
     },
     addAttachment: function (file, file_name = null) {
@@ -237,7 +234,7 @@ export default {
       this.selected = option;
     },
     submitForm: function () {
-      if (this.mode === MODE.Hashtag) return;
+      if (this.mode === Mode.Hashtag) return;
 
       this.inputField.disabled = true;
       const attachments = this.$refs.attachments.getAttachments();
@@ -245,14 +242,14 @@ export default {
       if (this.selected) {
         ipc.send('completeTodo', this.selected.id, attachments);
       } else {
-        let completed = this.state == STATE_ENUM.Done;
+        let completed = this.state == TodoState.Done;
         ipc.send('createTodo', this.name, attachments, completed);
       }
     },
-    isHashtag() {
+    captureHashtag() {
       this.selectedHashtag = getHashtag(this.inputField);
-      this.mode = this.selectedHashtag === undefined ? MODE.Todo : MODE.Hashtag;
-      return this.mode === MODE.Hashtag;
+      this.mode = this.selectedHashtag === undefined ? Mode.Todo : Mode.Hashtag;
+      return this.mode === Mode.Hashtag;
     },
     getAsyncData: debounce(function () {
       (async () => {
