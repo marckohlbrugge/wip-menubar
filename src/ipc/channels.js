@@ -1,5 +1,5 @@
 exports.Channels = {
-  GET_GLOBAL: 'app/get-global',
-  WND_CLOSE: 'app/wnd/close',
-  FETCH_HASHTAGS: 'app/fetch/hashtags',
+  GetGlobal: 'app/get-global',
+  WndClose: 'app/wnd/close',
+  FetchHashtags: 'app/fetch/hashtags',
 };
