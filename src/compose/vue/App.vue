@@ -35,7 +35,7 @@
           <div class="todo">
             <div class="todo__id">{{ props.option.id }}</div>
             <div class="todo__body">
-              {{ props.option.body ? props.option.body : props.option.name }}
+              {{ props.option.body ? props.option.body : props.option.hashtag }}
             </div>
           </div>
         </template>
@@ -48,6 +48,7 @@
 const debounce = require('lodash.debounce');
 const Attachments = require('./Attachments').default;
 const { ipcRenderer: ipc } = window.context.electron;
+const { fetchHashtags } = window.context.utils;
 
 const {
   KEY_CODES,
@@ -107,7 +108,7 @@ export default {
       if (this.mode === MODE.Todo) return;
       if (this.selectedHashtag === '') return this.hashtags;
       return this.hashtags.filter((el) => {
-        return el.name.toLowerCase().includes(this.selectedHashtag);
+        return el.hashtag.toLowerCase().includes(this.selectedHashtag);
       });
     },
   },
@@ -243,25 +244,8 @@ export default {
         this.isFetching = false;
       })();
     }, 500),
-    getHashtags: function () {
-      // return store.get('viewer.products');
-      this.hashtags = [
-        {
-          id: '15',
-          name: 'WIP',
-          hashtag: 'wip',
-        },
-        {
-          id: '2303',
-          name: 'WIP Menubar',
-          hashtag: 'menubar',
-        },
-        {
-          id: '181',
-          name: 'Startup Jobs',
-          hashtag: 'startupjobs',
-        },
-      ];
+    getHashtags: async function () {
+      this.hashtags = await fetchHashtags();
     },
   },
   created: function () {
