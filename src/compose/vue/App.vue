@@ -112,12 +112,12 @@ export default {
     },
     groupData: function () {
       const data = [];
-      if (this.todos.length > 0) {
-        data.push({ type: 'Todo', data: this.todos });
+      if (this.filterHashtags.length > 0) {
+        data.push({ type: 'Products', data: this.filterHashtags });
       }
 
-      if (this.filterHashtags.length > 0) {
-        data.push({ type: 'Hashtags', data: this.filterHashtags });
+      if (this.todos.length > 0) {
+        data.push({ type: 'Pending Todos', data: this.todos });
       }
 
       return data;
