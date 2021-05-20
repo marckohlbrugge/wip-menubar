@@ -1,6 +1,6 @@
 const { ipcRenderer, shell, contextBridge } = require('electron');
 const store = require('./store');
-const { closeCurrent, getGlobal } = require('./ipc/renderer');
+const utils = require('./ipc/renderer');
 
 const context = {
   electron: {
@@ -13,12 +13,9 @@ const context = {
       },
     },
   },
-  utils: {
-    closeCurrent,
-    getGlobal,
-  },
+  utils,
   store: {
-    get: key => store.get(key),
+    get: (key) => store.get(key),
   },
 };
 

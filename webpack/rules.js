@@ -12,6 +12,11 @@
     },
   };
 
+  const vue = {
+    test: /\.vue$/,
+    loader: 'vue-loader',
+  };
+
   const typescript = {
     test: /\.ts$/,
     loader: 'ts-loader',
@@ -30,7 +35,7 @@
     ],
   };
 
-  const css = (function() {
+  const css = (function () {
     return {
       test: /\.(sa|sc|c)ss$/,
       use: [
@@ -52,5 +57,6 @@
     pug,
     typescript,
     node,
+    vue,
   };
 }
