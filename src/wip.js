@@ -56,8 +56,10 @@ function viewer(options = {}) {
           streaking
           time_zone
           products {
+            id
             name
             url
+            hashtag
           }
         }
       }
@@ -110,7 +112,7 @@ function uploadFile(presigned_url, file) {
       });
     }
 
-    form.submit(presigned_url.url, function(error, response) {
+    form.submit(presigned_url.url, function (error, response) {
       response.resume();
 
       if (error) reject(error);
@@ -266,14 +268,14 @@ function getAccessToken(code) {
     request.setHeader('Content-Type', 'application/x-www-form-urlencoded');
     let body = '';
 
-    request.on('response', response => {
+    request.on('response', (response) => {
       if (response.statusCode !== 200) {
         console.warn('Rejected with status code ' + response.statusCode);
         console.warn(response);
         return reject(response);
       }
 
-      response.on('data', chunk => {
+      response.on('data', (chunk) => {
         body += chunk.toString();
       });
 

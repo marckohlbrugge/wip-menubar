@@ -181,3 +181,15 @@ i.custom.todo {
   -webkit-mask-image: url(./todo.svg);
   background: #333;
 }
+
+.has-text-weight-bold {
+  display: none
+}
+
+div.dropdown-item {
+  padding: 0
+}
+
+div.dropdown-item ~ div.dropdown-item {
+  border-top: 1px #222 solid
+}
