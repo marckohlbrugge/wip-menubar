@@ -11,9 +11,11 @@
         id="todo-body"
         ref="todoBody"
         v-model="name"
-        :data="data"
         :loading="isFetching"
         field="id"
+        :data="groupData"
+        group-field="type"
+        group-options="data"
         :custom-formatter="formatInput"
         size="is-large"
         autofocus="true"
@@ -35,7 +37,11 @@
           <div class="todo">
             <div class="todo__id">{{ props.option.id }}</div>
             <div class="todo__body">
-              {{ props.option.body ? props.option.body : props.option.hashtag }}
+              {{
+                props.option.body
+                  ? props.option.body
+                  : '#' + props.option.hashtag
+              }}
             </div>
           </div>
         </template>
@@ -104,8 +110,20 @@ export default {
     data: function () {
       return this.mode === MODE.Todo ? this.todos : this.filterHashtags;
     },
+    groupData: function () {
+      const data = [];
+      if (this.todos.length > 0) {
+        data.push({ type: 'Todo', data: this.todos });
+      }
+
+      if (this.filterHashtags.length > 0) {
+        data.push({ type: 'Hashtags', data: this.filterHashtags });
+      }
+
+      return data;
+    },
     filterHashtags: function () {
-      if (this.mode === MODE.Todo) return;
+      if (this.mode === MODE.Todo) return [];
       if (this.selectedHashtag === '') return this.hashtags;
       return this.hashtags.filter((el) => {
         return el.hashtag.toLowerCase().includes(this.selectedHashtag);
@@ -114,7 +132,7 @@ export default {
   },
   methods: {
     formatInput: function (option) {
-      if (this.mode === MODE.Todo) return option.body;
+      if (this.mode === MODE.Todo || option.body) return option.body;
       const hash = this.name.lastIndexOf(
         this.selectedHashtag,
         this.inputField.selectionStart,
@@ -166,7 +184,7 @@ export default {
     },
 
     keydown: function (event) {
-      if (this.isHashtag()) return;
+      this.isHashtag();
 
       if (
         event.keyCode == KEY_CODES.arrows.down &&
