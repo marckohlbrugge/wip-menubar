@@ -89,7 +89,7 @@
     "main:release": "webpack --mode production --config ./webpack/main.cfg.js",
     "render:release": "webpack --mode production --config ./webpack/renderer.cfg.js",
     "render:start": "webpack serve --mode development --config ./webpack/renderer.cfg.js",
-    "build:release": "rimraf dist && mkdir -p release/__appImage-x64 release/__appImage-arm64 && yarn main:release && yarn render:release",
+    "build:release": "rimraf dist && yarn main:release && yarn render:release",
     "dist": "electron-builder -mwl",
     "dist-m": "electron-builder -m",
     "dist-w": "electron-builder -w",
@@ -98,6 +98,6 @@
     "format": "prettier --write './src/**/*.{js,html}'",
     "lint": "eslint .",
     "start": "node_modules/electron/dist/Electron.app/Contents/MacOS/Electron src/app.js",
-    "release": "mkdir -p release/__appImage-x64 release/__appImage-arm64 && yarn build:release && electron-builder -mwl"
+    "release": "yarn build:release && electron-builder -mwl"
   }
 }
