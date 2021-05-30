@@ -137,8 +137,7 @@ export default {
       return (
         this.name.substr(0, hash) +
         option.hashtag +
-        this.name.substr(hash + this.selectedHashtag.length) +
-        ' '
+        this.name.substr(hash + this.selectedHashtag.length)
       );
     },
     paste: function (event) {
@@ -234,7 +233,12 @@ export default {
       this.selected = option;
     },
     submitForm: function () {
-      if (this.mode === Mode.Hashtag) return;
+      if (this.mode === Mode.Hashtag) {
+        const isLastHashtag = /.*#\w+\s*$/i.test(this.name);
+        if (!isLastHashtag) return;
+        if (!this.hashtags.find((e) => e.hashtag === this.selectedHashtag))
+          return;
+      }
 
       this.inputField.disabled = true;
       const attachments = this.$refs.attachments.getAttachments();
