@@ -122,9 +122,12 @@ export default {
     filterHashtags: function () {
       if (this.mode === Mode.Todo) return [];
       if (this.selectedHashtag === '') return this.hashtags;
-      return this.hashtags.filter((el) => {
+      const items = this.hashtags.filter((el) => {
         return el.hashtag.toLowerCase().includes(this.selectedHashtag);
       });
+      if (items.length === 0 || items.length > 1) return items;
+      if (items[0].hashtag === this.selectedHashtag) return [];
+      return items;
     },
   },
   methods: {
