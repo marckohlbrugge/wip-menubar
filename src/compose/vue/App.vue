@@ -122,9 +122,12 @@ export default {
     filterHashtags: function () {
       if (this.mode === Mode.Todo) return [];
       if (this.selectedHashtag === '') return this.hashtags;
-      return this.hashtags.filter((el) => {
+      const items = this.hashtags.filter((el) => {
         return el.hashtag.toLowerCase().includes(this.selectedHashtag);
       });
+      if (items.length === 0 || items.length > 1) return items;
+      if (items[0].hashtag === this.selectedHashtag) return [];
+      return items;
     },
   },
   methods: {
@@ -137,8 +140,7 @@ export default {
       return (
         this.name.substr(0, hash) +
         option.hashtag +
-        this.name.substr(hash + this.selectedHashtag.length) +
-        ' '
+        this.name.substr(hash + this.selectedHashtag.length)
       );
     },
     paste: function (event) {
@@ -234,7 +236,12 @@ export default {
       this.selected = option;
     },
     submitForm: function () {
-      if (this.mode === Mode.Hashtag) return;
+      if (this.mode === Mode.Hashtag) {
+        const isLastHashtag = /.*#\w+\s*$/i.test(this.name);
+        if (!isLastHashtag) return;
+        if (!this.hashtags.find((e) => e.hashtag === this.selectedHashtag))
+          return;
+      }
 
       this.inputField.disabled = true;
       const attachments = this.$refs.attachments.getAttachments();
