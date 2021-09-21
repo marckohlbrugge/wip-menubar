@@ -522,12 +522,12 @@ app.on('ready', () => {
       event.sender.send('todoSaved');
 
       todo.then((result) => {
-        logger.log(result.id);
+        logger.log('Todo saved: ', result.id);
         requestViewerData();
       });
 
-      todo.catch(() => {
-        logger.error('oops');
+      todo.catch((e) => {
+        logger.error('Failed to save TODO', e.message);
       });
     }
   }
@@ -600,9 +600,14 @@ app.on('ready', () => {
     job.start();
   }
 
-  process.on('uncaughtException', () => {
+  process.on('uncaughtException', (e) => {
+    logger.error('Exception received:', e);
     tray.setContextMenu(createTrayMenu('Uncaught exception'));
     tray.setImage(icon.fail);
+  });
+
+  process.on('unhandledRejection', (e) => {
+    logger.error('Unhandled rejection:', e);
   });
 
   if (process.platform === 'darwin') {
