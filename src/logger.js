@@ -1,11 +1,17 @@
 const logger = require('electron-log');
-const { isProduction, processType } = require('./utils');
+const { processType } = require('./utils');
 
 const isRenderer = processType === 'renderer';
 
 function getWindowLabel() {
   if (!isRenderer) return 'wip_main';
-  return window.location.pathname.slice(1);
+
+  const path = window.location.pathname;
+
+  const last = path.lastIndexOf('/');
+  if (last < 0) return path;
+
+  return path.substring(last + 1);
 }
 
 function init() {
