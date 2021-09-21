@@ -13,7 +13,7 @@ const store = require('./store');
 const pjson = require('../package.json');
 const wip = require('./wip');
 const debug = require('electron-debug');
-const logger = require('electron-log');
+const logger = require('./logger');
 const { autoUpdater } = require('electron-updater');
 const moment = require('moment');
 const { NetChecker } = require('./onlinestatus/NetChecker');
@@ -52,7 +52,7 @@ const {
 // app.setAsDefaultProtocolClient('wip');
 
 app.on('ready', () => {
-  logger.log('App ready');
+  logger.log('====== App ready ======');
   logger.log('Using access token:', store.get('oauth.access_token'));
 
   initMode();
@@ -80,7 +80,7 @@ app.on('ready', () => {
         {
           label: 'Quit',
           accelerator: 'Command+Q',
-          click: function() {
+          click: function () {
             app.quit();
           },
         },
@@ -302,7 +302,7 @@ app.on('ready', () => {
       ) {
         let submenu = new Array();
 
-        store.get('viewer.products').forEach(function(product) {
+        store.get('viewer.products').forEach(function (product) {
           submenu.push({
             label: product.name,
             click: () => shell.openExternal(product.url),
@@ -399,12 +399,12 @@ app.on('ready', () => {
 
       wip
         .viewer()
-        .then(data => {
+        .then((data) => {
           store.set('viewer', data);
           reloadTray();
           return resolve();
         })
-        .catch(error => {
+        .catch((error) => {
           if (error == 'This endpoint requires a valid token') {
             logger.error('yay');
             resetOAuth();
@@ -521,7 +521,7 @@ app.on('ready', () => {
       var todo = wip.createTodo(value, completed, attachments);
       event.sender.send('todoSaved');
 
-      todo.then(result => {
+      todo.then((result) => {
         logger.log(result.id);
         requestViewerData();
       });
@@ -536,7 +536,7 @@ app.on('ready', () => {
     var todo = wip.completeTodo(todo_id, attachments);
     event.sender.send('todoSaved');
 
-    todo.then(result => {
+    todo.then((result) => {
       logger.log(result.id);
       requestViewerData();
     });

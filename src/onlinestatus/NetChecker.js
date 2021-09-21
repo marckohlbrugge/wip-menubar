@@ -1,5 +1,5 @@
 const { EventEmitter } = require('events');
-const logger = require('electron-log');
+const logger = require('../logger');
 const isOnline = require('is-online');
 
 class NetChecker extends EventEmitter {

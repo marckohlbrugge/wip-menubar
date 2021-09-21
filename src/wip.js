@@ -1,5 +1,5 @@
 const { net } = require('electron');
-const logger = require('electron-log');
+const logger = require('./logger');
 const FormData = require('form-data');
 const fs = require('fs');
 const { GraphQLClient } = require('graphql-request');

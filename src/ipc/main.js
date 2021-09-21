@@ -1,5 +1,5 @@
 const { ipcMain, BrowserWindow } = require('electron');
-const logger = require('electron-log');
+const logger = require('../logger');
 const store = require('../store');
 
 const { Channels } = require('./channels');
