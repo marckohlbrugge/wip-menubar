@@ -14,9 +14,10 @@ const developmentModeCheckbox = document.getElementById(
 );
 const notificationCheckbox = document.getElementById('notification-checkbox');
 const notificationTime = document.getElementById('notification-time');
+const broadcastCheckbox = document.getElementById('broadcast-activity');
 
 // Open all links in external browser
-document.addEventListener('click', function(event) {
+document.addEventListener('click', function (event) {
   if (event.target.tagName === 'A' && event.target.href.startsWith('http')) {
     event.preventDefault();
     shell.openExternal(event.target.href);
@@ -29,6 +30,7 @@ developmentModeCheckbox.checked = store.get('development');
 notificationCheckbox.checked = store.get('notification.isEnabled');
 notificationTime.value = store.get('notification.time');
 notificationTime.disabled = !store.get('notification.isEnabled');
+broadcastCheckbox.checked = store.get('broadcast');
 
 let shortcutTypingTimer;
 shortcut.addEventListener('input', () => {
@@ -55,6 +57,10 @@ notificationCheckbox.addEventListener('change', () => {
 notificationTime.addEventListener('input', () => {
   if (isInvalid(notificationTime)) return;
   ipcRenderer.send('setNotificationTime', notificationTime.value);
+});
+
+broadcastCheckbox.addEventListener('change', () => {
+  ipcRenderer.send('setBroadcast', broadcastCheckbox.checked);
 });
 
 function isInvalid(input) {
