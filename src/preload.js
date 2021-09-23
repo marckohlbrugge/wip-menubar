@@ -1,6 +1,7 @@
 const { ipcRenderer, shell, contextBridge } = require('electron');
 const store = require('./store');
 const utils = require('./ipc/renderer');
+const logger = require('./logger');
 
 const context = {
   electron: {
@@ -17,6 +18,7 @@ const context = {
   store: {
     get: (key) => store.get(key),
   },
+  logger,
 };
 
 contextBridge.exposeInMainWorld('context', context);

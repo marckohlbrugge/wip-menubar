@@ -1,12 +1,5 @@
 const { app } = require('electron');
-
-const isProduction = (function() {
-  try {
-    return IS_PRODUCTION;
-  } catch (e) {
-    return false;
-  }
-})();
+const { isProduction } = require('./utils');
 
 const basePath = (() => {
   return isProduction
@@ -27,4 +20,5 @@ function getPreload() {
 module.exports = {
   getPath,
   getPreload,
+  isProduction,
 };
