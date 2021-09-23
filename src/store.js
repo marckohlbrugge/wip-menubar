@@ -9,5 +9,6 @@ module.exports = new Store({
       isEnabled: false,
       time: '20:00',
     },
+    broadcast: true,
   },
 });
