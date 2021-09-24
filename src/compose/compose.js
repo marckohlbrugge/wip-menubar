@@ -3,6 +3,7 @@ require('./compose.css');
 const { bugsnag } = require('../bugsnag/renderer');
 const { ipcRenderer } = window.context.electron;
 const { closeCurrent } = window.context.utils;
+const { logger } = window.context;
 const Vue = require('vue/dist/vue.js');
 const Buefy = require('buefy').default;
 const App = require('./vue/App').default;
@@ -23,7 +24,10 @@ const app = new Vue({
   template: '<app></app>',
   components: { App },
   mounted: function () {
-    ipcRenderer.on('todoSaved', closeCurrent);
+    ipcRenderer.on('todoSaved', () => {
+      logger.log('Received todoSaved, closing window');
+      closeCurrent();
+    });
     this.$nextTick(function () {
       const resizeObserver = new ResizeObserver(resize, { box: 'border-box' });
       resizeObserver.observe(document.querySelector('.dropdown-menu'));

@@ -55,6 +55,7 @@ const debounce = require('lodash.debounce');
 const Attachments = require('./Attachments').default;
 const { ipcRenderer: ipc } = window.context.electron;
 const { fetchHashtags } = window.context.utils;
+const { logger } = window.context;
 
 const {
   KeyCodes,
@@ -247,9 +248,11 @@ export default {
       const attachments = this.$refs.attachments.getAttachments();
 
       if (this.selected) {
+        logger.log('Sending "completeTodo" with', this.selected);
         ipc.send('completeTodo', this.selected.id, attachments);
       } else {
         let completed = this.state == TodoState.Done;
+        logger.log('Sending "createTodo" with text', this.name, ', completed', completed);
         ipc.send('createTodo', this.name, attachments, completed);
       }
     },

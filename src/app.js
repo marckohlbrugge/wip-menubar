@@ -14,7 +14,7 @@ const store = require('./store');
 const pjson = require('../package.json');
 const wip = require('./wip');
 const debug = require('electron-debug');
-const logger = require('electron-log');
+const logger = require('./logger');
 const { autoUpdater } = require('electron-updater');
 const moment = require('moment');
 const { NetChecker } = require('./onlinestatus/NetChecker');
@@ -53,7 +53,7 @@ const {
 // app.setAsDefaultProtocolClient('wip');
 
 app.on('ready', () => {
-  logger.log('App ready');
+  logger.log('====== App ready ======');
   logger.log('Using access token:', store.get('oauth.access_token'));
 
   initMode();
@@ -523,12 +523,12 @@ app.on('ready', () => {
       event.sender.send('todoSaved');
 
       todo.then((result) => {
-        logger.log(result.id);
+        logger.log('Todo saved: ', result.id);
         requestViewerData();
       });
 
-      todo.catch(() => {
-        logger.error('oops');
+      todo.catch((e) => {
+        logger.error('Failed to save TODO', e.message);
       });
     }
   }
@@ -602,9 +602,14 @@ app.on('ready', () => {
   }
 
   process.on('uncaughtException', (e) => {
+    logger.error('Exception received:', e);
     tray.setContextMenu(createTrayMenu('Uncaught exception'));
     tray.setImage(icon.fail);
     bugsnag.notify(e);
+  });
+
+  process.on('unhandledRejection', (e) => {
+    logger.error('Unhandled rejection:', e);
   });
 
   if (process.platform === 'darwin') {
