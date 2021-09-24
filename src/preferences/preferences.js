@@ -1,4 +1,5 @@
 require('./preferences.css');
+require('../bugsnag/renderer');
 const preload = window.context;
 const {
   electron: { ipcRenderer, shell },
@@ -16,7 +17,7 @@ const notificationCheckbox = document.getElementById('notification-checkbox');
 const notificationTime = document.getElementById('notification-time');
 
 // Open all links in external browser
-document.addEventListener('click', function(event) {
+document.addEventListener('click', function (event) {
   if (event.target.tagName === 'A' && event.target.href.startsWith('http')) {
     event.preventDefault();
     shell.openExternal(event.target.href);
