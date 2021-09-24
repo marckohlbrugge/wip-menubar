@@ -610,6 +610,7 @@ app.on('ready', () => {
 
   process.on('unhandledRejection', (e) => {
     logger.error('Unhandled rejection:', e);
+    bugsnag.notify(e);
   });
 
   if (process.platform === 'darwin') {
