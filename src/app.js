@@ -4,6 +4,7 @@ try {
   console.warn('Failed to import electron', err.message);
 }
 
+const { bugsnag } = require('./bugsnag/main');
 const electron = require('electron');
 // const AutoLaunch = require('auto-launch');
 const { CronJob, CronTime } = require('cron');
@@ -80,7 +81,7 @@ app.on('ready', () => {
         {
           label: 'Quit',
           accelerator: 'Command+Q',
-          click: function() {
+          click: function () {
             app.quit();
           },
         },
@@ -302,7 +303,7 @@ app.on('ready', () => {
       ) {
         let submenu = new Array();
 
-        store.get('viewer.products').forEach(function(product) {
+        store.get('viewer.products').forEach(function (product) {
           submenu.push({
             label: product.name,
             click: () => shell.openExternal(product.url),
@@ -399,12 +400,12 @@ app.on('ready', () => {
 
       wip
         .viewer()
-        .then(data => {
+        .then((data) => {
           store.set('viewer', data);
           reloadTray();
           return resolve();
         })
-        .catch(error => {
+        .catch((error) => {
           if (error == 'This endpoint requires a valid token') {
             logger.error('yay');
             resetOAuth();
@@ -521,7 +522,7 @@ app.on('ready', () => {
       var todo = wip.createTodo(value, completed, attachments);
       event.sender.send('todoSaved');
 
-      todo.then(result => {
+      todo.then((result) => {
         logger.log(result.id);
         requestViewerData();
       });
@@ -536,7 +537,7 @@ app.on('ready', () => {
     var todo = wip.completeTodo(todo_id, attachments);
     event.sender.send('todoSaved');
 
-    todo.then(result => {
+    todo.then((result) => {
       logger.log(result.id);
       requestViewerData();
     });
@@ -600,9 +601,10 @@ app.on('ready', () => {
     job.start();
   }
 
-  process.on('uncaughtException', () => {
+  process.on('uncaughtException', (e) => {
     tray.setContextMenu(createTrayMenu('Uncaught exception'));
     tray.setImage(icon.fail);
+    bugsnag.notify(e);
   });
 
   if (process.platform === 'darwin') {
