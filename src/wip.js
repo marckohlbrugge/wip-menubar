@@ -3,6 +3,7 @@ const logger = require('electron-log');
 const FormData = require('form-data');
 const fs = require('fs');
 const { GraphQLClient } = require('graphql-request');
+const store = require('./store');
 
 let devMode = false;
 let apiKey;
@@ -146,6 +147,7 @@ function createTodo(todo = null, completed = true, files = []) {
           id
           body
           completed_at
+          broadcast
         }
       }
     `;
@@ -153,6 +155,7 @@ function createTodo(todo = null, completed = true, files = []) {
       body: todo,
       completed_at: completed ? new Date().toISOString() : null,
       attachments: keys,
+      broadcast: store.get('broadcast'),
     };
     const json = await client().request(mutation, variables);
     const data = {
@@ -183,12 +186,14 @@ function completeTodo(todo_id = null, files = [], options = {}) {
         completeTodo(id: $id, attachments: $attachments) {
           id
           completed_at
+          broadcast
         }
       }
     `;
     const variables = {
       id: todo_id,
       attachments: keys,
+      broadcast: store.get('broadcast'),
     };
     const json = await client().request(mutation, variables);
     const data = {
