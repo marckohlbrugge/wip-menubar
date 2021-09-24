@@ -51,12 +51,12 @@ WIP's menu bar icon is updated depending on your current streak status:
 
 
 ## Development
-- `yarn render:start` to start the development renderer server.
-- `yarn render:release` to build release renderer bundle.
-- `yarn main:release` to build release main and preload bundles.
-- `yarn build:release` to prepare app for packaging.
-- `yarn start` to start the development main process.
-- `yarn dist` to build apps for distribution.
+During development two processes should be running:
+- `yarn render:start` start the development renderer server with hotreload.
+- `yarn main:start` start the development main process.
+
+Electron main process doesn't have hot reload functionality. The app will be restarted after any changes in the main process files. 
+## Release
 - `APPLE_ID=foobar@example.com APPLE_ID_PASSWORD=foo-bar yarn release` to build apps for distribution.
 
 ## Credits

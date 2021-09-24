@@ -87,6 +87,7 @@
   },
   "scripts": {
     "main:release": "webpack --mode production --config ./webpack/main.cfg.js",
+    "main:start": "node_modules/electron/dist/Electron.app/Contents/MacOS/Electron src/app.js",
     "render:release": "webpack --mode production --config ./webpack/renderer.cfg.js",
     "render:start": "webpack serve --mode development --config ./webpack/renderer.cfg.js",
     "build:release": "rimraf dist && yarn main:release && yarn render:release",
@@ -97,7 +98,6 @@
     "pack": "electron-builder --dir",
     "format": "prettier --write './src/**/*.{js,html}'",
     "lint": "eslint .",
-    "start": "node_modules/electron/dist/Electron.app/Contents/MacOS/Electron src/app.js",
     "release": "yarn build:release && electron-builder -mwl"
   }
 }
