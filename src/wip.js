@@ -142,12 +142,11 @@ function createTodo(todo = null, completed = true, files = []) {
     }
 
     const mutation = `
-      mutation createTodo($body: String!, $completed_at: DateTime, $attachments: [AttachmentInput]) {
-        createTodo(input: { body: $body, completed_at: $completed_at, attachments: $attachments }) {
+      mutation createTodo($body: String!, $completed_at: DateTime, $attachments: [AttachmentInput], $broadcast: Boolean) {
+        createTodo(input: { body: $body, completed_at: $completed_at, attachments: $attachments, broadcast: $broadcast }) {
           id
           body
           completed_at
-          broadcast
         }
       }
     `;
@@ -182,11 +181,10 @@ function completeTodo(todo_id = null, files = [], options = {}) {
     }
 
     const mutation = `
-      mutation completeTodo($id: ID!, $attachments: [AttachmentInput]) {
-        completeTodo(id: $id, attachments: $attachments) {
+      mutation completeTodo($id: ID!, $attachments: [AttachmentInput], $broadcast: Boolean) {
+        completeTodo(id: $id, attachments: $attachments, broadcast: $broadcast) {
           id
           completed_at
-          broadcast
         }
       }
     `;
