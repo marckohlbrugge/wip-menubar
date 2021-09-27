@@ -510,6 +510,10 @@ app.on('ready', () => {
     event.sender.send('NotificationTimeSet');
   }
 
+  function setBroadcast(event, isEnabled) {
+    store.set('broadcast', isEnabled);
+  }
+
   async function createTodo(event, value, attachments, completed) {
     if (value.match(/^\/help\b/i)) {
       // Executing /help command
@@ -622,6 +626,7 @@ app.on('ready', () => {
   ipcMain.on('activateDevelopmentMode', activateDevelopmentMode);
   ipcMain.on('activateNotifications', activateNotifications);
   ipcMain.on('setNotificationTime', setNotificationTime);
+  ipcMain.on('setBroadcast', setBroadcast);
   ipcMain.on('createTodo', createTodo);
   ipcMain.on('completeTodo', completeTodo);
   ipcMain.on('resetOAuth', resetOAuth);
