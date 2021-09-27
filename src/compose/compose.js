@@ -1,5 +1,6 @@
 require('./compose.css');
 
+const { bugsnag } = require('../bugsnag/renderer');
 const { ipcRenderer } = window.context.electron;
 const { closeCurrent } = window.context.utils;
 const { logger } = window.context;
@@ -7,6 +8,7 @@ const Vue = require('vue/dist/vue.js');
 const Buefy = require('buefy').default;
 const App = require('./vue/App').default;
 
+bugsnag.getPlugin('vue').installVueErrorHandler(Vue);
 Vue.use(Buefy);
 
 function resize() {
