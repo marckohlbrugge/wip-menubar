@@ -1,4 +1,5 @@
 require('./preferences.css');
+require('../bugsnag/renderer');
 const preload = window.context;
 const {
   electron: { ipcRenderer, shell },

@@ -7,6 +7,9 @@
     "url": "https://github.com/marckohlbrugge/wip-menubar/issues"
   },
   "dependencies": {
+    "@bugsnag/electron": "^7.11.0",
+    "@bugsnag/js": "^7.11.0",
+    "@bugsnag/plugin-vue": "^7.11.0",
     "buefy": "0.9.7",
     "bulma": "^0.9.2",
     "cron": "^1.6.0",
@@ -29,7 +32,7 @@
     "@fortawesome/fontawesome-free": "^5.15.3",
     "copy-webpack-plugin": "^8.1.1",
     "css-loader": "^5.2.4",
-    "electron": "^12.0.6",
+    "electron": "^15.0.0",
     "electron-builder": "^22.11.3",
     "electron-builder-notarize": "^1.1.2",
     "electron-reloader": "^1.0.1",
