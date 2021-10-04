@@ -240,8 +240,10 @@ export default {
       if (this.mode === Mode.Hashtag) {
         const isLastHashtag = /.*#\w+\s*$/i.test(this.name);
         if (!isLastHashtag) return;
-        if (!this.hashtags.find((e) => e.hashtag === this.selectedHashtag))
+        if (!this.hashtags.find((e) => e.hashtag === this.selectedHashtag)) {
+          this.name += ' ';
           return;
+        }
       }
 
       this.inputField.disabled = true;
