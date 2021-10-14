@@ -10,6 +10,7 @@
       outputPath: 'assets',
       name: '[name].[contenthash].[ext]',
     },
+    type: 'javascript/auto',
   };
 
   const vue = {
