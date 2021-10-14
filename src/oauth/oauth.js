@@ -1,4 +1,5 @@
 require('./oauth.css');
+require('../bugsnag/renderer');
 const preload = window.context;
 const { shell, ipcRenderer } = preload.electron;
 const { getGlobal, closeCurrent } = preload.utils;
