@@ -4,7 +4,6 @@ try {
   console.warn('Failed to import electron', err.message);
 }
 
-const { bugsnag } = require('./bugsnag/main');
 const electron = require('electron');
 // const AutoLaunch = require('auto-launch');
 const { CronJob, CronTime } = require('cron');
@@ -609,12 +608,10 @@ app.on('ready', () => {
     logger.error('Exception received:', e);
     tray.setContextMenu(createTrayMenu('Uncaught exception'));
     tray.setImage(icon.fail);
-    bugsnag.notify(e);
   });
 
   process.on('unhandledRejection', (e) => {
     logger.error('Unhandled rejection:', e);
-    bugsnag.notify(e);
   });
 
   if (process.platform === 'darwin') {
