@@ -7,7 +7,7 @@
     "url": "https://github.com/marckohlbrugge/wip-menubar/issues"
   },
   "dependencies": {
-    "@bugsnag/js": "^7.11.0",
+    "@bugsnag/electron": "^7.14.0",
     "@bugsnag/plugin-vue": "^7.11.0",
     "buefy": "0.9.10",
     "bulma": "^0.9.3",
