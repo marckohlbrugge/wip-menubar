@@ -1,4 +1,4 @@
-const Bugsnag = require('@bugsnag/js');
+const Bugsnag = require('@bugsnag/electron');
 const BugsnagPluginVue = require('@bugsnag/plugin-vue');
 const { API_KEY } = require('./config');
 
