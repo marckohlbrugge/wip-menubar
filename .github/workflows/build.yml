@@ -55,12 +55,16 @@ jobs:
 
       - name: Updating the Release Version
         run: yarn ci:update-version
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
       - name: Compiling the main and renderer code
         run: yarn build:release
 
       - name: Building and packaging the app
         run: yarn build:release
+        env:
+          GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
       - name: Tagging the release
         run: yarn ci:tag-release
