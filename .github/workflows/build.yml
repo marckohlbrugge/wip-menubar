@@ -1,48 +1,66 @@
 name: Build
 
-on: push
+on:
+  workflow_dispatch:
+    push:
+      branches:
+        - master
+        - hotfix
+
+env:
+  APPLE_CERTIFICATE_PASS: ${{ secrets.APPLE_CERTIFICATE_PASS }}
+  APPLE_ISSUER_ID: ${{ secrets.APPLE_ISSUER_ID }}
+  AuthKey_B64: ${{ secrets.AuthKey_B64 }}
+  API_KEY_ID: ${{ secrets.API_KEY_ID }}
+  macinstaller_B64: ${{ secrets.macinstaller_B64 }}
+  developerid_B64: ${{ secrets.developerid_B64 }}
 
 jobs:
   release:
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
+    runs-on: macos-11
 
     steps:
+      - name: Import macinstaller Code-Signing Certificate
+        uses: Apple-Actions/import-codesign-certs@v1
+        with:
+          # The certificates in a PKCS12 file encoded as a base64 string.
+          p12-file-base64: ${{ env.macinstaller_B64 }}
+          # The password used to import the PKCS12 file.
+          p12-password: ${{ env.APPLE_CERTIFICATE_PASS }}
+
+      - name: Import developerid Code-Signing Certificate 2
+        uses: Apple-Actions/import-codesign-certs@v1
+        with:
+          # The certificates in a PKCS12 file encoded as a base64 string.
+          p12-file-base64: ${{ env.developerid_B64 }}
+          # The password used to import the PKCS12 file.
+          p12-password: ${{ env.APPLE_CERTIFICATE_PASS }}
+
+      - name: Creating private_keys dir
+        run: mkdir ~/private_keys
+
+      - name: Copying auth key
+        run: echo $AuthKey_B64 | base64 --decode > ~/private_keys/AuthKey_${{ env.API_KEY_ID }}.p8
+
       - name: Check out Git repository
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
 
       - name: Install Node.js, NPM and Yarn
         uses: actions/setup-node@v1
         with:
           node-version: 16
 
-      - name: Prepare for app notarization
-        if: startsWith(matrix.os, 'macos')
-        # Import Apple API key for app notarization on macOS
-        run: |
-          mkdir -p ~/private_keys/
-          echo '${{ secrets.api_key }}' > ~/private_keys/AuthKey_${{ secrets.api_key_id }}.p8
+      - name: Installing Modules
+        run: yarn --frozen-lockfile --network-timeout 1000000
 
-      - name: Build/release Electron app
-        uses: samuelmeuli/action-electron-builder@v1
-        with:
-          # GitHub token, automatically provided to the action
-          # (No need to define this secret in the repo settings)
-          github_token: ${{ secrets.github_token }}
+      - name: Updating the Release Version
+        run: yarn ci:update-version
 
-          # If the commit is tagged with a version (e.g. "v1.0.0"),
-          # release the app after building
-          release: ${{ startsWith(github.ref, 'refs/tags/v') }}
+      - name: Compiling the main and renderer code
+        run: yarn build:release
 
-          build_script_name: build:release
-          mac_certs: ${{ secrets.mac_certs }}
-          mac_certs_password: ${{ secrets.mac_certs_password }}
+      - name: Building and packaging the app
+        run: yarn build:release
 
-        env:
-          # macOS notarization API key
-          APPLE_ID: ${{ secrets.APPLE_ID }}
-          APPLE_ID_PASSWORD: ${{ secrets.APPLE_ID_PASSWORD }}
-          CSC_LINK: ${{ secrets.CSC_LINK }}
+      - name: Tagging the release
+        run: yarn ci:tag-release
