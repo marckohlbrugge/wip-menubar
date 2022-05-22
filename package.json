@@ -107,5 +107,6 @@
     "lint": "eslint .",
     "release": "yarn build:release && electron-builder -mwl",
     "ci:update-version": "node scripts/update-version.js",
+    "ci:tag-release": "node scripts/tag-release.js"
   }
 }
