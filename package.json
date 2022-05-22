@@ -29,6 +29,7 @@
   },
   "devDependencies": {
     "@fortawesome/fontawesome-free": "^5.15.4",
+    "@octokit/rest": "^18.12.0",
     "copy-webpack-plugin": "^9.0.1",
     "css-loader": "^6.3.0",
     "electron": "^15.1.1",
@@ -51,6 +52,9 @@
     "rimraf": "^3.0.2",
     "sass": "^1.42.1",
     "sass-loader": "^12.1.0",
+    "semver": "^7.3.7",
+    "shelljs": "^0.8.5",
+    "versiony": "^2.0.1",
     "vue-loader": "^15.9.8",
     "vue-template-compiler": "^2.6.14",
     "webpack": "^5.56.1",
@@ -101,6 +105,7 @@
     "pack": "electron-builder --dir",
     "format": "prettier --write './src/**/*.{js,html}'",
     "lint": "eslint .",
-    "release": "yarn build:release && electron-builder -mwl"
+    "release": "yarn build:release && electron-builder -mwl",
+    "ci:update-version": "node scripts/update-version.js",
   }
 }
