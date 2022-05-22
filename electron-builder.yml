@@ -12,7 +12,7 @@ files:
 - "!node_modules/**/*"
 - embedded.provisionprofile
 
-afterSign: electron-builder-notarize
+afterSign: ./scripts/after-sign-hook.js
 
 publish:
   provider: github
