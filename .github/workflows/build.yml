@@ -21,6 +21,7 @@ jobs:
     steps:
       - name: Import macinstaller Code-Signing Certificate
         uses: Apple-Actions/import-codesign-certs@v1
+        id: import-installer-cert
         with:
           # The certificates in a PKCS12 file encoded as a base64 string.
           p12-file-base64: ${{ env.macinstaller_B64 }}
@@ -32,6 +33,7 @@ jobs:
         with:
           # do not create keychain as it is already created in the first step
           create-keychain: false
+          keychain-password: ${{steps.import-installer-cert.outputs.keychain-password}}
           # The certificates in a PKCS12 file encoded as a base64 string.
           p12-file-base64: ${{ env.developerid_B64 }}
           # The password used to import the PKCS12 file.
