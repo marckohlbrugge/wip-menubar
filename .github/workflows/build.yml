@@ -65,7 +65,7 @@ jobs:
         run: yarn build:release
 
       - name: Building and packaging the app
-        run: yarn build:release
+        run: yarn dist
         env:
           GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
