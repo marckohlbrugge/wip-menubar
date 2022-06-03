@@ -1,11 +1,10 @@
 name: Build
 
 on:
-  workflow_dispatch:
-    push:
-      branches:
-        - master
-        - hotfix
+  push:
+    branches:
+      - master
+      - hotfix
 
 env:
   APPLE_CERTIFICATE_PASS: ${{ secrets.APPLE_CERTIFICATE_PASS }}
