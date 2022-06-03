@@ -31,7 +31,7 @@ module.exports = async function (params) {
   const notarizeConfig = {
     appBundleId: appId,
     appPath: appPath,
-    appleApiKey: `~/private_keys/AuthKey_${process.env.API_KEY_ID}.p8`,
+    appleApiKey: `${process.env.API_KEY_ID}`,
     appleApiKeyId: process.env.API_KEY_ID,
     appleApiIssuer: process.env.APPLE_ISSUER_ID,
   };
