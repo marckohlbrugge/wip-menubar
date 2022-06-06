@@ -13,6 +13,7 @@ env:
   API_KEY_ID: ${{ secrets.API_KEY_ID }}
   macinstaller_B64: ${{ secrets.macinstaller_B64 }}
   developerid_B64: ${{ secrets.developerid_B64 }}
+  macdistribution_B64: ${{ secrets.macdistribution_B64 }}
 
 jobs:
   release:
