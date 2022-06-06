@@ -38,7 +38,18 @@ jobs:
           p12-file-base64: ${{ env.developerid_B64 }}
           # The password used to import the PKCS12 file.
           p12-password: ${{ env.APPLE_CERTIFICATE_PASS }}
-
+          
+      - name: Import mac app distribution certificate
+        uses: Apple-Actions/import-codesign-certs@v1
+        with:
+          # do not create keychain as it is already created in the first step
+          create-keychain: false
+          keychain-password: ${{steps.import-installer-cert.outputs.keychain-password}}
+          # The certificates in a PKCS12 file encoded as a base64 string.
+          p12-file-base64: ${{ env.macdistribution_B64 }}
+          # The password used to import the PKCS12 file.
+          p12-password: ${{ env.APPLE_CERTIFICATE_PASS }}
+          
       - name: Creating private_keys dir
         run: mkdir ~/private_keys
 
