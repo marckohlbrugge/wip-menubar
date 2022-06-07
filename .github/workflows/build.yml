@@ -58,9 +58,6 @@ jobs:
       - name: Copying auth key
         run: echo $AuthKey_B64 | base64 --decode > ~/private_keys/AuthKey_${{ env.API_KEY_ID }}.p8
 
-      - name: Copying provision profile
-        run: echo $provisionprofile_B64 | base64 --decode > ./embedded.provisionprofile
-
       - name: Check out Git repository
         uses: actions/checkout@v2
 
@@ -79,6 +76,9 @@ jobs:
 
       - name: Compiling the main and renderer code
         run: yarn build:release
+
+      - name: Copying provision profile
+        run: echo $provisionprofile_B64 | base64 --decode > ./embedded.provisionprofile
 
       - name: Building and packaging the app
         run: yarn dist --publish=always
