@@ -14,6 +14,7 @@ env:
   macinstaller_B64: ${{ secrets.macinstaller_B64 }}
   developerid_B64: ${{ secrets.developerid_B64 }}
   macdistribution_B64: ${{ secrets.macdistribution_B64 }}
+  provisionprofile_B64: ${{ secrets.provisionprofile_B64 }}
 
 jobs:
   release:
@@ -56,6 +57,9 @@ jobs:
 
       - name: Copying auth key
         run: echo $AuthKey_B64 | base64 --decode > ~/private_keys/AuthKey_${{ env.API_KEY_ID }}.p8
+
+      - name: Copying provision profile
+        run: echo $provisionprofile_B64 | base64 --decode > ./embedded.provisionprofile
 
       - name: Check out Git repository
         uses: actions/checkout@v2
