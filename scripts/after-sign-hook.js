@@ -18,6 +18,8 @@ module.exports = async function (params) {
   let appId = 'chat.wip.menubar';
 
   const notarizeAppAtPath = async (appPath) => {
+    console.log('App Path: ', appPath);
+
     const notarizeConfig = {
       appBundleId: appId,
       appPath: appPath,
