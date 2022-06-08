@@ -12,7 +12,7 @@ module.exports = async function (params) {
     return;
   }
 
-  console.log('afterSign hook triggered with params:', JSON.stringify(params));
+  console.log('afterSign hook triggered with params:', params.targets);
 
   // Same appId in electron-builder.
   let appId = 'chat.wip.menubar';
