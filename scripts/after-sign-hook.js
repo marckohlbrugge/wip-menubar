@@ -12,10 +12,35 @@ module.exports = async function (params) {
     return;
   }
 
-  console.log('afterSign hook triggered with params:', params.targets);
+  console.log('afterSign hook triggered');
 
   // Same appId in electron-builder.
   let appId = 'chat.wip.menubar';
+
+  const notarizeAppAtPath = async (appPath) => {
+    const notarizeConfig = {
+      appBundleId: appId,
+      appPath: appPath,
+      appleApiKey: `${process.env.API_KEY_ID}`,
+      appleApiKeyId: process.env.API_KEY_ID,
+      appleApiIssuer: process.env.APPLE_ISSUER_ID,
+    };
+
+    await pRetry(
+      (attempt) => {
+        console.log('Notarization attempt: ', attempt);
+        return notarize(notarizeConfig);
+      },
+      {
+        retries: 5,
+        onFailedAttempt: (error) => {
+          console.log(
+            `Attempt ${error.attemptNumber} failed. There are ${error.retriesLeft} retries left.`,
+          );
+        },
+      },
+    );
+  };
 
   let appPath = path.join(
     appOutDir,
@@ -28,28 +53,11 @@ module.exports = async function (params) {
 
   console.log(`Notarizing ${appId} found at ${appPath}`);
 
-  const notarizeConfig = {
-    appBundleId: appId,
-    appPath: appPath,
-    appleApiKey: `${process.env.API_KEY_ID}`,
-    appleApiKeyId: process.env.API_KEY_ID,
-    appleApiIssuer: process.env.APPLE_ISSUER_ID,
-  };
+  await notarizeAppAtPath(appPath);
 
-  await pRetry(
-    (attempt) => {
-      console.log('Notarization attempt: ', attempt);
-      return notarize(notarizeConfig);
-    },
-    {
-      retries: 5,
-      onFailedAttempt: (error) => {
-        console.log(
-          `Attempt ${error.attemptNumber} failed. There are ${error.retriesLeft} retries left.`,
-        );
-      },
-    },
-  );
+  console.log('Notarizing mas build');
+
+  await notarizeAppAtPath(appPath.replace('mac-universal', 'mas-universal'));
 
   console.log(`Done notarizing ${appId}`);
 };
