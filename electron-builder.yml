@@ -59,7 +59,7 @@ mas:
   provisioningProfile: embedded.provisionprofile
   icon: resource/app.icns
   darkModeSupport: true
-  hardenedRuntime: true
+  hardenedRuntime: false
   extendInfo:
     LSUIElement: 1
 
