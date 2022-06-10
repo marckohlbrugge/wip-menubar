@@ -13,6 +13,7 @@ env:
   API_KEY_ID: ${{ secrets.API_KEY_ID }}
   macinstaller_B64: ${{ secrets.macinstaller_B64 }}
   developerid_B64: ${{ secrets.developerid_B64 }}
+  thirdpartydeveloperinstaller_B64: ${{ secrets.thirdpartydeveloperinstaller_B64 }}
   macdistribution_B64: ${{ secrets.macdistribution_B64 }}
   provisionprofile_B64: ${{ secrets.provisionprofile_B64 }}
 
@@ -40,7 +41,7 @@ jobs:
           p12-file-base64: ${{ env.developerid_B64 }}
           # The password used to import the PKCS12 file.
           p12-password: ${{ env.APPLE_CERTIFICATE_PASS }}
-          
+
       - name: Import mac app distribution certificate
         uses: Apple-Actions/import-codesign-certs@v1
         with:
@@ -51,15 +52,23 @@ jobs:
           p12-file-base64: ${{ env.macdistribution_B64 }}
           # The password used to import the PKCS12 file.
           p12-password: ${{ env.APPLE_CERTIFICATE_PASS }}
-          
+
+      - name: Import 3rd party developer installer certificate
+        uses: Apple-Actions/import-codesign-certs@v1
+        with:
+          # do not create keychain as it is already created in the first step
+          create-keychain: false
+          keychain-password: ${{steps.import-installer-cert.outputs.keychain-password}}
+          # The certificates in a PKCS12 file encoded as a base64 string.
+          p12-file-base64: ${{ env.thirdpartydeveloperinstaller_B64 }}
+          # The password used to import the PKCS12 file.
+          p12-password: ${{ env.APPLE_CERTIFICATE_PASS }}
+
       - name: Creating private_keys dir
         run: mkdir ~/private_keys
 
       - name: Copying auth key
         run: echo $AuthKey_B64 | base64 --decode > ~/private_keys/AuthKey_${{ env.API_KEY_ID }}.p8
-
-      - name: Copying provision profile
-        run: echo $provisionprofile_B64 | base64 --decode > ./embedded.provisionprofile
 
       - name: Check out Git repository
         uses: actions/checkout@v2
@@ -79,6 +88,9 @@ jobs:
 
       - name: Compiling the main and renderer code
         run: yarn build:release
+
+      - name: Copying provision profile
+        run: echo $provisionprofile_B64 | base64 --decode > ./embedded.provisionprofile
 
       - name: Building and packaging the app
         run: yarn dist --publish=always
