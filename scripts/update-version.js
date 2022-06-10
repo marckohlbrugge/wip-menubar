@@ -27,11 +27,11 @@ try {
     let newVersion;
     switch (currentBranch) {
       case 'master': {
-        newVersion = inc(version, 'major');
+        newVersion = inc(version, 'minor');
         break;
       }
       case 'hotfix': {
-        newVersion = inc(version, 'minor');
+        newVersion = inc(version, 'patch');
         break;
       }
     }
