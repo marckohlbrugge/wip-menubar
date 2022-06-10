@@ -20,6 +20,16 @@ publish:
   owner: marckohlbrugge
   vPrefixedTagName: true
 
+dmg:
+  background: ./build/background.tiff
+  icon: ./build/icon.icns
+  iconSize: 128
+  contents:
+    [
+      { x: 460, y: 167, type: link, path: /Applications },
+      { x: 138, y: 167, type: file },
+    ]
+
 mac:
   target:
     - target: default
