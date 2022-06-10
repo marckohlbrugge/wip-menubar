@@ -20,6 +20,16 @@ publish:
   owner: marckohlbrugge
   vPrefixedTagName: true
 
+dmg:
+  background: ./build/background.tiff
+  icon: ./build/icon.icns
+  iconSize: 128
+  contents:
+    [
+      { x: 460, y: 167, type: link, path: /Applications },
+      { x: 138, y: 167, type: file },
+    ]
+
 mac:
   target:
     - target: default
@@ -49,7 +59,7 @@ mas:
   provisioningProfile: embedded.provisionprofile
   icon: resource/app.icns
   darkModeSupport: true
-  hardenedRuntime: true
+  hardenedRuntime: false
   extendInfo:
     LSUIElement: 1
 
