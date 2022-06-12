@@ -81,11 +81,6 @@ jobs:
       - name: Installing Modules
         run: yarn --frozen-lockfile --network-timeout 1000000
 
-      - name: Updating the Release Version
-        run: yarn ci:update-version
-        env:
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-
       - name: Compiling the main and renderer code
         run: yarn build:release
 
