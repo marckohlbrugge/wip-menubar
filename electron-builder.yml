@@ -52,7 +52,6 @@ mas:
   target:
     target: default
     arch: universal
-  type: distribution
   category: public.app-category.productivity
   entitlements: build/entitlements.mas.plist
   entitlementsInherit: build/entitlements.mas.inherit.plist
