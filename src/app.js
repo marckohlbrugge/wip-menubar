@@ -15,7 +15,7 @@ const wip = require('./wip');
 const debug = require('electron-debug');
 const logger = require('./logger');
 const { autoUpdater } = require('electron-updater');
-const moment = require('moment');
+const moment = require('moment-timezone');
 const { NetChecker } = require('./onlinestatus/NetChecker');
 const urls = require('./urls');
 
