@@ -52,10 +52,6 @@ mas:
   entitlements: build/entitlements.mas.plist
   entitlementsInherit: build/entitlements.mas.inherit.plist
   provisioningProfile: embedded.provisionprofile
-  icon: resource/app.icns
-  darkModeSupport: true
-  extendInfo:
-    LSUIElement: 1
 
 linux:
   target:
