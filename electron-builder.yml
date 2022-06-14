@@ -31,34 +31,29 @@ dmg:
     ]
 
 mac:
+  hardenedRuntime: true
+  appId: chat.wip.menubar
+  category: public.app-category.productivity
   target:
     - target: default
       arch: universal
     - target: mas
       arch: universal
-  category: public.app-category.productivity
-  entitlements: build/entitlements.mac.plist
   icon: resources/app.icns
   darkModeSupport: true
-  hardenedRuntime: true
-  gatekeeperAssess: true
   extendInfo:
     LSUIElement: 1
-    CFBundleURLSchemes:
-    - wip
-    CFBundleURLName: chat.wip.menubar
 
 mas:
+  hardenedRuntime: false
   target:
     target: default
     arch: universal
-  category: public.app-category.productivity
   entitlements: build/entitlements.mas.plist
   entitlementsInherit: build/entitlements.mas.inherit.plist
   provisioningProfile: embedded.provisionprofile
   icon: resource/app.icns
   darkModeSupport: true
-  hardenedRuntime: false
   extendInfo:
     LSUIElement: 1
 
