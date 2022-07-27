@@ -4,3 +4,4 @@ embedded.provisionprofile
 release/
 .env
 .idea
+yarn-error.log
