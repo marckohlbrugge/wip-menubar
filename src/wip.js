@@ -56,7 +56,7 @@ function viewer(options = {}) {
           completed_todos_count
           streaking
           time_zone
-          products {
+          projects {
             id
             name
             url
@@ -74,7 +74,7 @@ function viewer(options = {}) {
         bestStreak: json.viewer.best_streak,
         streaking: json.viewer.streaking,
         time_zone: json.viewer.time_zone,
-        products: json.viewer.products,
+        projects: json.viewer.projects,
       };
       return resolve(data);
     } catch (error) {

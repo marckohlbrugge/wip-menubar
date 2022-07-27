@@ -10,7 +10,7 @@ ipcMain.handle(Channels.GetGlobal, async (event, key) => {
 });
 
 ipcMain.handle(Channels.FetchHashtags, async () => {
-  const info = store.get('viewer.products');
+  const info = store.get('viewer.projects');
   return Promise.resolve(info);
 });
 

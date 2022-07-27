@@ -18,7 +18,7 @@ Download the latest version of WIP from the **[GitHub releases](https://github.c
 - Notification when you haven't shipped today
 - See time left to keep your streak
 - Launch at login
-- Jump to your product pages
+- Jump to your project pages
 
 ## Screenshots
 

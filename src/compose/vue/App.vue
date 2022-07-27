@@ -111,7 +111,7 @@ export default {
     groupData: function () {
       const data = [];
       if (this.filterHashtags.length > 0) {
-        data.push({ type: 'Products', data: this.filterHashtags });
+        data.push({ type: 'Projects', data: this.filterHashtags });
       }
 
       if (this.todos.length > 0) {

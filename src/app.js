@@ -297,19 +297,19 @@ app.on('ready', () => {
       ]);
 
       if (
-        Array.isArray(store.get('viewer.products')) &&
-        store.get('viewer.products').length
+        Array.isArray(store.get('viewer.projects')) &&
+        store.get('viewer.projects').length
       ) {
         let submenu = new Array();
 
-        store.get('viewer.products').forEach(function (product) {
+        store.get('viewer.projects').forEach(function (project) {
           submenu.push({
-            label: product.name,
-            click: () => shell.openExternal(product.url),
+            label: project.name,
+            click: () => shell.openExternal(project.url),
           });
         });
 
-        menuTemplate.push({ label: 'Products', submenu: submenu });
+        menuTemplate.push({ label: 'Projects', submenu: submenu });
       }
 
       menuTemplate = menuTemplate.concat([
