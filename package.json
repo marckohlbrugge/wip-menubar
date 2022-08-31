@@ -23,7 +23,7 @@
     "graphql-request": "^3.5.0",
     "is-online": "^9.0.1",
     "lodash.debounce": "^4.0.8",
-    "moment-timezone": "^0.5.33",
+    "moment-timezone": "^0.5.35",
     "vue": "^2.6.14",
     "webpack-cli": "^4.8.0"
   },
