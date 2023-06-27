@@ -89,39 +89,38 @@ function viewer(options = {}) {
 
 function uploadFile(presigned_url, file) {
   return new Promise((resolve, reject) => {
-    const form = new FormData();
-
-    for (let field of Object.keys(presigned_url.fields)) {
-      form.append(field, presigned_url.fields[field]);
-    }
+    let data;
+    let contentType;
 
     if (file.file.path) {
       // Actual image on disk
-      form.append('file', fs.createReadStream(file.file.path));
+      data = fs.readFileSync(file.file.path);
+      contentType = file.file.type;
     } else {
       // Pasted image
       var regex = /^data:(.+);base64,(.*)$/;
       var matches = file.base64.match(regex);
-      var content_type = matches[1];
-      var data = matches[2];
-      var buffer = new Buffer(data, 'base64');
-
-      form.append('file', buffer, {
-        filename: file.file.name,
-        contentType: content_type,
-        knownLength: file.file.size,
-      });
+      contentType = matches[1];
+      data = Buffer.from(matches[2], 'base64');
     }
+      
+    const request = net.request({
+      method: presigned_url.method,
+      url: presigned_url.url,
+      headers: presigned_url.headers
+    });
 
-    form.submit(presigned_url.url, function (error, response) {
-      response.resume();
-
-      if (error) reject(error);
-      if (response.statusCode != 204) {
-        reject('Invalid status code <' + response.statusCode + '>');
+    request.on('response', (response) => {
+      if (![200, 204].includes(response.statusCode)) {
+        reject(`Invalid status code <${response.statusCode}>`);
       }
       resolve();
     });
+
+    request.on('error', reject);
+
+    request.write(data);
+    request.end();
   });
 }
 
@@ -131,12 +130,14 @@ function createTodo(todo = null, completed = true, files = []) {
 
     if (files.length > 0) {
       for (const file of files) {
-        const presigned_url = await createPresignedUrl(file.file.name);
+        const filename = file.file.name;
+        const byteSize = file.file.size;
+        const checksum = file.checksum;
+
+        const presigned_url = await createPresignedUrl(filename, byteSize, checksum);
         await uploadFile(presigned_url, file);
         keys.push({
-          key: presigned_url.fields['key'],
-          size: file.file.size,
-          filename: file.file.name,
+          key: presigned_url.key,
         });
       }
     }
@@ -175,7 +176,7 @@ function completeTodo(todo_id = null, files = [], options = {}) {
         const presigned_url = await createPresignedUrl(file.file.name);
         await uploadFile(presigned_url, file);
         keys.push({
-          key: presigned_url.fields['key'],
+          key: presigned_url.key,
           size: file.file.size,
           filename: file.file.name,
         });
@@ -227,14 +228,14 @@ function pendingTodos(filter = null, options = {}) {
   });
 }
 
-function createPresignedUrl(filename) {
+function createPresignedUrl(filename, byteSize, checksum) {
   logger.log('Creating presigned URL for ' + filename);
   return new Promise(async (resolve, reject) => {
     const mutation = `
-      mutation createPresignedUrl($filename: String!) {
-        createPresignedUrl(input:{ filename: $filename }) {
+      mutation createPresignedUrl($filename: String!, $byteSize: Int!, $checksum: String!) {
+        createPresignedUrl(input:{ filename: $filename, byte_size: $byteSize, checksum: $checksum }) {
           url
-          fields
+          key
           method
           headers
         }
@@ -242,11 +243,13 @@ function createPresignedUrl(filename) {
     `;
     const variables = {
       filename: filename,
+      byteSize: byteSize,
+      checksum: checksum,
     };
     const json = await client().request(mutation, variables);
     const data = {
       url: json.createPresignedUrl.url,
-      fields: JSON.parse(json.createPresignedUrl.fields),
+      key: json.createPresignedUrl.key,
       method: json.createPresignedUrl.method,
       headers: JSON.parse(json.createPresignedUrl.headers),
     };

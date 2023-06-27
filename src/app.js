@@ -18,6 +18,8 @@ const { autoUpdater } = require('electron-updater');
 const moment = require('moment-timezone');
 const { NetChecker } = require('./onlinestatus/NetChecker');
 const urls = require('./urls');
+const crypto = require('crypto');
+const fs = require('fs');
 
 require('./ipc/main');
 
@@ -514,7 +516,31 @@ app.on('ready', () => {
     store.set('broadcast', isEnabled);
   }
 
+  async function attachmentsWithChecksums(attachments) {
+    return await Promise.all(attachments.map(async (attachment) => {
+      let data;
+
+      if (attachment.file.path) {
+        // Regular file
+        data = fs.readFileSync(attachment.file.path);
+      } else if (attachment.base64) {
+        // Base64 file
+        const base64Data = attachment.base64.split(',')[1];
+        data = Buffer.from(base64Data, 'base64');
+      }
+
+      if (data) {
+        const checksum = crypto.createHash('md5').update(data).digest('hex');
+        attachment.file.checksum = checksum;
+      }
+
+      return attachment;
+    }));
+  }
+
   async function createTodo(event, value, attachments, completed) {
+    attachments = await attachmentsWithChecksums(attachments);
+
     if (value.match(/^\/help\b/i)) {
       // Executing /help command
       shell.openExternal('https://wip.co/help#menubar');
@@ -537,6 +563,7 @@ app.on('ready', () => {
   }
 
   async function completeTodo(event, todo_id, attachments) {
+    attachments = await attachmentsWithChecksums(attachments);
     var todo = wip.completeTodo(todo_id, attachments);
     event.sender.send('todoSaved');
 
