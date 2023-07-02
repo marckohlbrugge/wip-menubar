@@ -103,7 +103,7 @@ function uploadFile(presigned_url, file) {
       });
       response.on('end', () => {
         if (![200, 204].includes(status)) {
-          reject(`Invalid status code <${status}>, descruption: ${body}`);
+          reject(`Invalid status code <${status}>, description: ${body}`);
         }
         resolve();
       });
