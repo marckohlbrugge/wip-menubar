@@ -530,8 +530,11 @@ app.on('ready', () => {
       }
 
       if (data) {
-        const checksum = crypto.createHash('md5').update(data).digest('hex');
+        // https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObject.html
+        // The base64-encoded 128-bit MD5 digest of the message (without the headers) according to RFC 1864.
+        const checksum = crypto.createHash('md5').update(data).digest('base64');
         attachment.file.checksum = checksum;
+        attachment.file.data = data;
       }
 
       return attachment;
