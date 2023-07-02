@@ -88,38 +88,30 @@ function viewer(options = {}) {
 }
 
 function uploadFile(presigned_url, file) {
-  return new Promise((resolve, reject) => {
-    let data;
-    let contentType;
-
-    if (file.file.path) {
-      // Actual image on disk
-      data = fs.readFileSync(file.file.path);
-      contentType = file.file.type;
-    } else {
-      // Pasted image
-      var regex = /^data:(.+);base64,(.*)$/;
-      var matches = file.base64.match(regex);
-      contentType = matches[1];
-      data = Buffer.from(matches[2], 'base64');
-    }
-      
+  return new Promise((resolve, reject) => {      
     const request = net.request({
       method: presigned_url.method,
       url: presigned_url.url,
       headers: presigned_url.headers
     });
-
+    
     request.on('response', (response) => {
-      if (![200, 204].includes(response.statusCode)) {
-        reject(`Invalid status code <${response.statusCode}>`);
-      }
-      resolve();
+      let status = response.statusCode;
+      let body = '';
+      response.on('data', (chunk) => {
+        body += chunk;
+      });
+      response.on('end', () => {
+        if (![200, 204].includes(status)) {
+          reject(`Invalid status code <${status}>, descruption: ${body}`);
+        }
+        resolve();
+      });
     });
 
     request.on('error', reject);
 
-    request.write(data);
+    request.write(file.file.data);
     request.end();
   });
 }
@@ -130,15 +122,11 @@ function createTodo(todo = null, completed = true, files = []) {
 
     if (files.length > 0) {
       for (const file of files) {
-        const filename = file.file.name;
-        const byteSize = file.file.size;
-        const checksum = file.checksum;
-
-        const presigned_url = await createPresignedUrl(filename, byteSize, checksum);
+        const { name, size, checksum, mime} = file.file;
+        const presigned_url = await createPresignedUrl(name, size, checksum, mime);
+        logger.log("Presigned URL: ", presigned_url);
         await uploadFile(presigned_url, file);
-        keys.push({
-          key: presigned_url.key,
-        });
+        keys.push({ key: presigned_url.key });
       }
     }
 
@@ -228,12 +216,12 @@ function pendingTodos(filter = null, options = {}) {
   });
 }
 
-function createPresignedUrl(filename, byteSize, checksum) {
+function createPresignedUrl(filename, byteSize, checksum, mime) {
   logger.log('Creating presigned URL for ' + filename);
   return new Promise(async (resolve, reject) => {
     const mutation = `
-      mutation createPresignedUrl($filename: String!, $byteSize: Int!, $checksum: String!) {
-        createPresignedUrl(input:{ filename: $filename, byte_size: $byteSize, checksum: $checksum }) {
+      mutation createPresignedUrl($filename: String!, $byteSize: Int!, $checksum: String!, $contentType: String!) {
+        createPresignedUrl(input:{ filename: $filename, byteSize: $byteSize, checksum: $checksum, contentType: $contentType }) {
           url
           key
           method
@@ -243,9 +231,11 @@ function createPresignedUrl(filename, byteSize, checksum) {
     `;
     const variables = {
       filename: filename,
-      byteSize: byteSize,
+      byteSize: Number(byteSize),
       checksum: checksum,
+      contentType: mime
     };
+
     const json = await client().request(mutation, variables);
     const data = {
       url: json.createPresignedUrl.url,

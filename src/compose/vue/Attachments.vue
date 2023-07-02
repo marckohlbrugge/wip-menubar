@@ -30,7 +30,8 @@ export default {
       const file_copy = {
         path: file.path,
         name: file_name || file.name,
-        size: file.size
+        size: file.size,
+        mime: file.type,
       };
 
       if (file.path) {
