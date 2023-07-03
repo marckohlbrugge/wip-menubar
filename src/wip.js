@@ -1,7 +1,5 @@
 const { net } = require('electron');
 const logger = require('./logger');
-const FormData = require('form-data');
-const fs = require('fs');
 const { GraphQLClient } = require('graphql-request');
 const store = require('./store');
 
@@ -89,172 +87,143 @@ function viewer(options = {}) {
 
 function uploadFile(presigned_url, file) {
   return new Promise((resolve, reject) => {
-    let data;
-    let contentType;
-
-    if (file.file.path) {
-      // Actual image on disk
-      data = fs.readFileSync(file.file.path);
-      contentType = file.file.type;
-    } else {
-      // Pasted image
-      var regex = /^data:(.+);base64,(.*)$/;
-      var matches = file.base64.match(regex);
-      contentType = matches[1];
-      data = Buffer.from(matches[2], 'base64');
-    }
-      
     const request = net.request({
       method: presigned_url.method,
       url: presigned_url.url,
-      headers: presigned_url.headers
+      headers: presigned_url.headers,
     });
 
     request.on('response', (response) => {
-      if (![200, 204].includes(response.statusCode)) {
-        reject(`Invalid status code <${response.statusCode}>`);
-      }
-      resolve();
+      let status = response.statusCode;
+      let body = '';
+      response.on('data', (chunk) => {
+        body += chunk;
+      });
+      response.on('end', () => {
+        if (![200, 204].includes(status)) {
+          reject(`Invalid status code <${status}>, description: ${body}`);
+        }
+        resolve();
+      });
     });
 
     request.on('error', reject);
 
-    request.write(data);
+    request.write(file.file.data);
     request.end();
   });
 }
 
-function createTodo(todo = null, completed = true, files = []) {
-  return new Promise(async (resolve, reject) => {
-    let keys = new Array();
+async function uploadFiles(files = []) {
+  let keys = new Array();
+  for (const file of files) {
+    const { name, size, checksum, mime } = file.file;
+    const presigned_url = await createPresignedUrl(name, size, checksum, mime);
+    await uploadFile(presigned_url, file);
+    keys.push({ signedId: presigned_url.signedId });
+  }
 
-    if (files.length > 0) {
-      for (const file of files) {
-        const filename = file.file.name;
-        const byteSize = file.file.size;
-        const checksum = file.checksum;
+  return keys;
+}
 
-        const presigned_url = await createPresignedUrl(filename, byteSize, checksum);
-        await uploadFile(presigned_url, file);
-        keys.push({
-          key: presigned_url.key,
-        });
+async function createTodo(todo = null, completed = true, files = []) {
+  const mutation = `
+    mutation createTodo($body: String!, $completed_at: DateTime, $attachments: [AttachmentInput], $broadcast: Boolean) {
+      createTodo(input: { body: $body, completed_at: $completed_at, attachments: $attachments, broadcast: $broadcast }) {
+        id
+        body
+        completed_at
       }
     }
+  `;
 
-    const mutation = `
-      mutation createTodo($body: String!, $completed_at: DateTime, $attachments: [AttachmentInput], $broadcast: Boolean) {
-        createTodo(input: { body: $body, completed_at: $completed_at, attachments: $attachments, broadcast: $broadcast }) {
+  const keys = await uploadFiles(files);
+  const variables = {
+    body: todo,
+    completed_at: completed ? new Date().toISOString() : null,
+    attachments: keys,
+    broadcast: store.get('broadcast'),
+  };
+  logger.log('Executing createTodo query', variables);
+  const json = await client().request(mutation, variables);
+  const data = {
+    id: json.createTodo.id,
+    completed_at: json.createTodo.completed_at,
+  };
+  logger.log('createTodo response: ', json);
+  return data;
+}
+
+async function completeTodo(todo_id = null, files = [], options = {}) {
+  const mutation = `
+    mutation completeTodo($id: ID!, $attachments: [AttachmentInput], $broadcast: Boolean) {
+      completeTodo(id: $id, attachments: $attachments, broadcast: $broadcast) {
+        id
+        completed_at
+      }
+    }
+  `;
+  const keys = await uploadFiles(files);
+  const variables = {
+    id: todo_id,
+    attachments: keys,
+    broadcast: store.get('broadcast'),
+  };
+  logger.log('Executing completeTodo query', variables);
+  const json = await client().request(mutation, variables);
+  const data = {
+    id: json.completeTodo.id,
+    completed_at: json.completeTodo.completed_at,
+  };
+  logger.log('completeTodo response: ', json);
+  return data;
+}
+
+async function pendingTodos(filter = null, options = {}) {
+  const query = `
+    query ($filter: String) {
+      viewer {
+        todos(filter: $filter, completed: false, limit: 100, order:"created_at:desc") {
           id
           body
-          completed_at
         }
-      }
-    `;
-    const variables = {
-      body: todo,
-      completed_at: completed ? new Date().toISOString() : null,
-      attachments: keys,
-      broadcast: store.get('broadcast'),
-    };
-    logger.log('Executing createTodo query', variables);
-    const json = await client().request(mutation, variables);
-    const data = {
-      id: json.createTodo.id,
-      completed_at: json.createTodo.completed_at,
-    };
-    logger.log('createTodo response: ', json);
-    return resolve(data);
-  });
-}
-
-function completeTodo(todo_id = null, files = [], options = {}) {
-  return new Promise(async (resolve, reject) => {
-    let keys = new Array();
-    if (files.length > 0) {
-      for (const file of files) {
-        const presigned_url = await createPresignedUrl(file.file.name);
-        await uploadFile(presigned_url, file);
-        keys.push({
-          key: presigned_url.key,
-          size: file.file.size,
-          filename: file.file.name,
-        });
       }
     }
-
-    const mutation = `
-      mutation completeTodo($id: ID!, $attachments: [AttachmentInput], $broadcast: Boolean) {
-        completeTodo(id: $id, attachments: $attachments, broadcast: $broadcast) {
-          id
-          completed_at
-        }
-      }
-    `;
-    const variables = {
-      id: todo_id,
-      attachments: keys,
-      broadcast: store.get('broadcast'),
-    };
-    logger.log('Executing completeTodo query', variables);
-    const json = await client().request(mutation, variables);
-    const data = {
-      id: json.completeTodo.id,
-      completed_at: json.completeTodo.completed_at,
-    };
-    logger.log('completeTodo response: ', json);
-    return resolve(data);
-  });
+  `;
+  const variables = {
+    filter: filter.trim(),
+  };
+  const json = await client().request(query, variables);
+  return json.viewer.todos;
 }
 
-function pendingTodos(filter = null, options = {}) {
-  return new Promise(async (resolve, reject) => {
-    const query = `
-      query ($filter: String) {
-        viewer {
-          todos(filter: $filter, completed: false, limit: 100, order:"created_at:desc") {
-            id
-            body
-          }
-        }
-      }
-    `;
-    const variables = {
-      filter: filter.trim(),
-    };
-    const json = await client().request(query, variables);
-    const data = json.viewer.todos;
-    return resolve(data);
-  });
-}
-
-function createPresignedUrl(filename, byteSize, checksum) {
+async function createPresignedUrl(filename, byteSize, checksum, mime) {
   logger.log('Creating presigned URL for ' + filename);
-  return new Promise(async (resolve, reject) => {
-    const mutation = `
-      mutation createPresignedUrl($filename: String!, $byteSize: Int!, $checksum: String!) {
-        createPresignedUrl(input:{ filename: $filename, byte_size: $byteSize, checksum: $checksum }) {
-          url
-          key
-          method
-          headers
-        }
+  const mutation = `
+    mutation createPresignedUrl($filename: String!, $byteSize: Int!, $checksum: String!, $contentType: String!) {
+      createPresignedUrl(input:{ filename: $filename, byteSize: $byteSize, checksum: $checksum, contentType: $contentType }) {
+        url
+        signedId
+        method
+        headers
       }
-    `;
-    const variables = {
-      filename: filename,
-      byteSize: byteSize,
-      checksum: checksum,
-    };
-    const json = await client().request(mutation, variables);
-    const data = {
-      url: json.createPresignedUrl.url,
-      key: json.createPresignedUrl.key,
-      method: json.createPresignedUrl.method,
-      headers: JSON.parse(json.createPresignedUrl.headers),
-    };
-    return resolve(data);
-  });
+    }
+  `;
+  const variables = {
+    filename: filename,
+    byteSize: Number(byteSize),
+    checksum: checksum,
+    contentType: mime,
+  };
+
+  const json = await client().request(mutation, variables);
+  const data = {
+    url: json.createPresignedUrl.url,
+    signedId: json.createPresignedUrl.signedId,
+    method: json.createPresignedUrl.method,
+    headers: JSON.parse(json.createPresignedUrl.headers),
+  };
+  return data;
 }
 
 function getAccessToken(code) {

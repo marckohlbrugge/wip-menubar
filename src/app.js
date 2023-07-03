@@ -20,6 +20,7 @@ const { NetChecker } = require('./onlinestatus/NetChecker');
 const urls = require('./urls');
 const crypto = require('crypto');
 const fs = require('fs');
+const { dialog } = require('electron');
 
 require('./ipc/main');
 
@@ -517,25 +518,33 @@ app.on('ready', () => {
   }
 
   async function attachmentsWithChecksums(attachments) {
-    return await Promise.all(attachments.map(async (attachment) => {
-      let data;
+    return await Promise.all(
+      attachments.map(async (attachment) => {
+        let data;
 
-      if (attachment.file.path) {
-        // Regular file
-        data = fs.readFileSync(attachment.file.path);
-      } else if (attachment.base64) {
-        // Base64 file
-        const base64Data = attachment.base64.split(',')[1];
-        data = Buffer.from(base64Data, 'base64');
-      }
+        if (attachment.file.path) {
+          // Regular file
+          data = fs.readFileSync(attachment.file.path);
+        } else if (attachment.base64) {
+          // Base64 file
+          const base64Data = attachment.base64.split(',')[1];
+          data = Buffer.from(base64Data, 'base64');
+        }
 
-      if (data) {
-        const checksum = crypto.createHash('md5').update(data).digest('hex');
-        attachment.file.checksum = checksum;
-      }
+        if (data) {
+          // https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObject.html
+          // The base64-encoded 128-bit MD5 digest of the message (without the headers) according to RFC 1864.
+          const checksum = crypto
+            .createHash('md5')
+            .update(data)
+            .digest('base64');
+          attachment.file.checksum = checksum;
+          attachment.file.data = data;
+        }
 
-      return attachment;
-    }));
+        return attachment;
+      }),
+    );
   }
 
   async function createTodo(event, value, attachments, completed) {
@@ -558,6 +567,15 @@ app.on('ready', () => {
 
       todo.catch((e) => {
         logger.error('Failed to save TODO', e.message);
+        // Timeout required to allow renderer process to close todo window
+        setTimeout(
+          () =>
+            dialog.showErrorBox(
+              'Unexpected error',
+              'Failed to save TODO. Try again later',
+            ),
+          100,
+        );
       });
     }
   }
@@ -572,8 +590,17 @@ app.on('ready', () => {
       requestViewerData();
     });
 
-    todo.catch(() => {
-      logger.error('oops');
+    todo.catch((e) => {
+      logger.error('Failed to complete TODO', e.message);
+      // Timeout required to allow renderer process to close todo window
+      setTimeout(
+        () =>
+          dialog.showErrorBox(
+            'Unexpected error',
+            'Failed to complete TODO. Try again later',
+          ),
+        100,
+      );
     });
   }
 
