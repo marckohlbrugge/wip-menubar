@@ -20,6 +20,7 @@ const { NetChecker } = require('./onlinestatus/NetChecker');
 const urls = require('./urls');
 const crypto = require('crypto');
 const fs = require('fs');
+const { dialog } = require('electron');
 
 require('./ipc/main');
 
@@ -561,6 +562,8 @@ app.on('ready', () => {
 
       todo.catch((e) => {
         logger.error('Failed to save TODO', e.message);
+        // Timeout required to allow renderer process to close todo window
+        setTimeout(() => dialog.showErrorBox('Unexpected error', 'Failed to save TODO. Try again later'), 100);
       });
     }
   }
@@ -575,8 +578,10 @@ app.on('ready', () => {
       requestViewerData();
     });
 
-    todo.catch(() => {
-      logger.error('oops');
+    todo.catch((e) => {
+      logger.error('Failed to complete TODO', e.message);
+      // Timeout required to allow renderer process to close todo window
+      setTimeout(() => dialog.showErrorBox('Unexpected error', 'Failed to complete TODO. Try again later'), 100);
     });
   }
 
