@@ -124,9 +124,8 @@ function createTodo(todo = null, completed = true, files = []) {
       for (const file of files) {
         const { name, size, checksum, mime} = file.file;
         const presigned_url = await createPresignedUrl(name, size, checksum, mime);
-        logger.log("Presigned URL: ", presigned_url);
         await uploadFile(presigned_url, file);
-        keys.push({ key: presigned_url.key });
+        keys.push({ signedId: presigned_url.signedId });
       }
     }
 
@@ -223,7 +222,7 @@ function createPresignedUrl(filename, byteSize, checksum, mime) {
       mutation createPresignedUrl($filename: String!, $byteSize: Int!, $checksum: String!, $contentType: String!) {
         createPresignedUrl(input:{ filename: $filename, byteSize: $byteSize, checksum: $checksum, contentType: $contentType }) {
           url
-          key
+          signedId
           method
           headers
         }
@@ -239,7 +238,7 @@ function createPresignedUrl(filename, byteSize, checksum, mime) {
     const json = await client().request(mutation, variables);
     const data = {
       url: json.createPresignedUrl.url,
-      key: json.createPresignedUrl.key,
+      signedId: json.createPresignedUrl.signedId,
       method: json.createPresignedUrl.method,
       headers: JSON.parse(json.createPresignedUrl.headers),
     };
