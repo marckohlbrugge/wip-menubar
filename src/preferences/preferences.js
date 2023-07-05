@@ -1,10 +1,10 @@
 require('./preferences.css');
 require('../bugsnag/renderer');
-const preload = window.context;
 const {
   electron: { ipcRenderer, shell },
   store,
-} = preload;
+  logger,
+} = window.context;
 
 const shortcut = document.getElementById('shortcut');
 const launchAtLoginCheckbox = document.getElementById(
@@ -25,13 +25,28 @@ document.addEventListener('click', function (event) {
   }
 });
 
-shortcut.value = store.get('shortcut');
-launchAtLoginCheckbox.checked = store.get('autoLaunch');
-developmentModeCheckbox.checked = store.get('development');
-notificationCheckbox.checked = store.get('notification.isEnabled');
-notificationTime.value = store.get('notification.time');
-notificationTime.disabled = !store.get('notification.isEnabled');
-broadcastCheckbox.checked = store.get('broadcast');
+async function loadStore() {
+  const setChecked = (item) => (v) => (item.checked = v);
+  const setValue = (item) => (v) => (item.value = v);
+  const items = {
+    shortcut: setValue(shortcut),
+    autoLaunch: setChecked(launchAtLoginCheckbox),
+    development: setChecked(developmentModeCheckbox),
+    'notification.isEnabled': setChecked(notificationCheckbox),
+    broadcast: setChecked(broadcastCheckbox),
+    'notification.time': (v) => {
+      notificationTime.disabled = !v;
+      notificationTime.value = v;
+    },
+  };
+
+  const keys = Object.keys(items);
+  const values = await store.getMulti(...keys);
+  for (const [key, value] of Object.entries(values)) {
+    items[key](value);
+  }
+}
+loadStore().then(() => logger.log('Store fetched'));
 
 let shortcutTypingTimer;
 shortcut.addEventListener('input', () => {
