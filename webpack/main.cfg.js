@@ -1,11 +1,11 @@
 const webpack = require('webpack');
-const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+// const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const CopyPlugin = require('copy-webpack-plugin');
 const path = require('path');
 
 const { rules } = require('./rules');
 
-module.exports = function(env, argv) {
+module.exports = function (env, argv) {
   const IS_PRODUCTION = argv.mode === 'production';
 
   /** @type {import('webpack').Configuration} */
@@ -20,10 +20,7 @@ module.exports = function(env, argv) {
       filename: '[name].js',
     },
     optimization: {
-      splitChunks: {
-        chunks: 'all',
-        name: 'main-vendor',
-      },
+      splitChunks: false,
     },
     module: {
       rules: [rules.node],
