@@ -21,6 +21,7 @@ const urls = require('./urls');
 const crypto = require('crypto');
 const fs = require('fs');
 const { dialog } = require('electron');
+const utils = require('./utils');
 
 require('./ipc/main');
 
@@ -150,6 +151,7 @@ app.on('ready', () => {
       webPreferences: {
         contextIsolation: true,
         preload: urls.getPreload(),
+        sandbox: utils.isProduction,
       },
     });
 
@@ -213,6 +215,7 @@ app.on('ready', () => {
       webPreferences: {
         contextIsolation: true,
         preload: urls.getPreload(),
+        sandbox: utils.isProduction,
       },
     });
 
@@ -246,6 +249,7 @@ app.on('ready', () => {
       webPreferences: {
         contextIsolation: true,
         preload: urls.getPreload(),
+        sandbox: utils.isProduction,
       },
     });
 
