@@ -4,5 +4,6 @@ exports.Channels = {
   FetchHashtags: 'app/fetch/hashtags',
   Log: 'app/log',
   StoreGet: 'app/store/get',
-  StoreGetMultiple: 'app/store/get_multi',
+  StoreGetMultiple: 'app/store/getMulti',
+  OpenExternalUrl: 'app/shell/openExternalUrl',
 };

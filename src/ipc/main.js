@@ -1,4 +1,4 @@
-const { ipcMain, BrowserWindow } = require('electron');
+const { ipcMain, BrowserWindow, shell } = require('electron');
 const logger = require('../logger');
 const store = require('../store');
 
@@ -25,6 +25,10 @@ ipcMain.handle(Channels.StoreGetMultiple, async (event, ...args) => {
     result[arg] = store.get(arg);
   }
   return Promise.resolve(result);
+});
+
+ipcMain.on(Channels.OpenExternalUrl, async (event, url) => {
+  shell.openExternal(url);
 });
 
 ipcMain.on(Channels.Log, async (event, level, ...args) => {
