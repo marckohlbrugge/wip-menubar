@@ -1,4 +1,4 @@
-const { ipcRenderer, shell, contextBridge } = require('electron');
+const { ipcRenderer, contextBridge } = require('electron');
 const utils = require('./ipc/renderer');
 const { Channels } = require('./ipc/channels');
 
@@ -10,7 +10,9 @@ function logGeneric(level, ...args) {
 
 const context = {
   electron: {
-    shell,
+    shell: {
+      openExternal: (url) => ipcRenderer.send(Channels.OpenExternalUrl, url),
+    },
     ipcRenderer: {
       send: ipcRenderer.send,
       invoke: ipcRenderer.invoke,
