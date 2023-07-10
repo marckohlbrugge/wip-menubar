@@ -10,7 +10,7 @@ files:
 - dist/**/*
 - resources/
 - "!node_modules/**/*"
-- embedded.provisionprofile
+- electron.provisionprofile
 
 afterSign: ./scripts/after-sign-hook.js
 
@@ -51,7 +51,7 @@ mas:
     arch: universal
   entitlements: build/entitlements.mas.plist
   entitlementsInherit: build/entitlements.mas.inherit.plist
-  provisioningProfile: embedded.provisionprofile
+  provisioningProfile: electron.provisionprofile
 
 linux:
   target:
