@@ -37,21 +37,10 @@ mac:
   target:
     - target: default
       arch: universal
-    - target: mas
-      arch: universal
   icon: resources/app.icns
   darkModeSupport: true
   extendInfo:
     LSUIElement: 1
-
-mas:
-  hardenedRuntime: false
-  target:
-    target: default
-    arch: universal
-  entitlements: build/entitlements.mas.plist
-  entitlementsInherit: build/entitlements.mas.inherit.plist
-  provisioningProfile: electron.provisionprofile
 
 linux:
   target:
