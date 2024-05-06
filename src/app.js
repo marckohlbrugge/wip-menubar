@@ -34,7 +34,7 @@ global.syncInterval = 15; // in minutes
 // Run this whenever app changes between dev / production mode
 function initMode() {
   global.clientId = store.get('development')
-    ? 'fa6c704654ae36a8cf9104e05ba01f972ef3f2e00a8c12f4b9d510b23d88640c'
+    ? '2838c353e4d9b2ff6b35ba59e7a2051d43abbc43bc4cfdd263db5b88f6f75eb6'
     : '2838c353e4d9b2ff6b35ba59e7a2051d43abbc43bc4cfdd263db5b88f6f75eb6';
   wip.setDevMode(store.get('development'));
   wip.setClientId(global.clientId);
@@ -204,7 +204,7 @@ app.on('ready', () => {
       backgroundColor: '#000000',
       title: `${pjson.name} - OAuth`,
       width: 400,
-      height: 260,
+      height: 280,
       frame: true,
       resizable: false,
       maximizable: false,
@@ -436,10 +436,6 @@ app.on('ready', () => {
     registerGlobalShortcut();
   }
 
-  ipcMain.handle('fetchPendingTodos', async (event, filter) => {
-    return await wip.pendingTodos(filter);
-  });
-
   async function setAuthorizationCode(event, authorization_code) {
     try {
       const oauth = await wip.getAccessToken(authorization_code);
@@ -551,7 +547,7 @@ app.on('ready', () => {
     );
   }
 
-  async function createTodo(event, value, attachments, completed) {
+  async function createTodo(event, value, attachments) {
     attachments = await attachmentsWithChecksums(attachments);
 
     if (value.match(/^\/help\b/i)) {
@@ -561,7 +557,7 @@ app.on('ready', () => {
     } else {
       // Creating a todo
       value = value.replace(/^\/(todo|done)\b/i, '');
-      var todo = wip.createTodo(value, completed, attachments);
+      var todo = wip.createTodo(value, attachments);
       event.sender.send('todoSaved');
 
       todo.then((result) => {
@@ -582,30 +578,6 @@ app.on('ready', () => {
         );
       });
     }
-  }
-
-  async function completeTodo(event, todo_id, attachments) {
-    attachments = await attachmentsWithChecksums(attachments);
-    var todo = wip.completeTodo(todo_id, attachments);
-    event.sender.send('todoSaved');
-
-    todo.then((result) => {
-      logger.log(result.id);
-      requestViewerData();
-    });
-
-    todo.catch((e) => {
-      logger.error('Failed to complete TODO', e.message);
-      // Timeout required to allow renderer process to close todo window
-      setTimeout(
-        () =>
-          dialog.showErrorBox(
-            'Unexpected error',
-            'Failed to complete TODO. Try again later',
-          ),
-        100,
-      );
-    });
   }
 
   async function onlineStatusChange(status) {
@@ -676,7 +648,7 @@ app.on('ready', () => {
     app.dock.hide();
   }
 
-  app.on('window-all-closed', () => {});
+  app.on('window-all-closed', () => { });
   tray.on('right-click', requestViewerData);
   ipcMain.on('setAuthorizationCode', setAuthorizationCode);
   ipcMain.on('setShortcut', setShortcut);
@@ -686,7 +658,6 @@ app.on('ready', () => {
   ipcMain.on('setNotificationTime', setNotificationTime);
   ipcMain.on('setBroadcast', setBroadcast);
   ipcMain.on('createTodo', createTodo);
-  ipcMain.on('completeTodo', completeTodo);
   ipcMain.on('resetOAuth', resetOAuth);
   ipcMain.on('resize', resize);
 

@@ -9,7 +9,7 @@ let clientId;
 
 function client() {
   const endpoint = devMode
-    ? 'http://wip.test:5000/graphql'
+    ? 'http://wip.test:3000/graphql'
     : 'https://wip.co/graphql';
 
   return new GraphQLClient(endpoint, {
@@ -36,7 +36,7 @@ function setClientId(value) {
 }
 
 function getOAuthURL() {
-  var base = devMode ? 'http://wip.test:5000' : 'https://wip.co';
+  var base = devMode ? 'http://wip.test:3000' : 'https://wip.co';
 
   return `${base}/oauth/authorize?client_id=${clientId}&response_type=code&redirect_uri=urn:ietf:wg:oauth:2.0:oob`;
 }
@@ -126,10 +126,10 @@ async function uploadFiles(files = []) {
   return keys;
 }
 
-async function createTodo(todo = null, completed = true, files = []) {
+async function createTodo(todo = null, files = []) {
   const mutation = `
-    mutation createTodo($body: String!, $completed_at: DateTime, $attachments: [AttachmentInput], $broadcast: Boolean) {
-      createTodo(input: { body: $body, completed_at: $completed_at, attachments: $attachments, broadcast: $broadcast }) {
+    mutation createTodo($body: String!, $attachments: [AttachmentInput], $broadcast: Boolean) {
+      createTodo(input: { body: $body, attachments: $attachments, broadcast: $broadcast }) {
         id
         body
         completed_at
@@ -140,7 +140,6 @@ async function createTodo(todo = null, completed = true, files = []) {
   const keys = await uploadFiles(files);
   const variables = {
     body: todo,
-    completed_at: completed ? new Date().toISOString() : null,
     attachments: keys,
     broadcast: store.get('broadcast'),
   };
@@ -152,49 +151,6 @@ async function createTodo(todo = null, completed = true, files = []) {
   };
   logger.log('createTodo response: ', json);
   return data;
-}
-
-async function completeTodo(todo_id = null, files = [], options = {}) {
-  const mutation = `
-    mutation completeTodo($id: ID!, $attachments: [AttachmentInput], $broadcast: Boolean) {
-      completeTodo(id: $id, attachments: $attachments, broadcast: $broadcast) {
-        id
-        completed_at
-      }
-    }
-  `;
-  const keys = await uploadFiles(files);
-  const variables = {
-    id: todo_id,
-    attachments: keys,
-    broadcast: store.get('broadcast'),
-  };
-  logger.log('Executing completeTodo query', variables);
-  const json = await client().request(mutation, variables);
-  const data = {
-    id: json.completeTodo.id,
-    completed_at: json.completeTodo.completed_at,
-  };
-  logger.log('completeTodo response: ', json);
-  return data;
-}
-
-async function pendingTodos(filter = null, options = {}) {
-  const query = `
-    query ($filter: String) {
-      viewer {
-        todos(filter: $filter, completed: false, limit: 100, order:"created_at:desc") {
-          id
-          body
-        }
-      }
-    }
-  `;
-  const variables = {
-    filter: filter.trim(),
-  };
-  const json = await client().request(query, variables);
-  return json.viewer.todos;
 }
 
 async function createPresignedUrl(filename, byteSize, checksum, mime) {
@@ -234,7 +190,7 @@ function getAccessToken(code) {
     if (devMode) {
       request_options.protocol = 'http:';
       request_options.hostname = 'wip.test';
-      request_options.port = 5000;
+      request_options.port = 3000;
     } else {
       request_options.protocol = 'https:';
       request_options.hostname = 'wip.co';
@@ -279,9 +235,7 @@ function getAccessToken(code) {
 
 module.exports = {
   viewer: viewer,
-  pendingTodos: pendingTodos,
   createTodo: createTodo,
-  completeTodo: completeTodo,
   createPresignedUrl: createPresignedUrl,
   setApiKey: setApiKey,
   setClientId: setClientId,

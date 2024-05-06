@@ -30,10 +30,6 @@ Download the latest version of WIP from the **[GitHub releases](https://github.c
 
 <img src="./screenshots/done.png" width="713" alt="Completed Todo Screenshot">
 
-### Add a Pending Todo
-
-<img src="./screenshots/todo.png" width="713" alt="Pending Todo Screenshot">
-
 ### Preferences
 
 <img src="./screenshots/preferences.png" width="399" alt="Preferences Screenshot">
