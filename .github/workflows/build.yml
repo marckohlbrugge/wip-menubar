@@ -90,6 +90,7 @@ jobs:
         run: yarn dist --publish=always
         env:
           GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          API_KEY: ~/private_keys/AuthKey_${{ env.API_KEY_ID }}.p8
 
       - name: Tagging the release
         run: yarn ci:tag-release
