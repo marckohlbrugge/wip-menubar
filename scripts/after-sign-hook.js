@@ -30,12 +30,10 @@ module.exports = async function (params) {
 
   const notarizeConfig = {
     tool: "notarytool",
-    teamId: "Y9VMFY8SNZ",
-    appBundleId: appId,
     appPath: appPath,
     appleApiKey: `${process.env.API_KEY_ID}`,
     appleApiKeyId: process.env.API_KEY_ID,
-    appleApiIssuer: process.env.APPLE_ISSUER_ID,
+    appleApiIssuer: process.env.APPLE_ISSUER_ID
   };
 
   await pRetry(
@@ -44,7 +42,7 @@ module.exports = async function (params) {
       return notarize(notarizeConfig);
     },
     {
-      retries: 5,
+      retries: 1,
       onFailedAttempt: (error) => {
         console.log(
           `Attempt ${error.attemptNumber} failed. There are ${error.retriesLeft} retries left.`,
