@@ -30,6 +30,7 @@ module.exports = async function (params) {
 
   const notarizeConfig = {
     tool: "notarytool",
+    teamId: "Y9VMFY8SNZ",
     appBundleId: appId,
     appPath: appPath,
     appleApiKey: `${process.env.API_KEY_ID}`,
