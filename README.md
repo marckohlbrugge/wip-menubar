@@ -1,3 +1,9 @@
+⚠️ **I'm no longer maintaining the app. The amount of work necessary to keep the app working, secure, and available in various app platforms wasn't worth it relative to how few people used the app.**
+
+**We now have a [Raycast extension](http://raycast.com/marckohlbrugge/wip) which does roughly the same thing. I hope you can use that instead.**
+
+<hr>
+
 <p align="center"><img src="./build/icon1024.png" height="64" alt="WIP Logo"></p>
 <h3 align="center">WIP</h3>
 <p align="center">🚧 WIP menubar app<p>
